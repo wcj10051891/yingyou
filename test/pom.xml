@@ -11,5 +11,11 @@
 			<artifactId>jprotobuf</artifactId>
 			<version>1.6.3</version>
 		</dependency>
+		<dependency>
+			<groupId>org.sction</groupId>
+			<artifactId>phprpc</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
 	</dependencies>
 </project>

@@ -28,8 +28,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/game-core.jar" sourcepath="/core"/>
-	<classpathentry kind="lib" path="lib/phprpc_privatekey.jar"/>
-	<classpathentry kind="lib" path="lib/tomcat-util.jar"/>
 	<classpathentry kind="lib" path="lib/tools.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>

@@ -32,7 +32,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/phprpc_privatekey.jar"/>
 	<classpathentry kind="lib" path="lib/tools.jar"/>
 	<classpathentry kind="lib" path="lib/tomcat-util.jar"/>
 	<classpathentry kind="output" path="target/classes"/>

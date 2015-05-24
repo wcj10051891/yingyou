@@ -43,13 +43,9 @@ public abstract class AppConfig {
 	 */
 	public static final String HTTP_DEFAULT_CHARSET;
 	/**
-	 * http keep-alive是否长连接
+	 * 请求上下文根
 	 */
-	public static final boolean HTTP_KEEP_ALIVE;
-	/**
-	 * http session存活时间
-	 */
-	public static final int HTTP_SESSION_ACTIVE_TIME;
+	public static final String HTTP_CONTEXT_ROOT;
 	/**
 	 * phprpc服务包名
 	 */
@@ -93,8 +89,7 @@ public abstract class AppConfig {
 		QUARTZ_SCHEDULE_CORE_POOL_SIZE = config.getString("quartz.schedule.core.pool.size", "2");
 		HTTP_PORT = config.getInt("http.port");
 		HTTP_DEFAULT_CHARSET = config.getString("http.defaultCharset", "UTF-8");
-		HTTP_KEEP_ALIVE = config.getBoolean("http.keep-alive", true);
-		HTTP_SESSION_ACTIVE_TIME = config.getInt("http.sessionActiveTime", 1800);
+		HTTP_CONTEXT_ROOT = config.getString("http.context.root", "server");
 		PHPRPC_BEAN_PACKAGE = config.getString("phprpc.bean.package");
 		DTO_PACKAGE = config.getString("dto.package");
 		SERVER_ID = config.getString("serverId");

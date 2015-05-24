@@ -3,10 +3,10 @@ package xgame.core.net.remote.phprpc;
 import java.lang.management.ManagementFactory;
 import java.util.jar.JarFile;
 
-import com.sun.tools.attach.VirtualMachine;
-
 import xgame.core.util.Dynamic;
 import xgame.core.util.InstrumentAgent;
+
+import com.sun.tools.attach.VirtualMachine;
 
 public class HotSwaper {
 

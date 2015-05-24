@@ -13,7 +13,7 @@ import xgame.core.cache.CacheService;
 import xgame.core.db.DaoContext;
 import xgame.core.db.DaoFactory;
 import xgame.core.net.remote.servlet.PhpRpcDispatcher;
-import xgame.core.net.server.http.HttpServletService;
+import xgame.core.net.server.servlet.ServletServer;
 import xgame.core.net.server.tcp.TcpService;
 
 import com.shadowgame.rpg.core.AppConfig;
@@ -26,7 +26,7 @@ public class Services {
 	private static final Logger log = LoggerFactory.getLogger(Services.class);
 	public static ThreadService threadService;
 	public static TcpService tcpService;
-	public static HttpServletService httpServletService;
+	public static ServletServer servletServer;
 	public static TimerService timerService;
 	public static JMXService jmxService;
 	public static CacheService cacheService;
@@ -66,21 +66,23 @@ public class Services {
 		tcpService.start();
 		log.info("[tcpService] start ok.");
 		
-		Map<String, Servlet> servlets = new HashMap<String, Servlet>(2);
+		Map<String, Class<? extends Servlet>> servlets = new HashMap<String, Class<? extends Servlet>>(2);
 		//registry servlets
-		servlets.put("/online", new Online());
-		servlets.put("/rpc", new PhpRpcDispatcher(AppConfig.PHPRPC_BEAN_PACKAGE));
+		servlets.put("/online", Online.class);
+		servlets.put("/rpc/*", PhpRpcDispatcher.class);
 		
-		httpServletService = new HttpServletService(AppConfig.HTTP_PORT, AppConfig.HTTP_DEFAULT_CHARSET, 
-			AppConfig.HTTP_KEEP_ALIVE ? 300 : 0, AppConfig.HTTP_SESSION_ACTIVE_TIME, servlets);
-		httpServletService.start();
-		log.info("[httpServletService] start ok.");
+		Map<String, String> servletContextAttribute = new HashMap<String, String>();
+		servletContextAttribute.put("phprpcBeanPackage", AppConfig.PHPRPC_BEAN_PACKAGE);
+		
+		servletServer = new ServletServer(AppConfig.HTTP_PORT, AppConfig.HTTP_DEFAULT_CHARSET, AppConfig.HTTP_CONTEXT_ROOT, servletContextAttribute, servlets);
+		servletServer.start();
+		log.info("[servletServer] start ok.");
 	}
 	
 	public static void stop() throws Exception {
-		if(httpServletService != null) {
-			httpServletService.stop();
-			log.info("[httpServletService] stop ok.");
+		if(servletServer != null) {
+			servletServer.stop();
+			log.info("[servletServer] stop ok.");
 		}
 		
 		if(tcpService != null) {

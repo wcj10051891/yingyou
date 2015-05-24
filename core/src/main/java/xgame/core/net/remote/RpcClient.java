@@ -22,7 +22,6 @@ public class RpcClient
     private static final int RETRY_TIMES = 3;
     private final Map<String, PHPRPC_Client> clientMap = new ConcurrentHashMap<String, PHPRPC_Client>();
     private final Set<CallBackInternal> callBackSet = new CopyOnWriteArraySet<CallBackInternal>();
-    private static final String Private_Key = "test";
     
     private PHPRPC_Client getClient(String server, String remoteClass)
     {
@@ -32,8 +31,7 @@ public class RpcClient
         {
             String url = "http://" + server + "/rpc/" + remoteClass;
             client = new PHPRPC_Client(url);
-            //client.setCharset("iso8859-1");
-            client.setPrivateKey(Private_Key);
+//            client.setCharset("iso8859-1");
             clientMap.put(server, client);
         }
         return client;
