@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<!-- <param name="ConversionPattern" value="%-5p %d{MM-dd HH:mm:ss} %l:%m%n"/>  -->
+			<param name="ConversionPattern" value="%1p %d{HH:mm:ss} %l:%m%n"/>
+		</layout>
+	</appender>
+	
+	<appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
+		<param name="BufferSize" value="1024" />
+		<appender-ref ref="CONSOLE" />
+	</appender>
+<!--
+	<appender name="CONSOLE_ERROR" class="org.apache.log4j.ConsoleAppender">
+        <param name="target" value="System.err"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%-5p %d{MM-dd HH:mm:ss} %l:%m%n" />
+		</layout>
+	</appender>
+    <appender name="FILE" class="org.apache.log4j.FileAppender">
+        <param name="File" value="rpg.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="[%-5p] %d{MM-dd HH:mm:ss} %l: %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="loginAppender" class="com.cndw.xianhun.util.DaylyRollingNFileAppender">
+        <param name="File" value="log/login.log"/>
+        <param name="DatePattern" value="'_'yyyy-MM-dd"/>
+        <param name="maxBackupIndex" value="7"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%m%n" />
+        </layout>
+    </appender>
+
+    <appender name="jdbcAppender" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="log/sql.log"/>
+        <param name="MaxFileSize" value="100mb"/>
+        <param name="maxBackupIndex" value="10"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="[%d{MM-dd HH:mm:ss}] %m%n" />
+        </layout>
+    </appender>
+    
+    <logger name="com.mchange"><level value="warn"/></logger>
+    <logger name="org.springframework"><level value="warn"/></logger>
+    <logger name="org.apache.commons"><level value="warn"/></logger>
+    <logger name="com.cndw.dao"><level value="warn"/></logger>
+    <logger name="net.paoding.rose.scanning"><level value="warn"/></logger>
+    <logger name="org.quartz"><level value="info"/></logger>
+    <logger name="com.qq.opensns"><level value="debug"/></logger>
+    <logger name="errorLog" additivity="false"><level value="debug"/><appender-ref ref="CONSOLE_ERROR" /></logger>
+    <logger name="com.cndw.dao.jade.jdbc" additivity="false"><level value="error"/><appender-ref ref="jdbcAppender" /></logger>
+    <logger name="login" additivity="false"><level value="INFO" /><appender-ref ref="loginAppender" /></logger>
+ -->
+    
+    <root>
+		<priority value="info" />
+		<appender-ref ref="ASYNC" />
+	</root>
+
+</log4j:configuration>

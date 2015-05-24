@@ -1,0 +1,45 @@
+#if ($packageName != '')
+package $packageName;
+import com.wcj.dao.annotation.Dao;
+import com.wcj.dao.annotation.Sql;
+import com.wcj.dao.annotation.Arg;
+import com.wcj.dao.annotation.IdModSharding;
+import $classFullName;
+#end
+@Dao
+public interface ${className}Dao {
+	@Sql(value="insert into ${tableName}(#attList()) values(#attValueList())")
+	void insert(@Arg(value="$entityName") $className entity, @IdModSharding(tableName="${tableName}")Integer shardArg);
+	
+	@Sql(value="delete from ${tableName} where id=:id")
+	void delete(@Arg(value="id")Long id, @IdModSharding(tableName="${tableName}")Integer shardArg);
+	
+	@Sql(value="update ${tableName} set #updateValueList() where id=:${entityName}.id")
+	void update(@Arg(value="$entityName") $className entity, @IdModSharding(tableName="${tableName}")Integer shardArg);
+
+	@Sql(value="select * from ${tableName} where id=:id")
+	$className get(@Arg(value="id") Long id, @IdModSharding(tableName="${tableName}")Integer shardArg);
+}
+#*
+	input var:
+		properties  -> list<properties>
+		tableName	-> table name
+		packageName
+		className
+		entityName
+*#
+#macro(attList)
+	#foreach( $property in $properties )
+`$property`#if( $velocityHasNext ),#end
+	#end
+#end
+#macro(attValueList)
+	#foreach( $property in $properties )
+:$entityName.$property#if( $velocityHasNext ),#end
+	#end
+#end
+#macro(updateValueList)
+	#foreach( $property in $properties )
+`$property`=:$entityName.$property#if( $velocityHasNext ),#end
+	#end
+#end

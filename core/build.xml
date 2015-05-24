@@ -1,0 +1,69 @@
+<project name="game-core" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="dist">
+	<property name="src" value="src/main/java" />
+	<property name="resources" value="src/main/resources" />
+	<property name="target" value="target" />
+	<property name="target2" value="../rpg/lib" />
+	<property name="lib" value="lib" />
+	<property name="classes" value="${target}/classes" />
+	<property name="jdk.version" value="1.7" />
+	<property name="source.encoding" value="UTF-8" />
+
+	<artifact:pom id="pom.this" file="pom.xml" />
+	<artifact:dependencies filesetid="fileset.lib.runtime" pathid="path.lib.runtime" pomrefid="pom.this" usescope="runtime" />
+
+	
+	<path id="classpath.project">
+		<path refid="path.lib.runtime"/>
+		<fileset dir="lib/"/>
+	</path>
+	
+	<target name="clean">
+		<delete dir="target" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${classes}" />
+		<javac srcdir="${src}" destdir="${classes}" source="${jdk.version}" target="${jdk.version}" encoding="${source.encoding}" nowarn="on" debug="true">
+			<classpath>
+				<path refid="classpath.project" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile">
+		<jar destfile="${lib}/${ant.project.name}.jar" manifest="${resources}/MANIFEST.MF">
+			<fileset dir="${classes}" />
+		</jar>
+		<delete dir="${target}/${classes}" includeemptydirs="true"/>
+	</target>
+	
+	<target name="dist-src">
+		<jar destfile="${ant.project.name}-src.jar">
+			<fileset dir="src">
+				<exclude name=".svn" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="copy-maven-lib-jar" depends="dist">
+<!--	
+		<delete dir="lib"/>
+		<mkdir dir="lib" /> 
+-->
+		<copy todir="${target2}" flatten="true">
+<!--			<fileset refid="fileset.lib.runtime" />			-->
+			<fileset dir="lib/"/>
+			<mapper type="flatten" />
+		</copy>
+	</target>
+<!--
+	<target name="copyto">
+		<scp file="target/${app.name}.jar" todir="root@192.168.14.90:/data/project/server" password="G38pTiJY%u41*8X" trust="true" />
+	</target>
+	<target name="restart">
+		<sshexec host="192.168.14.90" username="root" password="G38pTiJY%u41*8X" trust="true" command="/data/project/server/server.sh restart" />
+	</target>
+	<target name="deploy" depends="dist,copyto,restart">
+	</target>
+-->		
+</project>

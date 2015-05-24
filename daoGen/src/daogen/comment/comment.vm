@@ -1,0 +1,10 @@
+#foreach( $key in $tables.keySet() )
+    #oneTable($key $tables.get($key).getTableComment() $tables.get($key).getColumns())
+#end
+
+#macro(oneTable $tableName $tableComment $columns)
+表:$tableName - $tableComment
+	#foreach( $column in $columns )
+$column.columnComment	#end
+	
+#end

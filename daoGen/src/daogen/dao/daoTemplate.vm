@@ -1,0 +1,49 @@
+#if ($packageName != '')
+package $packageName;
+import com.wabao.dao.annotation.Arg;
+import com.wabao.dao.annotation.Dao;
+import com.wabao.dao.annotation.Sql;
+import java.util.List;
+import $classFullName;
+#end
+@Dao
+public interface ${className}Dao {
+	@Sql(value="insert into $tableName(#attList()) values(#attValueList())")
+	Integer insert(@Arg(value="$entityName") $className o);
+	
+	@Sql(value="delete from $tableName where id=:id")
+	void delete(@Arg(value="id")Integer id);
+	
+	@Sql(value="update $tableName set #updateValueList() where id=:${entityName}.id")
+	void update(@Arg(value="$entityName") $className o);
+
+	@Sql(value="select * from $tableName where id=:id")
+	$className get(@Arg(value="id") Integer id);
+	
+	@Sql(value="select * from $tableName")
+	List<$className> getAll();
+}
+#*
+	input var:
+		properties  -> list<properties>
+		tableName	-> table name
+		packageName
+		className
+		entityName
+		classFullName
+*#
+#macro(attList)
+	#foreach( $property in $properties )
+`$property`#if( $velocityHasNext ),#end
+	#end
+#end
+#macro(attValueList)
+	#foreach( $property in $properties )
+:$entityName.$property#if( $velocityHasNext ),#end
+	#end
+#end
+#macro(updateValueList)
+	#foreach( $property in $properties )
+`$property`=:$entityName.$property#if( $velocityHasNext ),#end
+	#end
+#end

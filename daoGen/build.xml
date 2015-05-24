@@ -1,0 +1,85 @@
+<project name="daoGen" basedir="." default="gen_all">
+	<property name="jdk.version" value="1.7" />
+	<property name="source.encoding" value="UTF-8" />
+	
+	<path id="classpath.project">
+		<fileset dir="lib" />
+		<pathelement location="bin" />
+	</path>
+	
+	<target name="comment_gen">
+		<java classname="daogen.comment.CommentGen">
+			<classpath>
+				<path refid="classpath.project" />
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="entity_gen">
+		<java classname="daogen.entity.EntityGen">
+			<classpath>
+				<path refid="classpath.project" />
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="dao_gen">
+		<java classname="daogen.dao.DaoGen">
+			<classpath>
+				<path refid="classpath.project" />
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="gen_all" depends="entity_gen, dao_gen"/>
+	
+	<!--////////////////////////        Path define -->
+
+	<target name="clean">
+		<delete dir="target" />
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="target/classes" />
+		<javac srcdir="src" destdir="target/classes" source="${jdk.version}" target="${jdk.version}" encoding="${source.encoding}" nowarn="on" debug="true">
+			<classpath>
+				<path refid="classpath.project" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile">
+		<jar destfile="target/${ant.project.name}.jar">
+			<fileset dir="target/classes" />
+		</jar>
+	</target>
+	
+	<target name="dist-src">
+		<jar destfile="${app.name}-src.jar">
+			<fileset dir="src">
+				<exclude name=".svn" />
+			</fileset>
+		</jar>
+	</target>
+<!--
+	<target name="copy-maven-lib-jar">
+		<delete dir="lib">
+		</delete>
+		<mkdir dir="lib" />
+		<copy todir="lib" flatten="true">
+			<fileset refid="fileset.lib.runtime" />
+			This mapper strips off all leading directory information 
+			<mapper type="flatten" />
+		</copy>
+	</target>
+
+	<target name="copyto">
+		<scp file="target/${app.name}.jar" todir="root@192.168.14.90:/data/project/server" password="G38pTiJY%u41*8X" trust="true" />
+	</target>
+	<target name="restart">
+		<sshexec host="192.168.14.90" username="root" password="G38pTiJY%u41*8X" trust="true" command="/data/project/server/server.sh restart" />
+	</target>
+	<target name="deploy" depends="dist,copyto,restart">
+	</target>
+-->		
+</project>
