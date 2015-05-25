@@ -2,10 +2,10 @@ package com.shadowgame.rpg.service;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import xgame.core.util.LinkedTransferQueue;
 import xgame.core.util.Service;
 import xgame.core.util.ThreadNameFactory;
 

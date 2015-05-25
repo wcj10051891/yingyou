@@ -11,7 +11,7 @@ import com.shadowgame.rpg.service.Services;
  * 可参战单位
  * @author wcj10051891@gmail.com
  */
-public class Fighter extends Unit {
+public class Fighter extends VisibleObject {
 	/**
 	 * 当前气血
 	 */

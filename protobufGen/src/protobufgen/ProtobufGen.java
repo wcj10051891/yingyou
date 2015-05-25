@@ -21,6 +21,7 @@ public class ProtobufGen {
 	private static final Type IGNORE = new Type(Ignore.class.getName());
 
 	public static void main(String[] args) throws Exception {
+		String lineSeparator = System.getenv("line.separator");
 		File outDirectory = new File(outDir);
 		if(outDirectory.exists())
 			IOUtils.deleteFile(outDirectory);
@@ -60,24 +61,24 @@ public class ProtobufGen {
 								fields.append("\toptional ");
 							}
 							fields.append(TypeConverter.convert(type, imports)).append(" ").append(f.getName())
-								.append("=").append(i++).append(";").append(System.lineSeparator());
+								.append("=").append(i++).append(";").append(lineSeparator);
 						}
 					}
 					StringBuilder protoFile = new StringBuilder();
 					protoFile.append("package ").append(javaClass.getPackageName()).append(";")
-					.append(System.lineSeparator());
+					.append(lineSeparator);
 					
 //					if(!defaultPackage)
 						protoFile.append("option java_package=\"")
 						.append(javaClass.getPackageName().replace(".protocol.", ".protobuf.")).append("\";")
-						.append(System.lineSeparator());
+						.append(lineSeparator);
 					
 					for (String im : imports) {
 						protoFile.append("import \"").append(im.replace(".", "/") + protoFileSuffix).append("\"")
-							.append(";").append(System.lineSeparator());
+							.append(";").append(lineSeparator);
 					}
 					protoFile.append(Utils.getClassComment(javaClass));
-					protoFile.append("message ").append(javaClass.getName()).append("{").append(System.lineSeparator());
+					protoFile.append("message ").append(javaClass.getName()).append("{").append(lineSeparator);
 					protoFile.append(fields);
 					protoFile.append("}");
 

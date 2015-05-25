@@ -126,7 +126,7 @@ public abstract class ProtobufUtils {
 		if(access == null) {
 			Field[] fields = beanClass.getDeclaredFields();
 			FieldAccess fieldAccess = FieldAccess.get(beanClass);
-			Map<Field, Integer> field2Index = new HashMap<>(fields.length);
+			Map<Field, Integer> field2Index = new HashMap<Field, Integer>(fields.length);
 			for (Field field : fields)
 				field2Index.put(field, fieldAccess.getIndex(field.getName()));
 			access = new FastAccess(field2Index, FieldAccess.get(beanClass));

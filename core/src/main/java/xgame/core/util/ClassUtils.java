@@ -52,32 +52,23 @@ public abstract class ClassUtils {
 	 * @return
 	 */
 	public static List<Class<?>> scanDir(String dirs) {
-		InternalClassLoader loader = null;
-		try {
-			loader = new InternalClassLoader(new URL[]{ClassUtils.class.getResource("/")});
-			List<Class<?>> result = new ArrayList<Class<?>>();
-			for(String dir : dirs.split(",")) {
-				File dirFile = new File(dir);
-				if(!dirFile.isDirectory())
-					throw new IllegalArgumentException(dir + " is not a directory.");
-				try {
-					loader.addURL(dirFile.toURI().toURL());
-					String packageRootPath = dirFile.getCanonicalPath();
-					if(!packageRootPath.endsWith(File.separator))
-						packageRootPath += File.separator;
-					result.addAll(loadInDir(loader, packageRootPath, dirFile));
-				} catch (Exception e) {
-					throw new IllegalArgumentException("scan path error.", e);
-				}
+		InternalClassLoader loader = new InternalClassLoader(new URL[]{ClassUtils.class.getResource("/")});
+		List<Class<?>> result = new ArrayList<Class<?>>();
+		for(String dir : dirs.split(",")) {
+			File dirFile = new File(dir);
+			if(!dirFile.isDirectory())
+				throw new IllegalArgumentException(dir + " is not a directory.");
+			try {
+				loader.addURL(dirFile.toURI().toURL());
+				String packageRootPath = dirFile.getCanonicalPath();
+				if(!packageRootPath.endsWith(File.separator))
+					packageRootPath += File.separator;
+				result.addAll(loadInDir(loader, packageRootPath, dirFile));
+			} catch (Exception e) {
+				throw new IllegalArgumentException("scan path error.", e);
 			}
-			return result;
-		} finally {
-			if(loader != null)
-				try {
-					loader.close();
-				} catch (Exception e) {
-				}
 		}
+		return result;
 	}
 	
 	private static List<Class<?>> loadInDir(InternalClassLoader loader, String packageRootPath, File dir)  throws Exception {

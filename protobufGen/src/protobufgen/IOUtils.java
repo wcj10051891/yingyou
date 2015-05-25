@@ -16,12 +16,13 @@ public abstract class IOUtils {
 	public static String read(String filepath) {
 		StringBuilder result = new StringBuilder();
 		Scanner scan = null;
+		String lineSeparator = System.getenv("line.separator");
 		try {
 			scan = new Scanner(bufferedIn(new FileInputStream(new File(filepath))));
 			while(scan.hasNextLine()) {
 				result.append(scan.nextLine());
 				if(scan.hasNextLine())
-					result.append(System.lineSeparator());
+					result.append(lineSeparator);
 			}
 			return result.toString();
 		} catch (Exception e) {

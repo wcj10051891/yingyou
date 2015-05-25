@@ -21,6 +21,7 @@ public class ServiceGen {
 	private static final String protoFileSuffix = "_PROTO.proto";
 
 	public static void main(String[] args) throws Exception {
+		String lineSeparator = System.getenv("line.separator");
 		File outDirectory = new File(outDir);
 		if(outDirectory.exists())
 			deleteFile(outDirectory);
@@ -62,19 +63,19 @@ public class ServiceGen {
 								fields.append("\toptional ");
 							}
 							fields.append(TypeConverter.convert(type, imports)).append(" ").append(f.getName())
-								.append("=").append(i++).append(";").append(System.lineSeparator());
+								.append("=").append(i++).append(";").append(lineSeparator);
 						}
 					}
 					StringBuilder protoFile = new StringBuilder();
 					protoFile.append("package ").append(javaClass.getPackageName()).append(";")
-					.append(System.lineSeparator());
+					.append(lineSeparator);
 
 					for (String im : imports) {
 						protoFile.append("import \"").append(im.replace(".", "/") + protoFileSuffix).append("\"")
-							.append(";").append(System.lineSeparator());
+							.append(";").append(lineSeparator);
 					}
 					protoFile.append(Utils.getFullComment(javaClass));
-					protoFile.append("message ").append(javaClass.getName()).append("{").append(System.lineSeparator());
+					protoFile.append("message ").append(javaClass.getName()).append("{").append(lineSeparator);
 					protoFile.append(fields);
 					protoFile.append("}");
 

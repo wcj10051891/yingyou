@@ -28,7 +28,6 @@ public class Player extends Fighter implements CacheObject<Long, com.shadowgame.
 	private static final Logger log = LoggerFactory.getLogger(Player.class);
 	public com.shadowgame.rpg.persist.entity.Player entity;
 	
-	public Long id;
 	public Integer channelId;
 	public DailyAttribute daily;
 	public JSONObject extAttribute;
@@ -45,22 +44,22 @@ public class Player extends Fighter implements CacheObject<Long, com.shadowgame.
 	}
 	
 	public Player init(com.shadowgame.rpg.persist.entity.Player entity) {
-		this.id = entity.id;
+		this.objectId = entity.id;
 		this.entity = entity;
 		this.daily = new DailyAttribute(!StringUtils.hasText(this.entity.daily) ? "{}" : this.entity.daily);
 		this.extAttribute = JsonUtils.parseObject(!StringUtils.hasText(this.entity.extAttribute) ? "{}" : this.entity.extAttribute);
-		this.knapsack = Services.cacheService.get(this.id, Knapsack.class, true);
+		this.knapsack = Services.cacheService.get(this.objectId, Knapsack.class, true);
 		return this;
 	}
 	
 	public void onLogin() {
-		Services.appService.players.add(this);
+		Services.appService.world.allPlayers.add(this);
 		Services.tcpService.joinGroup(Groups.World, channelId);
 	}
 	
 	public void onLogout() {
 		Services.tcpService.channels.remove(channelId);
-		Services.appService.players.remove(this);
+		Services.appService.world.allPlayers.remove(this);
 		Services.tcpService.leaveGroup(Groups.World, channelId);
 		channelId = 0;
 		
@@ -74,12 +73,12 @@ public class Player extends Fighter implements CacheObject<Long, com.shadowgame.
 
 	@Override
 	public Long getKey() {
-		return id;
+		return this.objectId;
 	}
 
 	@Override
 	public String toString() {
-		return String.valueOf(id);
+		return String.valueOf(this.objectId);
 	}
 	
 	public void send(Object message) {
@@ -102,7 +101,7 @@ public class Player extends Fighter implements CacheObject<Long, com.shadowgame.
 	}
 	
 	public void give(CountMap<Integer, Integer> itemIdAndNums) throws Exception {
-		List<PlayerItem> items = Item.createPlayerItem(itemIdAndNums, id);
+		List<PlayerItem> items = Item.createPlayerItem(itemIdAndNums, this.objectId);
 		this.knapsack.put(items);
 		List<com.shadowgame.rpg.persist.entity.PlayerItem> playerItemEntitys = new ArrayList<com.shadowgame.rpg.persist.entity.PlayerItem>(items.size());
 		for (PlayerItem playerItem : items)

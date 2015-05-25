@@ -23,7 +23,7 @@ public class PlayerCtrl {
 	public static ThreadLocal<ChannelHandlerContext> loginChannel = new ThreadLocal<ChannelHandlerContext>();
 	
 	public LoginResultDto login(String username) {
-		com.shadowgame.rpg.modules.core.Player onlinePlayer = Services.appService.players.getOnlinePlayerByUser(username);
+		com.shadowgame.rpg.modules.core.Player onlinePlayer = Services.appService.world.allPlayers.getOnlinePlayerByUser(username);
 		if(onlinePlayer != null) {
 			onlinePlayer.disconnectWaitCompleted();
 		}
@@ -77,7 +77,7 @@ public class PlayerCtrl {
 	
 	public void say(Player player, String content) {
 		ChatDto dto = new ChatDto();
-		dto.sayerId = player.id;
+		dto.sayerId = player.getObjectId();
 		dto.sayerNickname = player.entity.nickname;
 		dto.content = content;
 		Services.tcpService.world(dto);
@@ -88,7 +88,7 @@ public class PlayerCtrl {
 //		watch.start("get next id");
 //		UniqueId.next();
 		ChatListDto result = new ChatListDto();
-		List<ChatDto> list = new ArrayList<>();
+		List<ChatDto> list = new ArrayList<ChatDto>();
 		int n = 50;
 		for(int i = 0; i < n; i++) {
 			ChatDto c1 = new ChatDto();
@@ -98,7 +98,7 @@ public class PlayerCtrl {
 			list.add(c1);
 		}
 		result.chats = list;
-		List<Integer> l2 = new ArrayList<>();
+		List<Integer> l2 = new ArrayList<Integer>();
 		for(int i = 0; i < n; i++) {
 			l2.add(i);
 		}

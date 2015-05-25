@@ -3,7 +3,7 @@ package com.shadowgame.rpg.modules.core;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Players {
+public class PlayerContainer {
 	private ConcurrentHashMap<Long, Player> id2Player = new ConcurrentHashMap<Long, Player>();
 	private ConcurrentHashMap<String, Player> nickname2Player = new ConcurrentHashMap<String, Player>();
 	private ConcurrentHashMap<String, Player> username2Player = new ConcurrentHashMap<String, Player>();
@@ -12,17 +12,17 @@ public class Players {
 		return id2Player.containsKey(playerId);
 	}
 	public boolean isLogin(Player player) {
-		return player == null || !id2Player.contains(player.id);
+		return player == null || !id2Player.contains(player.getObjectId());
 	}
 	
 	public void add(Player player) {
-		id2Player.put(player.id, player);
+		id2Player.put(player.getObjectId(), player);
 		nickname2Player.put(player.entity.nickname, player);
 		username2Player.put(player.entity.username, player);
 	}
 	
 	public void remove(Player player) {
-		id2Player.remove(player.id);
+		id2Player.remove(player.getObjectId());
 		nickname2Player.remove(player.entity.nickname);
 		username2Player.remove(player.entity.username);
 	}
