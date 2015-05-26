@@ -1,0 +1,12 @@
+package com.shadowgame.rpg.modules.protocol.dto.player;
+option java_outer_classname = "PlayerDto$$Gen";
+	/**
+	 * 
+	 * @author wcj10051891@gmail.com
+	 */
+message PlayerDto {  
+optional int64 id=1;
+optional string nickname=2;
+optional int32 level=3;
+optional int32 exp=4;
+}

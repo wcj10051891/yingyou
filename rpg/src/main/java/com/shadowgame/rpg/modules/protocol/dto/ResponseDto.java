@@ -1,5 +1,8 @@
 package com.shadowgame.rpg.modules.protocol.dto;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Msg;
+
+@Msg(10002)
 public class ResponseDto {
 	/**
 	 * 序号

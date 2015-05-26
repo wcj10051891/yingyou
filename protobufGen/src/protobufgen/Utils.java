@@ -9,7 +9,7 @@ import com.thoughtworks.qdox.model.JavaField;
 public abstract class Utils {
 	private static String line = System.getenv("line.separator");
 	
-	public static String getFullComment(AbstractJavaEntity javaEntity) {
+	public static String getComment(AbstractJavaEntity javaEntity) {
 		StringBuilder comments = new StringBuilder();
 		String comment = javaEntity.getComment();
 		if (comment != null)

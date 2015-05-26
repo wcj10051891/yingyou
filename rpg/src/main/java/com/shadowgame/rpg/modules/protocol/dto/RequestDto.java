@@ -1,9 +1,12 @@
 package com.shadowgame.rpg.modules.protocol.dto;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Msg;
+
 /**
  * 请求
  * @author wcj10051891@gmail.com
  */
+@Msg(10001)
 public class RequestDto {
 	/**
 	 * 请求序号

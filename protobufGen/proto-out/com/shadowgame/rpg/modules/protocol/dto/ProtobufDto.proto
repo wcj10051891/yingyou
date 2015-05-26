@@ -1,0 +1,16 @@
+package com.shadowgame.rpg.modules.protocol.dto;
+option java_outer_classname = "ProtobufDto$$Gen";
+	/**
+	 * protobuf对象，用类型和二进制描述一个对象
+	 * @author wcj10051891@gmail.com
+	 */
+message ProtobufDto {  
+	/**
+	 * protobuf message类型的数字id
+	 */
+optional int32 typeId=1;
+	/**
+	 * protobuf message的二进制数据
+	 */
+optional bytes data=2;
+}

@@ -79,4 +79,12 @@ public class World {
 				getWorldMap(mapId).getWorldMapInstanceById(instance).getRegion(
 						object));
 	}
+	
+	public WorldPosition createPosition(int mapId, int x, int y)
+	{
+		WorldPosition position = new WorldPosition();
+		position.setXY(x, y);
+		position.setMapRegion(getWorldMap(mapId).getWorldMapInstance().getRegion(x, y));
+		return position;
+	}
 }

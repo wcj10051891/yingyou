@@ -1,0 +1,17 @@
+package com.shadowgame.rpg.modules.protocol.dto;
+option java_outer_classname = "ResponseDto$$Gen";
+import "com/shadowgame/rpg/modules/protocol/dto/ProtobufDto.proto";
+message ResponseDto {  
+	/**
+	 * 序号
+	 */
+optional int32 sn=1;
+	/**
+	 * 是否是错误响应
+	 */
+optional bool isError=2;
+	/**
+	 * 响应结果dto
+	 */
+optional ProtobufDto result=3;
+}

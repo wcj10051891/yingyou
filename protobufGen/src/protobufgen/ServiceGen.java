@@ -56,7 +56,7 @@ public class ServiceGen {
 					for (JavaField f : javaClass.getFields()) {
 						if ((f.isPublic()) && (!f.isStatic())) {
 							Type type = f.getType();
-							fields.append(Utils.getFullComment(f));
+							fields.append(Utils.getComment(f));
 							if ((type.isArray()) || (TypeConverter.isCollection(type)))
 								fields.append("\trepeated ");
 							else {
@@ -74,7 +74,7 @@ public class ServiceGen {
 						protoFile.append("import \"").append(im.replace(".", "/") + protoFileSuffix).append("\"")
 							.append(";").append(lineSeparator);
 					}
-					protoFile.append(Utils.getFullComment(javaClass));
+					protoFile.append(Utils.getComment(javaClass));
 					protoFile.append("message ").append(javaClass.getName()).append("{").append(lineSeparator);
 					protoFile.append(fields);
 					protoFile.append("}");

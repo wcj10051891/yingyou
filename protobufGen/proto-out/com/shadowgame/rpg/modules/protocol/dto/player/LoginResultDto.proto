@@ -1,0 +1,11 @@
+package com.shadowgame.rpg.modules.protocol.dto.player;
+option java_outer_classname = "LoginResultDto$$Gen";
+	/**
+	 * 
+	 * @author wcj10051891@gmail.com
+	 */
+import "com/shadowgame/rpg/modules/protocol/dto/player/PlayerDto.proto";
+message LoginResultDto {  
+optional bool success=1;
+optional PlayerDto playerDto=2;
+}

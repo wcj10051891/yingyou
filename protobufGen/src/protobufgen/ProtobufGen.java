@@ -54,7 +54,7 @@ public class ProtobufGen {
 					for (JavaField f : javaClass.getFields()) {
 						if ((f.isPublic()) && (!f.isStatic())) {
 							Type type = f.getType();
-							fields.append(Utils.getFullComment(f));
+							fields.append(Utils.getComment(f));
 							if ((type.isArray()) || (TypeConverter.isCollection(type)))
 								fields.append("\trepeated ");
 							else {

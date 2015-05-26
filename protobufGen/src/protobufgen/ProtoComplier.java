@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 public class ProtoComplier {
 	private static final String protoc = "./protoc.exe";
 	private static final String proto_file_path = "./proto-out";
-	private static final String java_out = "../rpg/src/main/java";
+	private static final String java_out = "src";
 
 	public static void main(String[] args) throws Exception {
 		List<String> protos = new ArrayList<String>();
