@@ -33,6 +33,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/tools.jar"/>
-	<classpathentry kind="lib" path="lib/tomcat-util.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

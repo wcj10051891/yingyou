@@ -10,15 +10,15 @@ import xgame.core.util.InstrumentAgent;
 import xgame.core.util.Service;
 
 import com.shadowgame.rpg.core.AppException;
-import com.shadowgame.rpg.modules.Dispatcher;
+import com.shadowgame.rpg.modules.world.InstanceService;
 import com.shadowgame.rpg.modules.world.World;
 
 public class AppService implements Service {
 	private static final Logger log = LoggerFactory.getLogger(AppService.class);
 	public Instrumentation instrument;
 	public RpcClient rpcClient;
-	public Dispatcher dispatcher;
 	public World world;
+	public InstanceService instanceService;
 
 	@Override
 	public void start() throws Exception {
@@ -27,8 +27,8 @@ public class AppService implements Service {
 			throw new AppException("instrument init error.");
 		
 		rpcClient = new RpcClient();
-		dispatcher = new Dispatcher();
 		world = new World();
+		instanceService = new InstanceService();
 	}
 
 	@Override

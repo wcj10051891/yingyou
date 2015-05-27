@@ -7,7 +7,7 @@ package com.shadowgame.rpg.modules.world;
  */
 public class WorldPosition {
 	/**
-	 * Map Region.
+	 * 所在区块
 	 */
 	private MapRegion mapRegion;
 	/**
@@ -20,8 +20,7 @@ public class WorldPosition {
 	private int y;
 
 	/**
-	 * Return World map id.
-	 * 
+	 * 获取地图ID
 	 * @return world map id
 	 */
 	public int getMapId() {
@@ -47,8 +46,7 @@ public class WorldPosition {
 	}
 
 	/**
-	 * Return map region
-	 * 
+	 * 获取所在区块
 	 * @return Map region
 	 */
 	public MapRegion getMapRegion() {
@@ -56,24 +54,23 @@ public class WorldPosition {
 	}
 
 	/**
-	 * 
+	 * 获取地图副本id
 	 * @return
 	 */
 	public int getInstanceId() {
-		return mapRegion.getParent().getInstanceId();
+		return mapRegion.getWorldMapInstance().getInstanceId();
 	}
 
 	/**
-	 * 
+	 * 获取所属地图一共有多少个默认副本
 	 * @return
 	 */
-	public int getInstanceCount() {
-		return mapRegion.getParent().getParent().getInstanceCount();
+	public int getTwinCount() {
+		return mapRegion.getWorldMapInstance().getWorldMap().getTwinCount();
 	}
 
 	/**
-	 * Returns the {@link World} instance in which this position is located. :D
-	 * 
+	 * 获取世界
 	 * @return World
 	 */
 	public World getWorld() {
@@ -81,8 +78,7 @@ public class WorldPosition {
 	}
 
 	/**
-	 * Set map region
-	 * 
+	 * 设置区块
 	 * @param r
 	 *            - map region
 	 */
@@ -90,6 +86,11 @@ public class WorldPosition {
 		mapRegion = r;
 	}
 
+	/**
+	 * 设置坐标
+	 * @param newX
+	 * @param newY
+	 */
 	void setXY(int newX, int newY) {
 		x = newX;
 		y = newY;

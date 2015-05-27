@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -54,5 +56,17 @@ public abstract class IOUtils {
 			for (File f : file.listFiles())
 				deleteFile(f);
 		file.delete();
+	}
+	
+	public static void writeFile(String parentDir, String filename, String fileContent) throws IOException {
+		File outFile = new File(parentDir, filename);
+		if (!outFile.exists()) {
+			outFile.getParentFile().mkdirs();
+			outFile.createNewFile();
+		}
+		BufferedWriter writer = bufferedWriter(new FileWriter(outFile));
+		writer.write(fileContent);
+		writer.flush();
+		writer.close();
 	}
 }

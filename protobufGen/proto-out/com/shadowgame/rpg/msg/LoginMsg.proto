@@ -1,0 +1,17 @@
+package com.shadowgame.rpg.msg;
+option java_outer_classname = "LoginMsg$$Gen";
+	/**
+	 * 登录消息
+	 * @author wcj10051891@gmail.com
+	 * @Date 2015年5月27日 上午10:03:53
+	 */
+message LoginMsg {  
+	/**
+	 * 用户名
+	 */
+optional string username=1;
+	/**
+	 * 密码
+	 */
+optional string password=2;
+}

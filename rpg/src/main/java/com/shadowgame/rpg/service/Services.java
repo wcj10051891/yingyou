@@ -20,6 +20,7 @@ import com.shadowgame.rpg.core.AppConfig;
 import com.shadowgame.rpg.net.LogicHandler;
 import com.shadowgame.rpg.net.codec.ProtobufDecoder;
 import com.shadowgame.rpg.net.codec.ProtobufEncoder;
+import com.shadowgame.rpg.net.msg.MsgService;
 import com.shadowgame.rpg.remote.servlet.Online;
 
 public class Services {
@@ -31,6 +32,7 @@ public class Services {
 	public static JMXService jmxService;
 	public static CacheService cacheService;
 	public static AppService appService;
+	public static MsgService msgService;
 	public static DaoFactory daoFactory;
 	public static QueryRunner jdbc;
 	
@@ -43,12 +45,12 @@ public class Services {
 		threadService.start();
 		log.info("[theadService] start ok.");
 		
-		DaoContext daoContext = new DaoContext();
-		daoFactory = daoContext.daoFactory;
-		log.info("[daoFactory] start ok.");
-		
-		jdbc = daoContext.jdbc;
-		log.info("[jdbc] start ok.");
+//		DaoContext daoContext = new DaoContext();
+//		daoFactory = daoContext.daoFactory;
+//		log.info("[daoFactory] start ok.");
+//		
+//		jdbc = daoContext.jdbc;
+//		log.info("[jdbc] start ok.");
 		
 		cacheService = new CacheService(timerService.jdkScheduler);
 		cacheService.start();
@@ -57,6 +59,10 @@ public class Services {
 		appService = new AppService();
 		appService.start();
 		log.info("[appService] start ok.");
+
+		msgService = new MsgService();
+		msgService.start();
+		log.info("[msgService] start ok.");
 		
 		jmxService = new JMXService();
 		jmxService.start();

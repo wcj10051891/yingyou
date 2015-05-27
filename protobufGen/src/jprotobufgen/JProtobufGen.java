@@ -1,12 +1,11 @@
 package jprotobufgen;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import protobufgen.IOUtils;
 import xgame.core.util.ClassUtils;
@@ -17,10 +16,11 @@ import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 
 public class JProtobufGen {
-
-	private static final String msg_src_package_path = "../rpg/src/main/java/com/shadowgame/rpg/modules/protocol";
+	private static final Logger log = Logger.getLogger(JProtobufGen.class.getName());
+	private static final String msg_src_package_path = "../rpg/src/main/java/com/shadowgame/rpg/msg";
 	private static final String msg_class_path = "../rpg/target/classes";
-	private static final String outDir = "proto-out";
+	private static final String proto_file_out_dir = "proto-out";
+	private static final String msg_registry_file_out_oir = "../rpg/src/main/resources";
 	private static void gen() throws Exception {
 		JavaDocBuilder builder = new JavaDocBuilder();
 		builder.addSourceTree(new File(msg_src_package_path));
@@ -29,7 +29,7 @@ public class JProtobufGen {
 			jcs.put(cls.getFullyQualifiedName(), cls);
 		}
 
-		File outDirectory = new File(outDir);
+		File outDirectory = new File(proto_file_out_dir);
 		if(outDirectory.exists())
 			IOUtils.deleteFile(outDirectory);
 		else
@@ -39,33 +39,22 @@ public class JProtobufGen {
 			Msg msg = null;
 			if((msg = cls.getAnnotation(Msg.class)) != null) {
 				String protoFile = ProtobufIDLGenerator.getIDL(cls, jcs.get(cls.getName()));
-				
-				File outFile = new File(outDirectory, cls.getName().replace(".", File.separator) + ".proto");
-				if (!outFile.exists()) {
-					outFile.getParentFile().mkdirs();
-					outFile.createNewFile();
-				}
-				BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
-				writer.write(protoFile.toString());
-				writer.flush();
-				writer.close();
+				String filename = cls.getName().replace(".", File.separator) + ".proto";
+				xgame.core.util.IOUtils.writeFile(proto_file_out_dir, filename, protoFile);
 				msgId2ClassName.put(msg.value(), cls.getName());
+				log.info("find Msg class:[" + cls.getName() + "], write file:[" +  filename + "] to [" + proto_file_out_dir + "] success.");
 			}
 		}
 		if(!msgId2ClassName.isEmpty()) {
+			String filename = "Messages.txt";
 			StringBuilder str = new StringBuilder();
 			for (Entry<Integer, String> e : msgId2ClassName.entrySet()) {
-				str.append(e.getKey()).append("   ->   ").append(e.getValue()).append("\n");
+				str.append(e.getKey()).append("=").append(e.getValue()).append("\n");
 			}
-			File outFile = new File(outDirectory, "config.txt");
-			if (!outFile.exists()) {
-				outFile.getParentFile().mkdirs();
-				outFile.createNewFile();
-			}
-			BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
-			writer.write(str.toString());
-			writer.flush();
-			writer.close();
+			xgame.core.util.IOUtils.writeFile(proto_file_out_dir, filename, str.toString());
+			log.info("write file:[" +  filename + "] to [" + proto_file_out_dir + "] success.");
+			xgame.core.util.IOUtils.writeFile(msg_registry_file_out_oir, filename, str.toString());
+			log.info("write file:[" +  filename + "] to [" + msg_registry_file_out_oir + "] success.");
 		}
 	}
 	

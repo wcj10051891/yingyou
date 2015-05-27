@@ -18,25 +18,20 @@ public class KnownList implements Iterable<VisibleObject> {
 //	private static final int VisibilityDistance = 95;
 
 	/**
-	 * Owner of this KnownList.
+	 * 所属对象
 	 */
 	protected final VisibleObject owner;
 	/**
-	 * List of objects that this KnownList owner known
+	 * 视野里有哪些对象
 	 */
 	protected final ConcurrentHashMap<Long, VisibleObject> knownObjects = new ConcurrentHashMap<Long, VisibleObject>();
 
-	/**
-	 * COnstructor.
-	 * 
-	 * @param owner
-	 */
 	public KnownList(VisibleObject owner) {
 		this.owner = owner;
 	}
 
 	/**
-	 * Do KnownList update.
+	 * 根据对象当前位置来更新视野内的对象
 	 */
 	public void doUpdate() {
 		forgetObjects();
@@ -44,7 +39,7 @@ public class KnownList implements Iterable<VisibleObject> {
 	}
 
 	/**
-	 * Clear known list. Used when object is despawned.
+	 * 移除视野内的所有对象
 	 */
 	public void clear() {
 		for (Iterator<VisibleObject> knownIt = iterator(); knownIt.hasNext();) {
@@ -55,8 +50,7 @@ public class KnownList implements Iterable<VisibleObject> {
 	}
 
 	/**
-	 * Check if object is known
-	 * 
+	 * 视野内是否包含指定对象
 	 * @param object
 	 * @return true if object is known
 	 */
@@ -65,8 +59,7 @@ public class KnownList implements Iterable<VisibleObject> {
 	}
 
 	/**
-	 * Returns an iterator over VisibleObjects on this known list
-	 * 
+	 * 返回视野内对象的迭代器
 	 * @return objects iterator
 	 */
 	@Override
@@ -75,8 +68,7 @@ public class KnownList implements Iterable<VisibleObject> {
 	}
 
 	/**
-	 * Add VisibleObject to this KnownList.
-	 * 
+	 * 添加对象
 	 * @param object
 	 */
 	protected void add(VisibleObject object) {
@@ -88,9 +80,9 @@ public class KnownList implements Iterable<VisibleObject> {
 	}
 
 	/**
-	 * Delete VisibleObject from this KnownList.
-	 * 
+	 * 移除对象
 	 * @param object
+	 * @param isOutOfRange	是否是因为不在视野范围内而移除
 	 */
 	private void del(VisibleObject object, boolean isOutOfRange) {
 		/**
@@ -101,7 +93,7 @@ public class KnownList implements Iterable<VisibleObject> {
 	}
 
 	/**
-	 * forget out of distance objects.
+	 * 移除之前在视野里但目前不在视野内的对象
 	 */
 	private void forgetObjects() {
 		for (Iterator<VisibleObject> knownIt = iterator(); knownIt.hasNext();) {
@@ -115,7 +107,7 @@ public class KnownList implements Iterable<VisibleObject> {
 	}
 
 	/**
-	 * Find objects that are in visibility range.
+	 * 添加在视野内但还没有加入视野对象列表的对象
 	 */
 	protected void findVisibleObjects() {
 		if (owner == null)
@@ -133,6 +125,12 @@ public class KnownList implements Iterable<VisibleObject> {
 		}
 	}
 
+	/**
+	 * 检查对象是否在可视范围
+	 * @param owner
+	 * @param newObject
+	 * @return
+	 */
 	protected boolean checkObjectInRange(VisibleObject owner, VisibleObject newObject) {
 //		return MathUtil.isInRange(owner, newObject, VisibilityDistance);
 		for (MapRegion mr : owner.getActiveRegion().getNeighbours()) {

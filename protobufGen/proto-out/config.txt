@@ -1,5 +1,0 @@
-10000   ->   com.shadowgame.rpg.modules.protocol.dto.ProtobufDto
-10001   ->   com.shadowgame.rpg.modules.protocol.dto.RequestDto
-10002   ->   com.shadowgame.rpg.modules.protocol.dto.ResponseDto
-10003   ->   com.shadowgame.rpg.modules.protocol.dto.player.LoginResultDto
-10004   ->   com.shadowgame.rpg.modules.protocol.dto.player.PlayerDto

@@ -1,24 +1,27 @@
-<project name="protobufGen" basedir="." default="gen_all">
-	<property name="jdk.version" value="1.7" />
+<project name="protobufGen" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="proto_gen">
+	<property name="jdk.version" value="1.6" />
 	<property name="source.encoding" value="UTF-8" />
 	<property name="src" value="src" />
 	<property name="target" value="target" />
 	<property name="classes" value="${target}/classes" />
-	<property name="dependences-dir" value="lib" />
+	<!--<property name="dependences-dir" value="lib" />-->
+	<artifact:pom id="pom.this" file="pom.xml" />
+	<artifact:dependencies filesetid="fileset.lib.runtime" pathid="path.lib.runtime" pomrefid="pom.this" usescope="runtime" />
 	
 	<path id="classpath.project">
-		<fileset dir="${dependences-dir}" />
-		<pathelement location="bin" />
+		<!--	<fileset dir="${dependences-dir}" />	-->
+		<path refid="path.lib.runtime"/>
+		<pathelement location="${classes}" />
 	</path>
 	
 	<target name="proto_gen">
-		<java classname="protobufgen.ProtobufGen">
+		<java classname="jprotobufgen.JProtobufGen">
 			<classpath>
 				<path refid="classpath.project" />
 			</classpath>
 		</java>
 	</target>
-	
+<!--	
 	<target name="service_gen">
 		<java classname="protobufgen.ServiceGen">
 			<classpath>
@@ -34,9 +37,9 @@
 			</classpath>
 		</java>
 	</target>
-	
+
 	<target name="gen_all" depends="proto_gen,service_gen,proto_compile"/>
-	
+-->	
 	<!--////////////////////////        Path define -->
 
 	<target name="clean">

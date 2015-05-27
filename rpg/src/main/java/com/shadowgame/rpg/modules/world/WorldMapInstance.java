@@ -2,20 +2,32 @@ package com.shadowgame.rpg.modules.world;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.modules.core.VisibleObject;
 
 /**
- * 世界地图副本
- * 
+ * 地图副本
  * @author wcj10051891@gmail.com
  * @Date 2015年5月25日 下午7:04:12
  */
 public class WorldMapInstance {
+	/**
+	 * 当前地图副本序号id
+	 */
 	private int instanceId;
-	private WorldMap parent;
+	/**
+	 * 副本所属地图
+	 */
+	private WorldMap worldMap;
+	/**
+	 * 宽
+	 */
 	private int width;
+	/**
+	 * 高
+	 */
 	private int height;
 	/**
 	 * 地图分块
@@ -29,9 +41,13 @@ public class WorldMapInstance {
 	 * 当前地图上所有玩家
 	 */
 	private ConcurrentHashMap<Long, Player> worldMapPlayers = new ConcurrentHashMap<Long, Player>();
+	/**
+	 * 副本销毁任务
+	 */
+	private Future<?> destroyTask;
 
 	public WorldMapInstance(WorldMap worldMap, int instanceId) {
-		this.parent = worldMap;
+		this.worldMap = worldMap;
 		this.instanceId = instanceId;
 	}
 
@@ -40,15 +56,15 @@ public class WorldMapInstance {
 	 * @return world map id
 	 */
 	public int getMapId() {
-		return getParent().getMapId();
+		return getWorldMap().getMapId();
 	}
 
 	/**
 	 * 返回所属WorldMap
 	 * @return parent
 	 */
-	public WorldMap getParent() {
-		return parent;
+	public WorldMap getWorldMap() {
+		return worldMap;
 	}
 
 	/**
@@ -119,12 +135,11 @@ public class WorldMapInstance {
 	}
 
 	/**
-	 * Returs {@link World} instance to which belongs this WorldMapInstance
-	 * 
+	 * 返回所属世界
 	 * @return World
 	 */
 	public World getWorld() {
-		return getParent().getWorld();
+		return getWorldMap().getWorld();
 	}
 
 	/**
@@ -146,6 +161,10 @@ public class WorldMapInstance {
 			worldMapPlayers.remove(object.getObjectId());
 	}
 
+	/**
+	 * 获取副本序号id
+	 * @return
+	 */
 	public int getInstanceId() {
 		return instanceId;
 	}
@@ -160,6 +179,7 @@ public class WorldMapInstance {
 	}
 
 	/**
+	 * 当前地图副本上所有对象
 	 * @return
 	 */
 	public Iterator<VisibleObject> objectIterator() {
@@ -167,10 +187,19 @@ public class WorldMapInstance {
 	}
 
 	/**
+	 * 当前地图副本上所有玩家
 	 * @return
 	 */
 	public Iterator<Player> playerIterator() {
 		return worldMapPlayers.values().iterator();
+	}
+
+	public Future<?> getDestroyTask() {
+		return destroyTask;
+	}
+
+	public void setDestroyTask(Future<?> destroyTask) {
+		this.destroyTask = destroyTask;
 	}
 
 }

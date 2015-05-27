@@ -18,48 +18,45 @@ public class MapRegion {
 	public static int height = 300;
 	public static int width = 300;
 	/**
-	 * Region id of this map region
+	 * 区块id
 	 */
 	private String regionId;
 	/**
-	 * WorldMapInstance witch is parent of this map region.
+	 * 所属地图
 	 */
-	private WorldMapInstance parent;
+	private WorldMapInstance worldMapInstance;
 	/**
-	 * Surrounding regions + self.
+	 * 包括当前区块在内，以及周围的区块一共9个区块
 	 */
 	private List<MapRegion> neighbours = new ArrayList<MapRegion>(9);
 	/**
-	 * Objects on this map region.
+	 * 区块中的对象
 	 */
 	private Map<Long, VisibleObject> objects = new ConcurrentHashMap<Long, VisibleObject>();
 
-	MapRegion(String id, WorldMapInstance parent) {
+	MapRegion(String id, WorldMapInstance worldMapInstance) {
 		this.regionId = id;
-		this.parent = parent;
+		this.worldMapInstance = worldMapInstance;
 		this.neighbours.add(this);
 	}
 
 	/**
-	 * Return World map id.
-	 * 
+	 * 获取所属地图id
 	 * @return world map id
 	 */
 	public int getMapId() {
-		return parent.getMapId();
+		return worldMapInstance.getMapId();
 	}
 
 	/**
-	 * Return an instance of {@link World}, which keeps map, to which belongs
-	 * this region
+	 * 获取世界
 	 */
 	public World getWorld() {
-		return parent.getWorld();
+		return worldMapInstance.getWorld();
 	}
 
 	/**
-	 * Returns region id of this map region. [NOT WORLD ID!]
-	 * 
+	 * 获取当前区块id
 	 * @return region id.
 	 */
 	public String getRegionId() {
@@ -67,16 +64,15 @@ public class MapRegion {
 	}
 
 	/**
-	 * Returns WorldMapInstance witch is parent of this instance
-	 * 
+	 * 获取所属地图
 	 * @return parent
 	 */
-	public WorldMapInstance getParent() {
-		return parent;
+	public WorldMapInstance getWorldMapInstance() {
+		return worldMapInstance;
 	}
 
 	/**
-	 * Returns neighbours regions
+	 * 获取区块组
 	 * @return neighbours iterator
 	 */
 	public List<MapRegion> getNeighbours() {
@@ -84,8 +80,7 @@ public class MapRegion {
 	}
 
 	/**
-	 * Returns iterator over AionObjects on this region
-	 * 
+	 * 获取区块中的所有对象
 	 * @return objects iterator
 	 */
 	public Collection<VisibleObject> getObjects() {
@@ -93,8 +88,7 @@ public class MapRegion {
 	}
 
 	/**
-	 * Add neighbour region to this region neighbours list.
-	 * 
+	 * 添加邻居区块
 	 * @param neighbour
 	 */
 	void addNeighbourRegion(MapRegion neighbour) {
@@ -102,8 +96,7 @@ public class MapRegion {
 	}
 
 	/**
-	 * Add AionObject to this region objects list.
-	 * 
+	 * 添加对象
 	 * @param object
 	 */
 	void add(VisibleObject object) {
@@ -111,8 +104,7 @@ public class MapRegion {
 	}
 
 	/**
-	 * Remove AionObject from region objects list.
-	 * 
+	 * 移除对象
 	 * @param object
 	 */
 	void remove(VisibleObject object) {

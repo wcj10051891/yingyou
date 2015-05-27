@@ -1,5 +1,7 @@
 package com.shadowgame.rpg.net.codec;
 
+import java.util.Arrays;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -8,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shadowgame.rpg.core.AppException;
-import com.shadowgame.rpg.modules.protobuf.dto.RequestDtoPROTO.RequestDto;
-import com.shadowgame.rpg.util.ProtobufUtils;
+import com.shadowgame.rpg.net.msg.Message;
+import com.shadowgame.rpg.service.Services;
 
 public class ProtobufDecoder extends FrameDecoder {
 	private static final Logger log = LoggerFactory.getLogger(ProtobufDecoder.class);
@@ -17,23 +19,28 @@ public class ProtobufDecoder extends FrameDecoder {
 	@Override
 	protected Object decode(ChannelHandlerContext ctx, Channel channel,
 			ChannelBuffer buffer) throws Exception {
+		/**
+		 * 4字节长度+4字节协议号+protobuf bytes
+		 */
 		if(buffer.readableBytes() < 4)
 			return null;
 		
 		buffer.markReaderIndex();
-		int len = buffer.readInt();
-		if(buffer.readableBytes() < len) {
+		int dataBodySize = buffer.readInt();
+		if(buffer.readableBytes() < dataBodySize) {
 			buffer.resetReaderIndex();
 			return null;
 		}
-		byte[] data = new byte[len];
-		buffer.readBytes(data, 0, len);
+		int msgId = buffer.readInt();
+		byte[] data = new byte[dataBodySize - 4];
+		buffer.readBytes(data, 0, data.length);
 		try {
-			RequestDto request = (RequestDto)ProtobufUtils.newBuilder(RequestDto.class.getName()).mergeFrom(data).build();
-			log.info("decode message {} -> {}", buffer, request);
-			return request;
+			Message msg = Services.msgService.decodeMsg(msgId, data);
+			log.info("decode message from player:{}, channel:{} success, msg:{}", channel.getAttachment(), channel, msg);
+			return msg;
 		} catch (Exception e) {
-			throw new AppException("protobuf object decode error.", e);
+			throw new AppException("decode message from player:" + channel.getAttachment() + 
+					", channel:" + channel + " error, msgId:" + msgId + ", data:" + Arrays.toString(data), e);
 		}
 	}
 }

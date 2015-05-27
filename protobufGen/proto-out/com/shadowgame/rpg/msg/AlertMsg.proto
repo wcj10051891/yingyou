@@ -1,0 +1,13 @@
+package com.shadowgame.rpg.msg;
+option java_outer_classname = "AlertMsg$$Gen";
+	/**
+	 * 弹窗提示
+	 * @author wcj10051891@gmail.com
+	 * @Date 2015年5月27日 下午2:02:59
+	 */
+message AlertMsg {  
+	/**
+	 * 弹窗提示消息内容
+	 */
+optional string content=1;
+}

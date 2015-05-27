@@ -56,14 +56,13 @@ public class World {
 	/**
 	 * 更新可见对象位置及视野
 	 */
-	public void updatePosition(VisibleObject object, int newX, int newY,
-			boolean updateKnownlist) {
+	public void updatePosition(VisibleObject object, int newX, int newY, boolean updateKnownlist) {
 		object.getPosition().setXY(newX, newY);
 		MapRegion oldRegion = object.getActiveRegion();
 		if (oldRegion == null)
 			throw new AppException("object " + object + "'s oldRegion is null.");
 
-		MapRegion newRegion = oldRegion.getParent().getRegion(object);
+		MapRegion newRegion = oldRegion.getWorldMapInstance().getRegion(object);
 		if (newRegion != oldRegion) {
 			oldRegion.remove(object);
 			newRegion.add(object);

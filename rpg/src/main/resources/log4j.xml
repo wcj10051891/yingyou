@@ -62,7 +62,7 @@
     
     <root>
 		<priority value="debug" />
-		<appender-ref ref="ASYNC" />
+		<appender-ref ref="CONSOLE" />
 	</root>
 
 </log4j:configuration>

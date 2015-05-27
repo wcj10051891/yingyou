@@ -1,5 +1,7 @@
 package xgame.core.net.server.tcp;
 
+import java.util.Arrays;
+
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
@@ -42,30 +44,32 @@ public class TcpService implements Service {
 
 	public void send(Object message, Channel client) {
 		client.write(encoder.encode(message));
-		log.info("send to {}:{}", client, message);
+		log.info("send to channel{}:{}", client, message);
 	}
 	
 	public void send(Object message, int channelId) {
 		channels.getChannel(channelId).write(encoder.encode(message));
-		log.info("send to channel {}:{}", channelId, message);
+		log.debug("send to channel {}:{}", channelId, message);
 	}
 	
 	public void broadcast(Object message, String groupName) {
 		groups.broadcast(groupName, encoder.encode(message));
+		log.debug("broadcast message:{} to group:{}", message, groupName);
 	}
 	
-	public void broadcast(Object message, String groupName, int excludeChannelId) {
-		groups.broadcast(groupName, encoder.encode(message), excludeChannelId);
+	public void broadcast(Object message, String groupName, Integer... excludeChannelIds) {
+		groups.broadcast(groupName, encoder.encode(message), excludeChannelIds);
+		log.debug("broadcast message:{} to group:{}, excludeChannelIds:{}", message, groupName, Arrays.toString(excludeChannelIds));
 	}
 	
 	public void joinGroup(String groupName, int channelId) {
 		groups.join(groupName, channelId);
-		log.info("channel {} join group {}.", channelId, groupName);
+		log.debug("channel {} join group {}.", channelId, groupName);
 	}
 	
 	public void leaveGroup(String groupName, int channelId) {
 		groups.leave(groupName, channelId);
-		log.info("channel {} leave group {}.", channelId, groupName);
+		log.debug("channel {} leave group {}.", channelId, groupName);
 	}
 	
 	public void world(Object message) {

@@ -27,13 +27,13 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/game-core.jar" sourcepath="/core"/>
 	<classpathentry kind="lib" path="lib/tools.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jprotobuf-1.6.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/jprotobuf-1.6.4-SNAPSHOT.jar" sourcepath="/jprotobuf"/>
+	<classpathentry kind="lib" path="lib/game-core.jar" sourcepath="/core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

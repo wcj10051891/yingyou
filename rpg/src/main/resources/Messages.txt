@@ -1,0 +1,3 @@
+10000=com.shadowgame.rpg.msg.LoginMsg
+10001=com.shadowgame.rpg.msg.AlertMsg
+10002=com.shadowgame.rpg.msg.NoticeMsg

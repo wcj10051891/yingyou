@@ -11,14 +11,6 @@ public abstract class AppConfig {
 	 */
 	public static final boolean DEBUG;
 	/**
-	 * 业务模块包名
-	 */
-	public static final String MODULE_PACKAGE_NAME;
-	/**
-	 * protobuf协议输出包名
-	 */
-	public static final String PROTOBUF_PACKAGE_NAME;
-	/**
 	 * tcp监听端口
 	 */
 	public static final int TCP_PORT;
@@ -81,8 +73,6 @@ public abstract class AppConfig {
 	static {
 		config = new Config(configFileName);
 		DEBUG = config.getBoolean("debug");
-		MODULE_PACKAGE_NAME = config.getString("module.package.name");
-		PROTOBUF_PACKAGE_NAME = config.getString("protobuf.package.name");
 		TCP_PORT = config.getInt("tcp.port");
 		THREAD_CORE_POOL_SIZE = config.getInt("thread.core.pool.size");
 		JDK_SCHEDULE_CORE_POOL_SIZE = config.getInt("jdk.schedule.core.pool.size", 10);
