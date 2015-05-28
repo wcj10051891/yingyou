@@ -35,6 +35,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 //					ctx.getChannel().close();
 //			}
 //		}, 10, TimeUnit.MINUTES);
+		Services.tcpService.channels.put(ctx);
 		log.info("player:{}, channel:{} connected", ctx.getAttachment(), ctx.getChannel());
 	}
 
@@ -81,6 +82,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 			else {
 				log.error("process client msg error, player:{}, channel:{}, msg:{}, error:{}", 
 						player, ctx.getChannel(), msg, ex);
+				ex.printStackTrace();
 			}
 		}
 	}

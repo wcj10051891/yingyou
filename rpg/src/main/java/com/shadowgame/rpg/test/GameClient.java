@@ -27,7 +27,6 @@ import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.baidu.bjf.remoting.protobuf.annotation.Msg;
 import com.shadowgame.rpg.core.AppException;
-import com.shadowgame.rpg.msg.AlertMsg;
 import com.shadowgame.rpg.msg.LoginMsg;
 import com.shadowgame.rpg.net.msg.Message;
 
@@ -69,7 +68,7 @@ public class GameClient {
 					@Override
 					protected Object encode(ChannelHandlerContext ctx, Channel channel, Object message) throws Exception {
 						/**
-						 * 4字节长度+4字节协议号+protobuf byte
+						 * 2字节长度+4字节协议号+protobuf byte
 						 */
 						if(!(message instanceof Message))
 							throw new AppException("message must extends [" + Message.class.getName() + "]");
@@ -81,8 +80,8 @@ public class GameClient {
 						int msgId = anno.value();
 						byte[] data = encodeMsg(msgId, msg);
 						int size = 4 + data.length;
-						ChannelBuffer packet = ChannelBuffers.buffer(size + 4);
-						packet.writeInt(size);
+						ChannelBuffer packet = ChannelBuffers.buffer(size + 2);
+						packet.writeShort(size);
 						packet.writeInt(msgId);
 						packet.writeBytes(data);
 						return packet;
@@ -94,13 +93,13 @@ public class GameClient {
 					protected Object decode(ChannelHandlerContext ctx, Channel channel,
 							ChannelBuffer buffer) throws Exception {
 						/**
-						 * 4字节长度+4字节协议号+protobuf bytes
+						 * 2字节长度+4字节协议号+protobuf bytes
 						 */
-						if(buffer.readableBytes() < 4)
+						if(buffer.readableBytes() < 2)
 							return null;
 						
 						buffer.markReaderIndex();
-						int dataBodySize = buffer.readInt();
+						short dataBodySize = buffer.readShort();
 						if(buffer.readableBytes() < dataBodySize) {
 							buffer.resetReaderIndex();
 							return null;
@@ -137,11 +136,11 @@ public class GameClient {
 						sc.close();
 						System.exit(0);
 					} else if(cmd.equals("send")) {
-//						LoginMsg login = new LoginMsg();
-//						login.setUsername("12345");
-//						login.setPassword("45678");
-						AlertMsg s = new AlertMsg("尼玛");
-						f.getChannel().write(s);
+						LoginMsg login = new LoginMsg();
+						login.setUsername("12345");
+						login.setPassword("45678");
+//						AlertMsg s = new AlertMsg("尼玛");
+						f.getChannel().write(login);
 					}
 				}
 			}

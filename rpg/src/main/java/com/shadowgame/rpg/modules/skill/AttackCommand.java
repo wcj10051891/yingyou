@@ -2,7 +2,7 @@ package com.shadowgame.rpg.modules.skill;
 
 import java.util.concurrent.Callable;
 
-import com.shadowgame.rpg.modules.core.Fighter;
+import com.shadowgame.rpg.modules.core.AbstractFighter;
 
 /**
  * 技能施放命令
@@ -10,11 +10,11 @@ import com.shadowgame.rpg.modules.core.Fighter;
  * @author wcj10051891@gmail.com
  */
 public class AttackCommand implements Callable<Object> {
-	public Fighter source;
+	public AbstractFighter source;
 	public AbstractSkill skill;
-	public Fighter target;
+	public AbstractFighter target;
 
-	public AttackCommand(Fighter source, AbstractSkill skill, Fighter target) {
+	public AttackCommand(AbstractFighter source, AbstractSkill skill, AbstractFighter target) {
 		this.source = source;
 		this.skill = skill;
 		this.target = target;

@@ -1,18 +1,21 @@
-package com.shadowgame.rpg.modules.world;
+package com.shadowgame.rpg.modules.map;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import com.shadowgame.rpg.modules.core.AbstractSpirit;
+import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.Player;
-import com.shadowgame.rpg.modules.core.VisibleObject;
+import com.shadowgame.rpg.service.Services;
 
 /**
  * 地图副本
  * @author wcj10051891@gmail.com
  * @Date 2015年5月25日 下午7:04:12
  */
-public class WorldMapInstance {
+public class MapInstance {
 	/**
 	 * 当前地图副本序号id
 	 */
@@ -20,15 +23,15 @@ public class WorldMapInstance {
 	/**
 	 * 副本所属地图
 	 */
-	private WorldMap worldMap;
+	private GameMap gameMap;
 	/**
 	 * 宽
 	 */
-	private int width;
+	private int width = 1000;
 	/**
 	 * 高
 	 */
-	private int height;
+	private int height = 1000;
 	/**
 	 * 地图分块
 	 */
@@ -36,43 +39,36 @@ public class WorldMapInstance {
 	/**
 	 * 当前地图上的所有对象
 	 */
-	private ConcurrentHashMap<Long, VisibleObject> worldMapObjects = new ConcurrentHashMap<Long, VisibleObject>();
+	private ConcurrentHashMap<Long, MapObject> objects = new ConcurrentHashMap<Long, MapObject>();
 	/**
 	 * 当前地图上所有玩家
 	 */
-	private ConcurrentHashMap<Long, Player> worldMapPlayers = new ConcurrentHashMap<Long, Player>();
+	private ConcurrentHashMap<Long, Player> players = new ConcurrentHashMap<Long, Player>();
 	/**
 	 * 副本销毁任务
 	 */
 	private Future<?> destroyTask;
 
-	public WorldMapInstance(WorldMap worldMap, int instanceId) {
-		this.worldMap = worldMap;
+	public MapInstance(GameMap gameMap, int instanceId) {
+		this.gameMap = gameMap;
 		this.instanceId = instanceId;
-	}
-
-	/**
-	 * 返回mapId
-	 * @return world map id
-	 */
-	public int getMapId() {
-		return getWorldMap().getMapId();
+		this.init();
 	}
 
 	/**
 	 * 返回所属WorldMap
 	 * @return parent
 	 */
-	public WorldMap getWorldMap() {
-		return worldMap;
+	public GameMap getGameMap() {
+		return gameMap;
 	}
 
 	/**
 	 * 查找对象所在区块
 	 * @return a MapRegion
 	 */
-	MapRegion getRegion(VisibleObject object) {
-		return getRegion(object.getX(), object.getY());
+	public MapRegion getRegion(MapObject object) {
+		return getRegion(object.getPosition().getX(), object.getPosition().getY());
 	}
 
 	/**
@@ -81,7 +77,7 @@ public class WorldMapInstance {
 	 * @param y
 	 * @return a MapRegion
 	 */
-	MapRegion getRegion(int x, int y) {
+	public MapRegion getRegion(int x, int y) {
 		return regions.get(getRegionId(x, y));
 	}
 
@@ -92,7 +88,7 @@ public class WorldMapInstance {
 	 * @return region id.
 	 */
 	private String getRegionId(int x, int y) {
-		return x / width + "_" + y / height;
+		return x / MapRegion.width + "_" + y / MapRegion.height;
 	}
 
 	/**
@@ -132,33 +128,30 @@ public class WorldMapInstance {
 				if (c2 >= 0)
 					current.addNeighbourRegion(regions.get(r + "_" + c2));
 			}
+		//设置定时销毁
+//		setDestroyTime(destroySecond);
 	}
-
-	/**
-	 * 返回所属世界
-	 * @return World
-	 */
-	public World getWorld() {
-		return getWorldMap().getWorld();
-	}
-
-	/**
-	 * 添加对象
-	 */
-	public void addObject(VisibleObject object) {
-		if (worldMapObjects.put(object.getObjectId(), object) == null) {
-			if (object instanceof Player)
-				worldMapPlayers.put(object.getObjectId(), (Player) object);
+	
+	public void destory() {
+		gameMap.removeInstance(instanceId);
+		for(Iterator<MapObject> it = objects.values().iterator();it.hasNext();) {
+			MapObject obj = it.next();
+			if(obj instanceof Player) {			
+				Player player = (Player) obj;
+//				moveToEntryPoint((Player) obj, portal, true);
+			} else {
+//				obj.getController().delete();
+			}
+				
 		}
 	}
 
-	/**
-	 * 移除对象
-	 */
-	public void removeObject(VisibleObject object) {
-		worldMapObjects.remove(object.getObjectId());
-		if (object instanceof Player)
-			worldMapPlayers.remove(object.getObjectId());
+	public void onEnter(AbstractSpirit spirit) {
+		
+	}
+	
+	public void onLeave(AbstractSpirit spirit) {
+		
 	}
 
 	/**
@@ -175,15 +168,7 @@ public class WorldMapInstance {
 	 * @return
 	 */
 	public boolean isInInstance(Long objectId) {
-		return worldMapPlayers.containsKey(objectId);
-	}
-
-	/**
-	 * 当前地图副本上所有对象
-	 * @return
-	 */
-	public Iterator<VisibleObject> objectIterator() {
-		return worldMapObjects.values().iterator();
+		return players.containsKey(objectId);
 	}
 
 	/**
@@ -191,15 +176,21 @@ public class WorldMapInstance {
 	 * @return
 	 */
 	public Iterator<Player> playerIterator() {
-		return worldMapPlayers.values().iterator();
+		return players.values().iterator();
 	}
+	
+	/**
+	 * 设置副本销毁
+	 */
+	private void setDestroyTime(int destroySecond) {
+		if (destroyTask != null)
+			destroyTask.cancel(true);
 
-	public Future<?> getDestroyTask() {
-		return destroyTask;
+		destroyTask = Services.timerService.jdkScheduler.schedule(new Runnable() {
+			@Override
+			public void run() {
+				destory();
+			}
+		}, destroySecond, TimeUnit.SECONDS);
 	}
-
-	public void setDestroyTask(Future<?> destroyTask) {
-		this.destroyTask = destroyTask;
-	}
-
 }

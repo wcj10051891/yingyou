@@ -11,7 +11,7 @@ import com.shadowgame.rpg.service.Services;
  * 可参战单位
  * @author wcj10051891@gmail.com
  */
-public class Fighter extends VisibleObject {
+public abstract class AbstractFighter extends AbstractSpirit {
 	/**
 	 * 当前气血
 	 */
@@ -59,7 +59,7 @@ public class Fighter extends VisibleObject {
 	 */
 	public ProcessQueue attackQueue = new ProcessQueue(Services.threadService.threadPool);
 	
-	public Object onAttack(Fighter source, AbstractSkill skill) {
+	public Object onAttack(AbstractFighter source, AbstractSkill skill) {
 		try {
 			return attackQueue.submit(new AttackCommand(source, skill, this)).get();
 		} catch (Exception e) {

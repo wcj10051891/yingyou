@@ -65,6 +65,14 @@ public abstract class AppConfig {
 	 * dto包名
 	 */
 	public static final String DTO_PACKAGE;
+	/**
+	 * 包长度的字节数
+	 */
+	public static final int packet_length_size = 2;
+	/**
+	 * 协议号的字节数
+	 */
+	public static final int msgId_size = 4;
 	
 	private static final Pattern serverIdPTN = Pattern.compile("([A-Z])([0-2047])");
 	public static String configFileName = "config.properties";

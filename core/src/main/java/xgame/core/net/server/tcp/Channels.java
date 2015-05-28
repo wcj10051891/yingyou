@@ -15,9 +15,9 @@ public class Channels {
         }
     };
 
-	public void put(Integer channelId, ChannelHandlerContext channelContext) {
-		if(this.channels.putIfAbsent(channelId, channelContext) == null)
-			channelContext.getChannel().getCloseFuture().addListener(remover);
+	public void put(ChannelHandlerContext ctx) {
+		if(this.channels.putIfAbsent(ctx.getChannel().getId(), ctx) == null)
+			ctx.getChannel().getCloseFuture().addListener(remover);
 	}
 
 	public ChannelHandlerContext getChannelContext(Integer channelId) {

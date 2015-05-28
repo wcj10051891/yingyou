@@ -2,9 +2,13 @@ package com.shadowgame.rpg.msg;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
 
+import xgame.core.util.StringUtils;
+
 import com.baidu.bjf.remoting.protobuf.annotation.Msg;
-import com.shadowgame.rpg.core.NoticeException;
+import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.map.Position;
 import com.shadowgame.rpg.net.msg.ClientMsg;
+import com.shadowgame.rpg.service.Services;
 
 /**
  * 登录消息
@@ -41,7 +45,19 @@ public class LoginMsg extends ClientMsg {
 
 	public void handleLogin(ChannelHandlerContext ctx) {
 //		Services.tcpService.send(this, ctx.getChannel());
-		throw new NoticeException("尼玛");
+		Player p = new Player();
+		p.channelId = ctx.getChannel().getId();
+		p.setObjectId(Long.valueOf(p.channelId));
+		p.setPosition(new Position(0, 0));
+		Services.appService.world.updatePosition(p, Services.appService.world.getWorldMap(1).getDefaultInstance(), 0, 0);
+		p.entity = new com.shadowgame.rpg.persist.entity.Player();
+		p.entity.username = "user" + p.getObjectId();
+		p.entity.nickname = "nick" + p.getObjectId();
+		Services.appService.world.addObject(p);
+		Services.appService.world.updatePosition(p, Services.appService.world.getWorldMap(1).getDefaultInstance(), 350, 350);
+		p.send(new AlertMsg("player " + p.getKey() + " login success, enter mapRegion:" + StringUtils.toString(p.getPosition())));
+		
+		Services.tcpService.broadcast(new NoticeMsg("大家好我来了"), "MapRegion_0_0");
 	}
 	
 }

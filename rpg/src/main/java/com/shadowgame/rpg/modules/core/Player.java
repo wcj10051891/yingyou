@@ -20,11 +20,12 @@ import com.shadowgame.rpg.modules.common.DailyAttribute;
 import com.shadowgame.rpg.modules.item.Item;
 import com.shadowgame.rpg.modules.item.Knapsack;
 import com.shadowgame.rpg.modules.item.PlayerItem;
+import com.shadowgame.rpg.modules.map.Position;
 import com.shadowgame.rpg.persist.dao.PlayerDao;
 import com.shadowgame.rpg.service.Services;
 
-public class Player extends Fighter implements CacheObject<Long, com.shadowgame.rpg.persist.entity.Player> {
-	private static final PlayerDao dao = Services.daoFactory.get(PlayerDao.class);
+public class Player extends AbstractFighter implements CacheObject<Long, com.shadowgame.rpg.persist.entity.Player> {
+	private static final PlayerDao dao = null;// = Services.daoFactory.get(PlayerDao.class);
 	private static final Logger log = LoggerFactory.getLogger(Player.class);
 	public com.shadowgame.rpg.persist.entity.Player entity;
 	
@@ -135,5 +136,15 @@ public class Player extends Fighter implements CacheObject<Long, com.shadowgame.
 		this.entity.daily = this.daily.toString();
 		this.entity.extAttribute = this.extAttribute.toString();
 		dao.update(entity);
+	}
+
+	@Override
+	public Long getObjectId() {
+		return this.objectId;
+	}
+
+	@Override
+	public Position getPosition() {
+		return this.position;
 	}
 }
