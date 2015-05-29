@@ -128,6 +128,7 @@ public class SaveQueue {
 			object.update();
 		} catch (Exception e) {
 			log.error("save object:{}, error:{}", object, e);
+			e.printStackTrace();
 		}
 	}
 	

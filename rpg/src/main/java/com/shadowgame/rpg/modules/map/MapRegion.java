@@ -1,15 +1,21 @@
 package com.shadowgame.rpg.modules.map;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.jboss.netty.channel.Channel;
 
 import com.shadowgame.rpg.modules.core.AbstractSpirit;
 import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.net.msg.Message;
+import com.shadowgame.rpg.service.Services;
 
 /**
  * 地图区块
@@ -25,10 +31,6 @@ public class MapRegion {
 	 */
 	private String regionId;
 	/**
-	 * 当前区域以及周围一起9个区块组成一个广播组，互相接收状态更新
-	 */
-	private String broadcastGroupName;
-	/**
 	 * 所属地图
 	 */
 	private MapInstance mapInstance;
@@ -39,13 +41,54 @@ public class MapRegion {
 	/**
 	 * 区块中的对象
 	 */
-	private ConcurrentHashMap<Long, MapObject> objects = new ConcurrentHashMap<Long, MapObject>();
+	private MapRegionCollections<MapObject> objects = new MapRegionCollections<>();
 
+	@SuppressWarnings("unchecked")
+	private static final class MapRegionCollections<V extends MapObject> extends ConcurrentHashMap<Long, V> {
+		private static final long serialVersionUID = 1L;
+		private Map<Class<V>, Set<V>> type2Objects = new ConcurrentHashMap<Class<V>, Set<V>>();
+		@Override
+		public V put(Long key, V value) {
+			V result = super.put(key, value);
+			getObjectsByType((Class<V>) value.getClass()).add(value);
+			return result;
+		}
+		
+		private Set<V> getObjectsByType(Class<V> type) {
+			Set<V> set = type2Objects.get(type);
+			if(set == null) {
+				set = new HashSet<>();
+				type2Objects.put(type, set);
+			}
+			return set;
+		}
+		
+		@Override
+		public V putIfAbsent(Long key, V value) {
+			V result = super.putIfAbsent(key, value);
+			getObjectsByType((Class<V>) value.getClass()).add(value);
+			return result;
+		}
+		
+		@Override
+		public V remove(Object key) {
+			V result = super.remove(key);
+			if(result != null)
+				getObjectsByType((Class<V>) result.getClass()).remove(result);
+			return result;
+		}
+		
+		@Override
+		public void clear() {
+			super.clear();
+			type2Objects.clear();
+		}
+	}
+	
 	MapRegion(String id, MapInstance mapInstance) {
 		this.regionId = id;
 		this.mapInstance = mapInstance;
 		this.neighbours.add(this);
-		this.broadcastGroupName = "MapRegion_" + id;
 	}
 
 	/**
@@ -88,8 +131,6 @@ public class MapRegion {
 							((AbstractSpirit)o).notSee(newObject);
 						if(newObject instanceof AbstractSpirit)
 							((AbstractSpirit)newObject).notSee(o);
-//						if(newObject instanceof Player)
-//							Services.tcpService.leaveGroup(r.broadcastGroupName, ((Player)newObject).channelId);
 					}
 				}
 			}
@@ -107,13 +148,11 @@ public class MapRegion {
 							((AbstractSpirit)newObject).see(o);
 					}
 				}
-//				if(newObject instanceof Player)
-//					Services.tcpService.joinGroup(r.broadcastGroupName, ((Player)newObject).channelId);
 			}
 		}
 	}
 	
-	void remove(MapObject object) {
+	public void remove(MapObject object) {
 		if(this.objects.remove(object.getObjectId()) != null) {
 			for (MapRegion r : this.neighbours) {
 				for (MapObject o : r.objects.values()) {
@@ -123,20 +162,33 @@ public class MapRegion {
 						((AbstractSpirit)object).notSee(o);
 				}
 			}
-//			if(object instanceof Player) {
-//				for (MapRegion r : this.neighbours)
-//					Services.tcpService.leaveGroup(r.broadcastGroupName, ((Player)object).channelId);
-//			}
 		}
 	}
 	
-	public void broadcast(Message message) {
+	public void broadcast(Message message, Player... excludePlayers) {
+		Collection<Channel> toChannels = new ArrayList<>();
+		Set<Channel> excludeChannels = new HashSet<>();
+		Collection<Player> excludePs = new HashSet<>(Arrays.asList(excludePlayers));
 		for (MapRegion r : this.neighbours) {
-			for (MapObject o : r.objects.values()) {
-				if(o instanceof Player) {
-					((Player)o).send(message);
-				}
+			for (Player player : r.getMapObjectByType(Player.class)) {
+				if(excludePs.contains(player))
+					excludeChannels.add(player.channel);
+				else
+					toChannels.add(player.channel);
 			}
 		}
+		if(!toChannels.isEmpty()) {
+			Services.tcpService.broadcast(message, toChannels, excludeChannels);
+		}
+	}
+	
+	/**
+	 * 按对象类型查找对象集合
+	 * @param type
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends MapObject> Set<T> getMapObjectByType(Class<T> type) {
+		return (Set<T>) this.objects.getObjectsByType((Class<MapObject>) type);
 	}
 }

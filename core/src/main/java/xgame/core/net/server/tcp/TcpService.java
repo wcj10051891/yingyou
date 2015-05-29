@@ -1,7 +1,11 @@
 package xgame.core.net.server.tcp;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
@@ -12,7 +16,6 @@ import xgame.core.util.Service;
 
 public class TcpService implements Service {
 	private static final Logger log = LoggerFactory.getLogger(TcpService.class);
-	public Channels channels;
 	public Groups groups;
 	
 	private int tcpPort;
@@ -33,8 +36,7 @@ public class TcpService implements Service {
 	public void start() throws Exception {
 		this.nettyTcpServer = new NettyTcpServer(this.tcpPort, this.decoderClass, this.logicHandler);
 		this.nettyTcpServer.start();
-		this.channels = new Channels();
-		this.groups = new Groups(channels);
+		this.groups = new Groups();
 	}
 	
 	@Override
@@ -47,29 +49,62 @@ public class TcpService implements Service {
 		log.info("send to channel{}:{}", client, message);
 	}
 	
-	public void send(Object message, int channelId) {
-		channels.getChannel(channelId).write(encoder.encode(message));
-		log.debug("send to channel {}:{}", channelId, message);
+	public void send(ChannelBuffer message, Channel client) {
+		client.write(message);
+		log.info("send to channel{}:{}", client, message);
 	}
 	
-	public void broadcast(Object message, String groupName) {
-		groups.broadcast(groupName, encoder.encode(message));
-		log.debug("broadcast message:{} to group:{}", message, groupName);
+	public void broadcast(Object message, String groupName, Channel... excludeChannels) {
+		this.broadcast(encoder.encode(message), groupName, excludeChannels);
 	}
 	
-	public void broadcast(Object message, String groupName, Integer... excludeChannelIds) {
-		groups.broadcast(groupName, encoder.encode(message), excludeChannelIds);
-		log.debug("broadcast message:{} to group:{}, excludeChannelIds:{}", message, groupName, Arrays.toString(excludeChannelIds));
+	public void broadcast(Object message, String groupName, Set<Channel> excludeChannels) {
+		this.broadcast(encoder.encode(message), groupName, excludeChannels);
+	}
+
+	public void broadcast(ChannelBuffer message, String groupName, Channel... excludeChannels) {
+		groups.broadcast(message, groupName, excludeChannels);
+		log.info("broadcast message:{} to group:{}, exclude:{}", message, groupName, excludeChannels);
 	}
 	
-	public void joinGroup(String groupName, int channelId) {
-		groups.join(groupName, channelId);
-		log.debug("channel {} join group {}.", channelId, groupName);
+	public void broadcast(ChannelBuffer message, String groupName, Set<Channel> excludeChannels) {
+		groups.broadcast(message, groupName, excludeChannels);
+		log.info("broadcast message:{} to group:{}, exclude:{}", message, groupName, excludeChannels);
 	}
 	
-	public void leaveGroup(String groupName, int channelId) {
-		groups.leave(groupName, channelId);
-		log.debug("channel {} leave group {}.", channelId, groupName);
+	public void broadcast(Object message, Collection<Channel> toChannels, Channel... excludeChannels) {
+		this.broadcast(encoder.encode(message), toChannels, excludeChannels);
+	}
+	
+	public void broadcast(Object message, Collection<Channel> toChannels, Set<Channel> excludeChannels) {
+		this.broadcast(encoder.encode(message), toChannels, excludeChannels);
+	}
+
+	public void broadcast(ChannelBuffer message, Collection<Channel> toChannels, Channel... excludeChannels) {
+		this.broadcast(message, toChannels, new HashSet<>(Arrays.asList(excludeChannels)));
+	}
+	
+	public void broadcast(ChannelBuffer message, Collection<Channel> toChannels, Set<Channel> excludeChannels) {
+		if(excludeChannels == null || excludeChannels.isEmpty()) {
+			for (Channel channel : toChannels)
+				channel.write(message);
+		} else {
+			for (Channel channel : toChannels) {
+				if (!excludeChannels.contains(channel))
+					channel.write(message);
+			}
+		}
+		log.info("broadcast message:{} to channels:{}, exclude:{}", message, toChannels, excludeChannels);
+	}
+	
+	public void joinGroup(String groupName, Channel channel) {
+		groups.join(groupName, channel);
+		log.info("channel {} join group {}.", channel, groupName);
+	}
+	
+	public void leaveGroup(String groupName, Channel channel) {
+		groups.leave(groupName, channel);
+		log.info("channel {} leave group {}.", channel, groupName);
 	}
 	
 	public void world(Object message) {
@@ -80,8 +115,8 @@ public class TcpService implements Service {
 	 * 断掉连接，异步的
 	 * @return ChannelFuture
 	 */
-	public ChannelFuture disconnect(int channelId) {
-		log.info("disconnect channel {}.", channelId);
-		return channels.getChannel(channelId).close();
+	public ChannelFuture disconnect(Channel channel) {
+		log.info("disconnect channel {}.", channel);
+		return channel.close();
 	}
 }

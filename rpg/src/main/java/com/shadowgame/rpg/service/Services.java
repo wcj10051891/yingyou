@@ -45,12 +45,12 @@ public class Services {
 		threadService.start();
 		log.info("[theadService] start ok.");
 		
-//		DaoContext daoContext = new DaoContext();
-//		daoFactory = daoContext.daoFactory;
-//		log.info("[daoFactory] start ok.");
-//		
-//		jdbc = daoContext.jdbc;
-//		log.info("[jdbc] start ok.");
+		DaoContext daoContext = new DaoContext();
+		daoFactory = daoContext.daoFactory;
+		log.info("[daoFactory] start ok.");
+		
+		jdbc = daoContext.jdbc;
+		log.info("[jdbc] start ok.");
 		
 		cacheService = new CacheService(timerService.jdkScheduler);
 		cacheService.start();

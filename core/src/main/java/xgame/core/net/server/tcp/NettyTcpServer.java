@@ -54,9 +54,7 @@ public class NettyTcpServer {
 	}
 
 	public void stop() {
-		if(bossPool != null)
-			bossPool.shutdownNow();
-		if(workersPool != null)
-			workersPool.shutdownNow();
+		if(server != null)
+			server.releaseExternalResources();
 	}
 }

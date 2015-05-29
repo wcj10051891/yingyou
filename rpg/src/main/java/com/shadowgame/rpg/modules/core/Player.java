@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	private static final Logger log = LoggerFactory.getLogger(Player.class);
 	public com.shadowgame.rpg.persist.entity.Player entity;
 	
-	public Integer channelId;
+	public Channel channel;
 	public DailyAttribute daily;
 	public JSONObject extAttribute;
 	public Knapsack knapsack;
@@ -55,14 +56,14 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	
 	public void onLogin() {
 		Services.appService.world.allPlayers.add(this);
-		Services.tcpService.joinGroup(Groups.World, channelId);
+		Services.tcpService.joinGroup(Groups.World, channel);
 	}
 	
 	public void onLogout() {
-		Services.tcpService.channels.remove(channelId);
 		Services.appService.world.allPlayers.remove(this);
-		Services.tcpService.leaveGroup(Groups.World, channelId);
-		channelId = 0;
+		Services.tcpService.leaveGroup(Groups.World, channel);
+		this.getPosition().getMapRegion().remove(this);
+		this.channel = null;
 		
 		Services.cacheService.saveAsync(this);
 		Services.cacheService.saveAsync(this.knapsack);
@@ -83,16 +84,15 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	}
 	
 	public void send(Object message) {
-		Services.tcpService.send(message, channelId);
+		Services.tcpService.send(message, this.channel);
 	}
-	
 
 	public void disconnectWaitCompleted() {
 		disconnect(false);
 	}
 	
 	public void disconnect(boolean synchronize) {
-		ChannelFuture future = Services.tcpService.disconnect(channelId);
+		ChannelFuture future = Services.tcpService.disconnect(this.channel);
 		if(synchronize)
 			try {
 				future.await();

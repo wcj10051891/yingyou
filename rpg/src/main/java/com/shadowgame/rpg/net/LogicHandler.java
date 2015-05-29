@@ -35,8 +35,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 //					ctx.getChannel().close();
 //			}
 //		}, 10, TimeUnit.MINUTES);
-		Services.tcpService.channels.put(ctx);
-		log.info("player:{}, channel:{} connected", ctx.getAttachment(), ctx.getChannel());
+		log.info("player:{}, channel:{} connected", ctx.getChannel().getAttachment(), ctx.getChannel());
 	}
 
 	@Override
@@ -44,7 +43,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 		Services.threadService.execute(new Runnable() {
 			@Override
 			public void run() {
-				final Player player = (Player)ctx.getAttachment();
+				final Player player = (Player)ctx.getChannel().getAttachment();
 				final Message msg = (Message)e.getMessage();
 				if(!(msg instanceof ClientMsg))
 					throw new AppException("receive msg not instanceof ClientMsg:[" + msg + 
@@ -90,6 +89,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
 		log.error("player:{}, channel:{}, exception:{}", e.getChannel().getAttachment(), e.getChannel(), e.getCause());
+		e.getCause().printStackTrace();
 	}
 
 	@Override
@@ -97,14 +97,15 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 		Services.threadService.execute(new Runnable() {
 			@Override
 			public void run() {
-				Player player = (Player)ctx.getAttachment();
+				Player player = (Player)ctx.getChannel().getAttachment();
 				if(player != null) {
 					try {
 						player.onLogout();
 					} catch (Exception ex) {
 						log.error("player:{}, channel:{} logout error:{}", player, ctx.getChannel(), ex.getCause());
+						ex.printStackTrace();
 					}
-					ctx.setAttachment(null);
+					ctx.getChannel().setAttachment(null);
 				}
 				log.info("player:{}, channel:{} channelClosed", player, ctx.getChannel());
 			}

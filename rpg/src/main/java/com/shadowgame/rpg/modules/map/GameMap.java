@@ -2,11 +2,7 @@ package com.shadowgame.rpg.modules.map;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.shadowgame.rpg.service.Services;
 
 /**
  * 地图

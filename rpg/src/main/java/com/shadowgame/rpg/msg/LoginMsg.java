@@ -46,8 +46,9 @@ public class LoginMsg extends ClientMsg {
 	public void handleLogin(ChannelHandlerContext ctx) {
 //		Services.tcpService.send(this, ctx.getChannel());
 		Player p = new Player();
-		p.channelId = ctx.getChannel().getId();
-		p.setObjectId(Long.valueOf(p.channelId));
+		p.channel = ctx.getChannel();
+		p.channel.setAttachment(p);
+		p.setObjectId(Long.valueOf(p.channel.getId()));
 		p.setPosition(new Position(0, 0));
 		Services.appService.world.updatePosition(p, Services.appService.world.getWorldMap(1).getDefaultInstance(), 0, 0);
 		p.entity = new com.shadowgame.rpg.persist.entity.Player();
@@ -57,7 +58,7 @@ public class LoginMsg extends ClientMsg {
 		Services.appService.world.updatePosition(p, Services.appService.world.getWorldMap(1).getDefaultInstance(), 350, 350);
 		p.send(new AlertMsg("player " + p.getKey() + " login success, enter mapRegion:" + StringUtils.toString(p.getPosition())));
 		
-		Services.tcpService.broadcast(new NoticeMsg("大家好我来了"), "MapRegion_0_0");
+		p.getPosition().getMapRegion().broadcast(new NoticeMsg("大家好我来了"), p);
 	}
 	
 }

@@ -12,6 +12,7 @@ import org.joda.time.format.DateTimeFormatter;
 import xgame.core.util.RandomUtils;
 
 import com.shadowgame.rpg.core.AppConfig;
+import com.sun.jmx.snmp.Timestamp;
 
 public abstract class UniqueId {
 	private static final String CAPITAL_LETTER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -114,6 +115,10 @@ public abstract class UniqueId {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(Arrays.toString(decode(4501493532967145472l)));
+//		System.out.println(Arrays.toString(decode(4501493532967145472l)));
+		
+		long id = next();
+		System.out.println(Arrays.toString(decode(id)));
+		System.out.println(new Timestamp(1432885799195l).getDate());
 	}
 }
