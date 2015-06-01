@@ -3,11 +3,10 @@ package protobufgen;
 import com.thoughtworks.qdox.model.AbstractJavaEntity;
 import com.thoughtworks.qdox.model.DocletTag;
 import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaField;
 
 @Ignore
 public abstract class Utils {
-	private static String line = System.getenv("line.separator");
+	private static String line = System.lineSeparator();
 	
 	public static String getComment(AbstractJavaEntity javaEntity) {
 		StringBuilder comments = new StringBuilder();
@@ -44,11 +43,11 @@ public abstract class Utils {
 			comments.append("\t * @").append(tagName).append(" ").append(comm);
 			comments.append(line);
 		}
-		comments.append("字段列表:").append(line);
-		for (JavaField f : javaClass.getFields()) {
-			comments.append("//").append(f.getComment()).append(line)
-				.append(f.getType().getGenericValue()).append(" ").append(f.getName()).append(line);
-		}
+//		comments.append("字段列表:").append(line);
+//		for (JavaField f : javaClass.getFields()) {
+//			comments.append("//").append(f.getComment()).append(line)
+//				.append(f.getType().getGenericValue()).append(" ").append(f.getName()).append(line);
+//		}
 		if (comments.length() > 0) {
 			return "\t/**" + line + comments + "\t */"
 					+ line;

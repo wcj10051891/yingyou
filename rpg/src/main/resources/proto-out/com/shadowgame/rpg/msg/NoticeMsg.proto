@@ -1,0 +1,13 @@
+package com.shadowgame.rpg.msg;
+option java_outer_classname="NoticeMsg$$Gen";
+	/**
+	 * 飘字提示
+	 * @author wcj10051891@gmail.com
+	 * @Date 2015年5月27日 下午2:03:06
+	 */
+message NoticeMsg{
+	/**
+	 * 飘字提示消息内容
+	 */
+	optional string content=1;
+}

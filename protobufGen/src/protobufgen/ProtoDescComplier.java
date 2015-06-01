@@ -8,18 +8,22 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 @Ignore
-public class ProtoComplier {
+public class ProtoDescComplier {
 	private static final String protoc = "./protoc.exe";
 	private static final String proto_file_path = "../rpg/src/main/resources/proto-out";
-	private static final String java_out = "src";
+	private static final String descriptor_set_out = "../rpg/src/main/resources/proto-desc-out";
 
 	public static void main(String[] args) throws Exception {
 		List<String> protos = new ArrayList<String>();
 		list(new File(proto_file_path), protos);
 		String fpath = new File(proto_file_path).getCanonicalPath();
-		for (String protoFile : protos)
-			protoc(fpath, java_out, protoFile);
-		System.out.println("proto compile success.");
+		for (String protoFile : protos) {
+			int fromIndex = protoFile.lastIndexOf(File.separator) + 1;
+			int endIndex = protoFile.indexOf(".proto");
+			String descFilename = protoFile.substring(fromIndex, endIndex);
+			protoc(fpath, descriptor_set_out + "/" + descFilename + ".desc", protoFile);
+		}
+		System.out.println("proto desc compile success.");
 	}
 
 	private static void list(File file, List<String> filepaths) throws Exception {
@@ -33,8 +37,8 @@ public class ProtoComplier {
 		}
 	}
 
-	private static void protoc(String I, String java_out, String protoFile) throws Exception {
-		ProcessBuilder processBuilder = new ProcessBuilder(cmds(protoc + " -I" + I + " --java_out=" + java_out + " " + protoFile));
+	private static void protoc(String I, String descriptor_set_out, String protoFile) throws Exception {
+		ProcessBuilder processBuilder = new ProcessBuilder(cmds(protoc + " -I" + I + " --descriptor_set_out=" + descriptor_set_out + " " + protoFile));
 		Process process = processBuilder.start();
 		String error = new String(readBin(process.getErrorStream()));
 		if (error.length() > 0) {

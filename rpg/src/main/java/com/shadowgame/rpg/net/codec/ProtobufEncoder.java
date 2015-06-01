@@ -5,9 +5,9 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xgame.core.net.protocol.Msg;
 import xgame.core.net.server.tcp.Encoder;
 
-import com.baidu.bjf.remoting.protobuf.annotation.Msg;
 import com.shadowgame.rpg.core.AppConfig;
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.net.msg.Message;
@@ -29,7 +29,7 @@ public class ProtobufEncoder implements Encoder {
 		int msgId = anno.value();
 		byte[] data = null;
 		try {
-			data = Services.msgService.encodeMsg(msgId, msg);
+//			data = Services.msgService.encodeMsg(msgId, msg);
 		} catch (Exception e) {
 			throw new AppException("encode message error, msgId:" + msgId + ", msg:" + msg, e);
 		}
