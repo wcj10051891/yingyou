@@ -1,12 +1,18 @@
-<project name="gameserver" basedir="." default="dist">
+<project name="gameserver" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="dist">
 	<property name="jdk.version" value="1.7" />
 	<property name="source.encoding" value="UTF-8" />
-	<property name="dependences-dir" value="../wabao-common/lib" />
-	<property name="src" value="src" />
+	<property name="src" value="src/main/java" />
+	<property name="manifest" value="MANIFEST.MF" />
+	<property name="resources" value="src/main/resources" />
 	<property name="target" value="target" />
+	<property name="lib" value="lib" />
+
+	<artifact:pom id="pom.this" file="pom.xml" />
+	<artifact:dependencies filesetid="fileset.lib.runtime" pathid="path.lib.runtime" pomrefid="pom.this" usescope="runtime" />
 
 	<path id="classpath.project">
-		<fileset dir="${dependences-dir}" />
+		<path refid="path.lib.runtime"/>
+		<fileset dir="${lib}/"/>
 	</path>
 
 	<target name="clean">
@@ -20,16 +26,17 @@
 				<path refid="classpath.project" />
 			</classpath>
 		</javac>
-		<copy file="${src}/log4j.xml" todir="${target}/classes"/>
-		<copy file="${src}/quartz_jobs.xml" todir="${target}/classes"/>
+		<copy file="${resources}/log4j.xml" todir="${target}/classes"/>
+		<copy file="${resources}/Messages.txt" todir="${target}/classes"/>
+		<copy file="${resources}/quartz_jobs.xml" todir="${target}/classes"/>
 	</target>
 
 	<target name="dist" depends="compile">
-		<jar destfile="${target}/${ant.project.name}.jar" manifest="${src}/MANIFEST.MF">
+		<jar destfile="${target}/${ant.project.name}.jar" manifest="${manifest}">
 			<fileset dir="${target}/classes" />
 		</jar>
 		<delete dir="${target}/classes" includeemptydirs="true"/>
-		<copy file="${target}/${ant.project.name}.jar" todir="F:\Program Files\VanDyke Software\SecureCRT\up"/>
+<!--		<copy file="${target}/${ant.project.name}.jar" todir="F:\Program Files\VanDyke Software\SecureCRT\up"/> -->
 	</target>
 	
 	<target name="dist-src">

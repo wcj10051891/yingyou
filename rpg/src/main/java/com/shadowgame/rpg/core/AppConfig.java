@@ -72,7 +72,7 @@ public abstract class AppConfig {
 	/**
 	 * 协议号的字节数
 	 */
-	public static final int msgId_size = 4;
+	public static final int msgId_size = 2;
 	
 	private static final Pattern serverIdPTN = Pattern.compile("([A-Z])([0-2047])");
 	public static String configFileName = "config.properties";

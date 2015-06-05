@@ -2,7 +2,7 @@ package com.shadowgame.rpg.service;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +24,7 @@ public class ThreadService implements Service {
 			AppConfig.THREAD_CORE_POOL_SIZE, 
 			10,
 			TimeUnit.MINUTES, 
-			new SynchronousQueue<Runnable>(),//new LinkedTransferQueue<Runnable>(), 
+			new LinkedTransferQueue<Runnable>(), 
 			new ThreadNameFactory("business logic"));
 		threadPool.allowCoreThreadTimeOut(true);
 	}

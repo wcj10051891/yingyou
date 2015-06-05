@@ -1,10 +1,0 @@
-
-É
-%com/shadowgame/rpg/msg/LoginMsg.protocom.shadowgame.rpg.msg%com/shadowgame/rpg/msg/AlertMsg.proto&com/shadowgame/rpg/msg/NoticeMsg.proto"§
-LoginMsg
-username (	
-password (	2
-alertMsg (2 .com.shadowgame.rpg.msg.AlertMsg5
-
-noticeMsgs (2!.com.shadowgame.rpg.msg.NoticeMsg
-msgs (	BBLoginMsg$$Gen

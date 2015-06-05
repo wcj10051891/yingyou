@@ -60,8 +60,11 @@
     <logger name="login" additivity="false"><level value="INFO" /><appender-ref ref="loginAppender" /></logger>
  -->
     
+    <logger name="org.quartz"><level value="error"/></logger>
+    <logger name="org.apache.commons.digester"><level value="error"/></logger>
+    <logger name="org.apache.commons.beanutils"><level value="error"/></logger>
     <root>
-		<priority value="debug" />
+		<priority value="error" />
 		<appender-ref ref="CONSOLE" />
 	</root>
 

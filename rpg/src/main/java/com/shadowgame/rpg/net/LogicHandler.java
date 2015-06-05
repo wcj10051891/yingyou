@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.shadowgame.rpg.core.AlertException;
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.core.NoticeException;
+import com.shadowgame.rpg.jmx.impl.Statistics;
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.msg.AlertMsg;
 import com.shadowgame.rpg.msg.LoginMsg;
@@ -25,17 +26,26 @@ import com.shadowgame.rpg.service.Services;
 @Sharable
 public class LogicHandler extends SimpleChannelUpstreamHandler {
 	private static final Logger log = LoggerFactory.getLogger(LogicHandler.class);
-    
+	
+	private Statistics stat = Services.jmxService.getMXBean(Statistics.class);
 	@Override
 	public void channelConnected(final ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
 //		Services.timerService.jdkScheduler.schedule(new Runnable() {
 //			@Override
 //			public void run() {
-//				if(ctx.getAttachment() == null)
+//				if(ctx.getChannel().getAttachment() == null)
 //					ctx.getChannel().close();
 //			}
 //		}, 10, TimeUnit.MINUTES);
-		log.info("player:{}, channel:{} connected", ctx.getChannel().getAttachment(), ctx.getChannel());
+//		
+//		Services.threadService.execute(new Runnable() {
+//			@Override
+//			public void run() {
+////				Services.tcpService.joinGroup(Groups.World, ctx.getChannel());
+//				log.info("player:{}, channel:{} connected", ctx.getChannel().getAttachment(), ctx.getChannel());
+//			}
+//		});
+		stat.users.incrementAndGet();
 	}
 
 	@Override
@@ -64,6 +74,8 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 	}
 	
 	private void processRequest(Player player, ClientMsg msg, ChannelHandlerContext ctx) {
+		stat.requestCount.incrementAndGet();
+		long start = System.currentTimeMillis();
 		try {
 			log.info("process client msg:{}, player:{}, channel:{}", msg, player, ctx.getChannel());
 			if(msg instanceof LoginMsg) {//未登录，没有player
@@ -84,12 +96,16 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 				ex.printStackTrace();
 			}
 		}
+		long cost = System.currentTimeMillis() - start;
+		stat.responseTimeSum.getAndAdd(cost);
 	}
 	
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
 		log.error("player:{}, channel:{}, exception:{}", e.getChannel().getAttachment(), e.getChannel(), e.getCause());
 		e.getCause().printStackTrace();
+		
+//		throw (Exception)e.getCause();
 	}
 
 	@Override
@@ -110,5 +126,6 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 				log.info("player:{}, channel:{} channelClosed", player, ctx.getChannel());
 			}
 		});
+		stat.users.decrementAndGet();
 	}
 }

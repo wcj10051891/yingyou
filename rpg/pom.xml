@@ -189,6 +189,11 @@
 			<artifactId>phprpc</artifactId>
 			<version>3.0.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.baidu</groupId>
+			<artifactId>jprotobuf</artifactId>
+			<version>1.6.4-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

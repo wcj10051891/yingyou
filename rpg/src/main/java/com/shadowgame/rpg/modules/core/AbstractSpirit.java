@@ -11,7 +11,7 @@ public abstract class AbstractSpirit extends MapObject {
 	 * @param object
 	 */
 	public void see(MapObject object) {
-		System.out.println(this + " see " + object);
+//		System.out.println(this + " see " + object);
 	}
 
 	/**
@@ -19,6 +19,6 @@ public abstract class AbstractSpirit extends MapObject {
 	 * @param object
 	 */
 	public void notSee(MapObject object) {
-		System.out.println(this + " notSee " + object);
+//		System.out.println(this + " notSee " + object);
 	}
 }

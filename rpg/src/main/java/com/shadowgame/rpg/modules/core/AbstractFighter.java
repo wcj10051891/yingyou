@@ -1,11 +1,5 @@
 package com.shadowgame.rpg.modules.core;
 
-import xgame.core.util.ProcessQueue;
-
-import com.shadowgame.rpg.core.AppException;
-import com.shadowgame.rpg.modules.skill.AbstractSkill;
-import com.shadowgame.rpg.modules.skill.AttackCommand;
-import com.shadowgame.rpg.service.Services;
 
 /**
  * 可参战单位
@@ -54,16 +48,16 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	 */
 	public int endurance;
 	
-	/**
-	 * 攻击队列，串行处理
-	 */
-	public ProcessQueue attackQueue = new ProcessQueue(Services.threadService.threadPool);
-	
-	public Object onAttack(AbstractFighter source, AbstractSkill skill) {
-		try {
-			return attackQueue.submit(new AttackCommand(source, skill, this)).get();
-		} catch (Exception e) {
-			throw new AppException("skill attack error, source:" + source + ", target:" + this + ", skill:" + skill, e);
-		}
-	}
+//	/**
+//	 * 攻击队列，串行处理
+//	 */
+//	public ProcessQueue attackQueue = new ProcessQueue(Services.threadService.threadPool);
+//	
+//	public Object onAttack(AbstractFighter source, AbstractSkill skill) {
+//		try {
+//			return attackQueue.submit(new AttackCommand(source, skill, this)).get();
+//		} catch (Exception e) {
+//			throw new AppException("skill attack error, source:" + source + ", target:" + this + ", skill:" + skill, e);
+//		}
+//	}
 }

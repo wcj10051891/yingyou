@@ -21,19 +21,21 @@ public class ProtobufDecoder extends FrameDecoder {
 	protected Object decode(ChannelHandlerContext ctx, Channel channel,
 			ChannelBuffer buffer) throws Exception {
 		/**
-		 * 2字节长度+4字节协议号+protobuf bytes
+		 * 2字节长度(长度=2字节len+2字节协议号+数据长度)+2字节协议号+protobuf bytes
 		 */
 		if(buffer.readableBytes() < AppConfig.packet_length_size)
 			return null;
 		
 		buffer.markReaderIndex();
 		short dataBodySize = buffer.readShort();
+		dataBodySize -= AppConfig.packet_length_size;
 		if(buffer.readableBytes() < dataBodySize) {
 			buffer.resetReaderIndex();
 			return null;
 		}
-		int msgId = buffer.readInt();
-		byte[] data = new byte[dataBodySize - AppConfig.msgId_size];
+		int msgId = buffer.readShort();
+		dataBodySize -= AppConfig.msgId_size;
+		byte[] data = new byte[dataBodySize];
 		buffer.readBytes(data, 0, data.length);
 		try {
 			Message msg = Services.msgService.decodeMsg(msgId, data);

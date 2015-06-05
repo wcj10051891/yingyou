@@ -4,14 +4,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import xgame.core.net.protocol.Msg;
 import xgame.core.util.ClassUtils;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Msg;
 import com.thoughtworks.qdox.JavaDocBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
@@ -23,7 +23,7 @@ public class ProtobufGen {
 	private static final String msg_src = "../rpg/src/main/java/com/shadowgame/rpg/msg";
 	private static final String msg_classes = "../rpg/target/classes";
 	private static final String classpath_resources = "../rpg/src/main/resources";
-	private static final String proto_file_out_dir = classpath_resources + "/proto-out";
+	private static final String proto_file_out_dir = "proto-out";
 	private static final String protoFileSuffix = ".proto";
 	private static final String registry_filename = "Messages.txt";
 
@@ -98,6 +98,7 @@ public class ProtobufGen {
 			for (Entry<Integer, String> e : msgId2ClassName.entrySet()) {
 				str.append(e.getKey()).append("=").append(e.getValue()).append("\n");
 			}
+			xgame.core.util.IOUtils.writeFile(proto_file_out_dir, registry_filename, str.toString());
 			xgame.core.util.IOUtils.writeFile(classpath_resources, registry_filename, str.toString());
 			log.info("write file:[" +  registry_filename + "] to [" + classpath_resources + "] success.");
 		}

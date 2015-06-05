@@ -1,1 +1,10 @@
+*.class
+/bin
+# Package Files #
+*.war
+*.ear
 /target
+.gitignore
+.svn
+.project
+.classpath
