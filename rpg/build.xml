@@ -1,17 +1,12 @@
-<project name="gameserver" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="dist">
+<project name="GameServer" basedir="." default="dist">
 	<property name="jdk.version" value="1.7" />
 	<property name="source.encoding" value="UTF-8" />
-	<property name="src" value="src/main/java" />
+	<property name="src" value="src" />
 	<property name="manifest" value="MANIFEST.MF" />
-	<property name="resources" value="src/main/resources" />
 	<property name="target" value="target" />
 	<property name="lib" value="lib" />
 
-	<artifact:pom id="pom.this" file="pom.xml" />
-	<artifact:dependencies filesetid="fileset.lib.runtime" pathid="path.lib.runtime" pomrefid="pom.this" usescope="runtime" />
-
 	<path id="classpath.project">
-		<path refid="path.lib.runtime"/>
 		<fileset dir="${lib}/"/>
 	</path>
 
@@ -26,9 +21,9 @@
 				<path refid="classpath.project" />
 			</classpath>
 		</javac>
-		<copy file="${resources}/log4j.xml" todir="${target}/classes"/>
-		<copy file="${resources}/Messages.txt" todir="${target}/classes"/>
-		<copy file="${resources}/quartz_jobs.xml" todir="${target}/classes"/>
+		<copy file="${src}/log4j.xml" todir="${target}/classes"/>
+		<copy file="${src}/Messages.txt" todir="${target}/classes"/>
+		<copy file="${src}/quartz_jobs.xml" todir="${target}/classes"/>
 	</target>
 
 	<target name="dist" depends="compile">
@@ -46,4 +41,16 @@
 			</fileset>
 		</jar>
 	</target>
+<!--	
+	<target name="copy-maven-lib-jar" depends="dist">
+	
+			<delete dir="lib"/>
+			<mkdir dir="lib" /> 
+
+			<copy todir="${lib}" flatten="true">
+				<fileset refid="fileset.lib.runtime" />
+				<mapper type="flatten" />
+			</copy>
+		</target>
+-->
 </project>

@@ -1,38 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/tools.jar"/>
+	<classpathentry excluding="main/java/" kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/game-core.jar" sourcepath="/core"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-dbutils-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-digester-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/dozer-5.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/dozer-proto-5.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/druid-1.0.14.jar"/>
+	<classpathentry kind="lib" path="lib/fastjson-1.1.36.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-annotations-api_1.2_spec-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-logging-3.1.4.GA.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-servlet-api_3.1_spec-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/jcl-over-slf4j-1.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/jprotobuf-1.6.4-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.26.jar"/>
+	<classpathentry kind="lib" path="lib/netty-3.10.3.Final.jar" sourcepath="C:/Users/Administrator/.m2/repository/io/netty/netty/3.10.3.Final/netty-3.10.3.Final-sources.jar"/>
+	<classpathentry kind="lib" path="lib/phprpc-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/protobuf-java-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/protoparser-3.1.5.jar"/>
+	<classpathentry kind="lib" path="lib/qdox-1.12.jar"/>
+	<classpathentry kind="lib" path="lib/quartz-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/undertow-core-1.2.6.Final.jar"/>
+	<classpathentry kind="lib" path="lib/undertow-servlet-1.2.6.Final.jar"/>
+	<classpathentry kind="lib" path="lib/xnio-api-3.3.1.Final.jar"/>
+	<classpathentry kind="lib" path="lib/xnio-nio-3.3.1.Final.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
