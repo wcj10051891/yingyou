@@ -13,21 +13,13 @@ public class AlertMsg extends Message {
 	/**
 	 * 弹窗提示消息内容
 	 */
-	private String content;
+	public String content;
 	
 	public AlertMsg() {
 	}
 
 	public AlertMsg(String content) {
 		super();
-		this.content = content;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
 		this.content = content;
 	}
 }

@@ -15,7 +15,7 @@
 	</path>
 	
 	<target name="proto_gen">
-		<java classname="jprotobufgen.JProtobufGen">
+		<java classname="protobufgen.ProtobufGen">
 			<classpath>
 				<path refid="classpath.project" />
 			</classpath>

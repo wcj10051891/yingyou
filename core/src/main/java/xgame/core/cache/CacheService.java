@@ -46,7 +46,7 @@ public class CacheService implements Service {
 		saveQueue.saveOnStop();
 	}
 	
-	public <T extends CacheObject, K> T get(K key, Class<T> objectClass, boolean loadFromDB) {
+	public <T extends CacheObject, K> T get(K key, Class<T> objectClass, boolean loadFromDB, Object attachment) {
 		if(key == null || key.toString().equals("0")) {
 			log.info("get object invalid key:{}, class:{}, loadFromDB:{}.", 
 				key, objectClass, loadFromDB);
@@ -74,7 +74,7 @@ public class CacheService implements Service {
 				Object entity = newObject.get(key);
 				if(entity == null)
 					return null;
-				newObject.init(entity);
+				newObject.init(entity, attachment);
 				put(k, new CacheObjectReference<CacheObject>(k, newObject, refQueue));
 				log.info("get object not in cache, create it. key:{}, class:{}, instance:{}, fromDB:{}.", 
 						key, objectClass, newObject, loadFromDB);
@@ -122,7 +122,7 @@ public class CacheService implements Service {
         }
     }
 	
-	public <T extends CacheObject<K, E>, K, E> Map<K, T> gets(Collection<K> keys, Class<T> objectClass, boolean loadFromDB) {
+	public <T extends CacheObject<K, E>, K, E> Map<K, T> gets(Collection<K> keys, Class<T> objectClass, boolean loadFromDB, Object attachment) {
 		if(keys == null || keys.isEmpty()) {
 			log.info("gets object invalid keys:{}, class:{}, loadFromDB:{}.", 
 				keys, objectClass, loadFromDB);
@@ -134,7 +134,7 @@ public class CacheService implements Service {
 		for(K key : keys) {
 			if(key == null || key.toString().equals("0"))
 				continue;
-			T target = get(key, objectClass, false);
+			T target = get(key, objectClass, false, attachment);
 			if(target == null)
 				notInCache.add(key);
 			else
@@ -179,6 +179,38 @@ public class CacheService implements Service {
 		}
 		log.info("gets object, keys:{}, class:{}, fromDB:{}, result:{}.", keys, objectClass, loadFromDB, result.keySet()); 
 		return result;
+	}
+	
+	public <T extends CacheObject, K> T create(K key, Class<T> objectClass, Object attachment) {
+		if(key == null || key.toString().equals("0")) {
+			log.info("create object invalid key:{}, class:{}.", key, objectClass);
+			return null;
+		}
+		String k = k(key, objectClass);
+		try {
+			cacheLock.lock();
+			SoftReference<CacheObject> ref = softCache.get(k);
+			if(ref != null && ref.get() != null) {
+				T result = (T) ref.get();
+				log.info("create object from cache, key:{}, class:{}, instance:{}.", 
+						key, objectClass, result);				
+				return result;
+			}
+			try {
+				T newObject = (T) objectClass.newInstance();
+				Object entity = newObject.create(attachment);
+				newObject.init(entity, attachment);
+				put(k, new CacheObjectReference<CacheObject>(k, newObject, refQueue));
+				log.info("create object not in cache, create it. key:{}, class:{}, instance:{}.", 
+						key, objectClass, newObject);
+				return newObject;
+			} catch (Exception e) {
+				log.error("instantiate object failure, key:{}, class:{}, error:{}.", key, objectClass, e);
+				return null;
+			}
+		}finally{
+			cacheLock.unlock();
+		}
 	}
 	
 	public <T extends CacheObject> T put(T newObject) {

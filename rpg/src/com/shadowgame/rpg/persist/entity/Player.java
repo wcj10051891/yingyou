@@ -1,5 +1,5 @@
 package com.shadowgame.rpg.persist.entity;
-/** 玩家表 */
+/** 玩家 */
 public class Player{
 	/** 玩家id */
 	public Long id;
@@ -7,16 +7,16 @@ public class Player{
 	public String username="";
 	/** 昵称 */
 	public String nickname="";
-	/** 当前等级 */
+	/** 等级 */
 	public Integer level=0;
 	/** 当前经验 */
 	public Integer exp=0;
 	/** 创建时间 */
-	public java.sql.Timestamp createTime;
-	/** 上次登录 */
-	public java.sql.Timestamp loginTime;
-	/** 上次登出 */
-	public java.sql.Timestamp logoutTime;
+	public java.sql.Timestamp createTime=new java.sql.Timestamp(System.currentTimeMillis());
+	/** 上次登录时间 */
+	public java.sql.Timestamp loginTime=new java.sql.Timestamp(System.currentTimeMillis());
+	/** 上次登出时间 */
+	public java.sql.Timestamp logoutTime=new java.sql.Timestamp(System.currentTimeMillis());
 	/** 每日属性 */
 	public String daily;
 	/** 扩展属性 */

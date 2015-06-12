@@ -18,10 +18,11 @@ public abstract class AbstractCacheObject<K, E> implements CacheObject<K, E> {
 	}
 	
 	@Override
-	public abstract CacheObject<K, E> init(E entity);
+	public abstract CacheObject<K, E> init(E entity, Object attachement);
 
 	@Override
-	public void insert() {
+	public E create(Object attachment) {
+		return null;
 	}
 
 	@Override

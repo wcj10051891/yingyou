@@ -47,7 +47,7 @@ public class Knapsack extends AbstractCacheObject<Long, com.shadowgame.rpg.persi
 	 * @return
 	 */
 	@Override
-	public CacheObject<Long, PlayerKnapsack> init(PlayerKnapsack entity) {
+	public CacheObject<Long, PlayerKnapsack> init(PlayerKnapsack entity, Object attachment) {
 		this.entity = entity;
 		this.items = new Long[entity.capacity];
 		JSONArray data = JsonUtils.parseArray(this.entity.items);
@@ -57,7 +57,7 @@ public class Knapsack extends AbstractCacheObject<Long, com.shadowgame.rpg.persi
 			if(object != null && object instanceof Long) {
 				Long playerItemId = (Long)object;
 				if(playerItemId > 0) {
-					PlayerItem playerItem = Services.cacheService.get(playerItemId, PlayerItem.class, true);
+					PlayerItem playerItem = Services.cacheService.get(playerItemId, PlayerItem.class, true, attachment);
 					if(playerItem != null)
 						items[i] = playerItemId;
 				}

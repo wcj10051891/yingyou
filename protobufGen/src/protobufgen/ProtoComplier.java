@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 @Ignore
 public class ProtoComplier {
 	private static final String protoc = "./protoc.exe";
-	private static final String proto_file_path = "../rpg/src/main/resources/proto-out";
+	private static final String proto_file_path = "./proto-out";
 	private static final String java_out = "src";
 
 	public static void main(String[] args) throws Exception {

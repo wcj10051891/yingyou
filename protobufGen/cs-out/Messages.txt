@@ -1,0 +1,7 @@
+10000=com.shadowgame.rpg.msg.LoginMsg
+10001=com.shadowgame.rpg.msg.AlertMsg
+10002=com.shadowgame.rpg.msg.NoticeMsg
+10003=com.shadowgame.rpg.msg.ProtoMsg
+10004=com.shadowgame.rpg.msg.LoginResult
+10005=com.shadowgame.rpg.msg.LoginResult2
+10006=com.shadowgame.rpg.msg.LoginResult3

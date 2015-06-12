@@ -1,14 +1,14 @@
 package xgame.core.event;
 
 
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class BaseObservable {
-	public Map<Class<? extends Event>, Set<EventListener<? extends Event>>> eventListeners = new HashMap<Class<? extends Event>, Set<EventListener<? extends Event>>>(0);
+	public Map<Class<? extends Event>, Set<EventListener<? extends Event>>> eventListeners = new ConcurrentHashMap<Class<? extends Event>, Set<EventListener<? extends Event>>>(0);
 
 	public void addListener(Class<? extends Event> eventType, EventListener... listeners) {
 		if(listeners.length == 0)
@@ -35,6 +35,16 @@ public abstract class BaseObservable {
 		
 		for (EventListener<? extends Event> eventListener : listeners)
 			_listeners.remove(eventListener);
+	}
+	
+	public void removeListener(EventListener... listeners) {
+		if(listeners.length == 0)
+			return;
+
+		for (EventListener<? extends Event> eventListener : listeners) {
+			for (Set<EventListener<? extends Event>> es : this.eventListeners.values())
+				es.remove(eventListener);
+		}
 	}
 
 	public <E extends Event> void fireEvent(E event) {

@@ -29,7 +29,7 @@ public class Item extends AbstractCacheObject<Integer, com.shadowgame.rpg.persis
 	}
 	
 	@Override
-	public Item init(com.shadowgame.rpg.persist.entity.Item entity) {
+	public Item init(com.shadowgame.rpg.persist.entity.Item entity, Object attachment) {
 		this.entity = entity;
 		return this;
 	}
@@ -63,7 +63,7 @@ public class Item extends AbstractCacheObject<Integer, com.shadowgame.rpg.persis
 			playerItemEntity.playerId = playerId;
 			if(this.entity.bindType == 1)
 				playerItemEntity.binding = true;
-			playerItem.init(playerItemEntity);
+			playerItem.init(playerItemEntity, null);
 			result.add(playerItem);
 		}
 		return result;
@@ -78,13 +78,13 @@ public class Item extends AbstractCacheObject<Integer, com.shadowgame.rpg.persis
 			List<Integer> keys) {
 		Map<Integer, CacheObject<Integer, com.shadowgame.rpg.persist.entity.Item>> result = new HashMap<Integer, CacheObject<Integer, com.shadowgame.rpg.persist.entity.Item>>(keys.size());
 		for(com.shadowgame.rpg.persist.entity.Item item : dao.getByItemIds(keys))
-			result.put(item.getId(), new Item().init(item));
+			result.put(item.getId(), new Item().init(item, null));
 		
 		return result;
 	}
 	
 	public static List<PlayerItem> createPlayerItem(CountMap<Integer, Integer> itemIdAndNums, Long playerId) {
-		Map<Integer, Item> items = Services.cacheService.gets(itemIdAndNums.keySet(), Item.class, true);
+		Map<Integer, Item> items = Services.cacheService.gets(itemIdAndNums.keySet(), Item.class, true, null);
 		List<PlayerItem> result = new ArrayList<PlayerItem>(itemIdAndNums.size());
 		for (Entry<Integer, Integer> idAndNum : itemIdAndNums.entrySet())
 			result.addAll(items.get(idAndNum.getKey()).createPlayerItem(idAndNum.getValue(), playerId));

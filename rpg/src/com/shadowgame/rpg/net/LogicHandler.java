@@ -20,7 +20,6 @@ import com.shadowgame.rpg.msg.AlertMsg;
 import com.shadowgame.rpg.msg.LoginMsg;
 import com.shadowgame.rpg.msg.NoticeMsg;
 import com.shadowgame.rpg.net.msg.ClientMsg;
-import com.shadowgame.rpg.net.msg.Message;
 import com.shadowgame.rpg.service.Services;
 
 @Sharable
@@ -46,6 +45,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 //			}
 //		});
 		stat.users.incrementAndGet();
+		log.info("channel:{} channelConnected", ctx.getChannel());
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 			@Override
 			public void run() {
 				final Player player = (Player)ctx.getChannel().getAttachment();
-				final Message msg = (Message)e.getMessage();
+				final Object msg = e.getMessage();
 				if(!(msg instanceof ClientMsg))
 					throw new AppException("receive msg not instanceof ClientMsg:[" + msg + 
 							"], server can't process, player:" + player + ", channel:" + ctx.getChannel());
@@ -74,7 +74,6 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 	}
 	
 	private void processRequest(Player player, ClientMsg msg, ChannelHandlerContext ctx) {
-		stat.requestCount.incrementAndGet();
 		long start = System.currentTimeMillis();
 		try {
 			log.info("process client msg:{}, player:{}, channel:{}", msg, player, ctx.getChannel());
@@ -84,17 +83,21 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 			} else {
 				msg.handle(player);
 			}
+			stat.requestCount.incrementAndGet();
 		} catch (Exception ex) {
 			Throwable cause = ex.getCause();
-			if(cause instanceof AlertException)
-				Services.tcpService.send(new AlertMsg(((AlertException)cause).msg), ctx.getChannel());
-			else if(cause instanceof NoticeException)
-				Services.tcpService.send(new NoticeMsg(((NoticeException)cause).msg), ctx.getChannel());
-			else {
-				log.error("process client msg error, player:{}, channel:{}, msg:{}, error:{}", 
-						player, ctx.getChannel(), msg, ex);
-				ex.printStackTrace();
+			if(cause != null) {
+				if(cause instanceof AlertException) {
+					Services.tcpService.send(new AlertMsg(((AlertException)cause).msg), ctx.getChannel());
+					return;
+				} else if(cause instanceof NoticeException) {
+					Services.tcpService.send(new NoticeMsg(((NoticeException)cause).msg), ctx.getChannel());
+					return;
+				}
 			}
+			log.error("process client msg error, player:{}, channel:{}, msg:{}, error:{}", 
+					player, ctx.getChannel(), msg, ex);
+			ex.printStackTrace();
 		}
 		long cost = System.currentTimeMillis() - start;
 		stat.responseTimeSum.getAndAdd(cost);
@@ -104,8 +107,6 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
 		log.error("player:{}, channel:{}, exception:{}", e.getChannel().getAttachment(), e.getChannel(), e.getCause());
 		e.getCause().printStackTrace();
-		
-//		throw (Exception)e.getCause();
 	}
 
 	@Override

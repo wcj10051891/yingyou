@@ -1,0 +1,12 @@
+package com.shadowgame.rpg.msg;
+option java_outer_classname = "ProtoMsg$$Gen";
+message ProtoMsg {  
+	/**
+	 * 协议号
+	 */
+optional int32 id=1;
+	/**
+	 * proto数据
+	 */
+optional bytes data=2;
+}

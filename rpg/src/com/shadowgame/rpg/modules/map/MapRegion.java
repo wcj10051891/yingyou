@@ -14,7 +14,6 @@ import org.jboss.netty.channel.Channel;
 import com.shadowgame.rpg.modules.core.AbstractSpirit;
 import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.Player;
-import com.shadowgame.rpg.net.msg.Message;
 import com.shadowgame.rpg.service.Services;
 
 /**
@@ -165,7 +164,7 @@ public class MapRegion {
 		}
 	}
 	
-	public void broadcast(Message message, Player... excludePlayers) {
+	public void broadcast(Object message, Player... excludePlayers) {
 		Collection<Channel> toChannels = new ArrayList<>();
 		Set<Channel> excludeChannels = new HashSet<>();
 		Collection<Player> excludePs = new HashSet<>(Arrays.asList(excludePlayers));

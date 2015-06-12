@@ -14,4 +14,24 @@ optional string username=1;
 	 * 密码
 	 */
 optional string password=2;
+	/**
+	 * 提示消息数组
+	 */
+repeated NoticeMsg msgs1=3;
+	/**
+	 * 提示消息数组
+	 */
+repeated AlertMsg msgs2=4;
+}
+message NoticeMsg {  
+	/**
+	 * 飘字提示消息内容
+	 */
+optional string content=1;
+}
+message AlertMsg {  
+	/**
+	 * 弹窗提示消息内容
+	 */
+optional string content=1;
 }

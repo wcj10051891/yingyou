@@ -25,7 +25,7 @@ public class ThreadService implements Service {
 			10,
 			TimeUnit.MINUTES, 
 			new LinkedTransferQueue<Runnable>(), 
-			new ThreadNameFactory("business logic"));
+			new ThreadNameFactory("game business logic"));
 		threadPool.allowCoreThreadTimeOut(true);
 	}
 

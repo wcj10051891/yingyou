@@ -58,7 +58,7 @@ public abstract class IOUtils {
 		file.delete();
 	}
 	
-	public static void writeFile(String parentDir, String filename, String fileContent) throws IOException {
+	public static File writeFile(String parentDir, String filename, String fileContent) throws IOException {
 		File outFile = new File(parentDir, filename);
 		if (!outFile.exists()) {
 			outFile.getParentFile().mkdirs();
@@ -68,5 +68,6 @@ public abstract class IOUtils {
 		writer.write(fileContent);
 		writer.flush();
 		writer.close();
+		return outFile;
 	}
 }

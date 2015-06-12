@@ -30,7 +30,7 @@ public class TimerService implements Service {
 	@Override
 	public void start() throws Exception {
 		jdkScheduler = new ScheduledThreadPoolExecutor(
-				AppConfig.JDK_SCHEDULE_CORE_POOL_SIZE, new ThreadNameFactory("jdk scheduler"));
+				AppConfig.JDK_SCHEDULE_CORE_POOL_SIZE, new ThreadNameFactory("game scheduler"));
 		
 		// 读取默认配置文件 增加插件
 		Properties ps = new Config("org/quartz/quartz.properties").getProperties();

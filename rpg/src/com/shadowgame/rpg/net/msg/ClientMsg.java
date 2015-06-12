@@ -12,7 +12,5 @@ public abstract class ClientMsg extends Message {
 	 * 处理客户端发送的消息
 	 * @param player
 	 */
-	public void handle(Player player) {
-		
-	}
+	public abstract void handle(Player player);
 }

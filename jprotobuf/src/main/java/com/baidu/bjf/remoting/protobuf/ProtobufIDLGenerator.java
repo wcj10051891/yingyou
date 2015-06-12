@@ -20,6 +20,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Msg;
@@ -45,11 +46,7 @@ public class ProtobufIDLGenerator {
      *            target protobuf class to parse
      * @return protobuf IDL content in string
      */
-    public static String getIDL(Class<?> cls) {
-    	return getIDL(cls, null);
-    }
-    
-    public static String getIDL(Class<?> cls, JavaClass jclass) {
+    public static String getIDL(Class<?> cls, Map<String, JavaClass> context, Set<String> nestedMsg) {
     	StringBuilder code = new StringBuilder();
 
         Set<Class<?>> cachedTypes = new HashSet<Class<?>>();
@@ -63,10 +60,11 @@ public class ProtobufIDLGenerator {
 
         cachedTypes.add(cls);
 
+        JavaClass jclass = context.get(cls.getName());
         if(jclass != null) {
         	 code.append(Utils.getComment(jclass));
         }
-        code.append(generateIDL(jclass, cls, cachedTypes, cachedEnumTypes));
+        code.append(generateIDL(cls, context, cachedTypes, cachedEnumTypes, nestedMsg));
 
         return code.toString();
     }
@@ -76,8 +74,8 @@ public class ProtobufIDLGenerator {
      * @param cls
      * @return sub message class list
      */
-    private static String generateIDL(JavaClass jclass, Class<?> cls, Set<Class<?>> cachedTypes,
-        Set<Class<?>> cachedEnumTypes) {
+    private static String generateIDL(Class<?> cls, Map<String, JavaClass> context, Set<Class<?>> cachedTypes,
+        Set<Class<?>> cachedEnumTypes, Set<String> nestedMsg) {
 //        List<Field> fields = FieldUtils.findMatchedFields(cls, Protobuf.class);
 //        if (fields.isEmpty()) {
 //            throw new IllegalArgumentException("Invalid class [" + cls.getName() + "] no field use annotation @"
@@ -97,6 +95,7 @@ public class ProtobufIDLGenerator {
             if (field.hasDescription()) {
                 code.append("// ").append(field.getDescription()).append("\n");
             } else {
+                JavaClass jclass = context.get(cls.getName());
             	if(jclass != null) {
             		code.append(Utils.getComment(jclass.getFieldByName(field.getField().getName())));
             	}
@@ -166,17 +165,19 @@ public class ProtobufIDLGenerator {
 //        if (subTypes.isEmpty()) {
 //            return;
 //        }
-//
-//        for (Class<?> subType : subTypes) {
-//            generateIDL(code, subType, cachedTypes, cachedEnumTypes);
-//        }
         if(!subTypes.isEmpty()) {
-        	StringBuilder imports = new StringBuilder();
         	for (Class<?> subType : subTypes) {
-        		imports.append("import \"").append(subType.getName().replaceAll("\\.", "/")).append(".proto\";\n");
+        		nestedMsg.add(subType.getName());
+        		code.append(generateIDL(subType, context, cachedTypes, cachedEnumTypes, nestedMsg));
         	}
-        	return new StringBuilder().append(imports).append(code).toString();
         }
+//        if(!subTypes.isEmpty()) {
+//        	StringBuilder imports = new StringBuilder();
+//        	for (Class<?> subType : subTypes) {
+//        		imports.append("import \"").append(subType.getName().replaceAll("\\.", "/")).append(".proto\";\n");
+//        	}
+//        	return new StringBuilder().append(imports).append(code).toString();
+//        }
         return code.toString();
     }
     

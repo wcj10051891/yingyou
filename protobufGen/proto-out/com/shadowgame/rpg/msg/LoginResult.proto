@@ -1,0 +1,23 @@
+package com.shadowgame.rpg.msg;
+option java_outer_classname = "LoginResult$$Gen";
+message LoginResult {  
+optional int32 i=1;
+optional int64 l=2;
+optional float f=3;
+optional double d=4;
+optional bool b=5;
+optional string s=6;
+repeated LoginResult2 r2=7;
+}
+message LoginResult2 {  
+optional int32 i=1;
+optional int64 l=2;
+optional float f=3;
+optional double d=4;
+optional bool b=5;
+optional string s=6;
+repeated LoginResult3 r3=7;
+}
+message LoginResult3 {  
+optional string s=1;
+}

@@ -1,8 +1,8 @@
 #if ($packageName != '')
 package $packageName;
-import com.wabao.dao.annotation.Arg;
-import com.wabao.dao.annotation.Dao;
-import com.wabao.dao.annotation.Sql;
+import xgame.core.db.annotation.Arg;
+import xgame.core.db.annotation.Dao;
+import xgame.core.db.annotation.Sql;
 import java.util.List;
 import $classFullName;
 #end

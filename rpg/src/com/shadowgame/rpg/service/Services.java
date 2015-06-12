@@ -18,9 +18,9 @@ import xgame.core.net.server.tcp.TcpService;
 
 import com.shadowgame.rpg.core.AppConfig;
 import com.shadowgame.rpg.net.LogicHandler;
-import com.shadowgame.rpg.net.codec.ProtobufDecoder;
-import com.shadowgame.rpg.net.codec.ProtobufEncoder;
-import com.shadowgame.rpg.net.msg.MsgService;
+import com.shadowgame.rpg.net.codec.BinaryDecoder;
+import com.shadowgame.rpg.net.codec.BinaryEncoder;
+import com.shadowgame.rpg.net.msg.BinaryMsgService;
 import com.shadowgame.rpg.remote.servlet.Online;
 
 public class Services {
@@ -32,9 +32,11 @@ public class Services {
 	public static JMXService jmxService;
 	public static CacheService cacheService;
 	public static AppService appService;
-	public static MsgService msgService;
+//	public static MsgService msgService;
+	public static BinaryMsgService msgService;
 	public static DaoFactory daoFactory;
 	public static QueryRunner jdbc;
+	public static ConfigService config;
 	
 	public static void start() throws Exception {
 		timerService = new TimerService();
@@ -45,12 +47,12 @@ public class Services {
 		threadService.start();
 		log.info("[theadService] start ok.");
 		
-//		DaoContext daoContext = new DaoContext();
-//		daoFactory = daoContext.daoFactory;
-//		log.info("[daoFactory] start ok.");
-//		
-//		jdbc = daoContext.jdbc;
-//		log.info("[jdbc] start ok.");
+		DaoContext daoContext = new DaoContext();
+		daoFactory = daoContext.daoFactory;
+		log.info("[daoFactory] start ok.");
+		
+		jdbc = daoContext.jdbc;
+		log.info("[jdbc] start ok.");
 		
 		cacheService = new CacheService(timerService.jdkScheduler);
 		cacheService.start();
@@ -60,7 +62,7 @@ public class Services {
 		appService.start();
 		log.info("[appService] start ok.");
 
-		msgService = new MsgService();
+		msgService = new BinaryMsgService();
 		msgService.start();
 		log.info("[msgService] start ok.");
 		
@@ -68,7 +70,7 @@ public class Services {
 		jmxService.start();
 		log.info("[jmxService] start ok.");
 		
-		tcpService = new TcpService(AppConfig.TCP_PORT, ProtobufDecoder.class, new LogicHandler(), new ProtobufEncoder());
+		tcpService = new TcpService(AppConfig.TCP_PORT, BinaryDecoder.class, new LogicHandler(), new BinaryEncoder());
 		tcpService.start();
 		log.info("[tcpService] start ok.");
 		
@@ -83,6 +85,10 @@ public class Services {
 		servletServer = new ServletServer(AppConfig.HTTP_PORT, AppConfig.HTTP_DEFAULT_CHARSET, AppConfig.HTTP_CONTEXT_ROOT, servletContextAttribute, servlets);
 		servletServer.start();
 		log.info("[servletServer] start ok.");
+		
+		config = new ConfigService();
+		config.start();
+		log.info("[ConfigService] start ok.");
 	}
 	
 	public static void stop() throws Exception {

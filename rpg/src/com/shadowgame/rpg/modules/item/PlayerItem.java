@@ -30,9 +30,9 @@ public class PlayerItem extends AbstractCacheObject<Long, com.shadowgame.rpg.per
 	 */
 	@Override
 	public CacheObject<Long, com.shadowgame.rpg.persist.entity.PlayerItem> init(
-			com.shadowgame.rpg.persist.entity.PlayerItem entity) {
+			com.shadowgame.rpg.persist.entity.PlayerItem entity, Object attachment) {
 		this.entity = entity;
-		this.item = Services.cacheService.get(this.entity.itemId, Item.class, true);
+		this.item = Services.cacheService.get(this.entity.itemId, Item.class, true, attachment);
 		return this;
 	}
 	
@@ -40,8 +40,9 @@ public class PlayerItem extends AbstractCacheObject<Long, com.shadowgame.rpg.per
 	 * 
 	 */
 	@Override
-	public void insert() {
+	public com.shadowgame.rpg.persist.entity.PlayerItem create(Object attachment) {
 		dao.insert(entity);
+		return null;
 	}
 	
 	/**

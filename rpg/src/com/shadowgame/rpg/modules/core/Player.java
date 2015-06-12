@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xgame.core.cache.CacheObject;
+import xgame.core.event.BaseObservable;
 import xgame.core.net.server.tcp.Groups;
 import xgame.core.util.CountMap;
 import xgame.core.util.JsonUtils;
@@ -22,11 +23,12 @@ import com.shadowgame.rpg.modules.item.Item;
 import com.shadowgame.rpg.modules.item.Knapsack;
 import com.shadowgame.rpg.modules.item.PlayerItem;
 import com.shadowgame.rpg.modules.map.Position;
+import com.shadowgame.rpg.modules.mission.PlayerMissionManager;
 import com.shadowgame.rpg.persist.dao.PlayerDao;
 import com.shadowgame.rpg.service.Services;
 
 public class Player extends AbstractFighter implements CacheObject<Long, com.shadowgame.rpg.persist.entity.Player> {
-	private static final PlayerDao dao = null;// = Services.daoFactory.get(PlayerDao.class);
+	private static final PlayerDao dao = Services.daoFactory.get(PlayerDao.class);
 	private static final Logger log = LoggerFactory.getLogger(Player.class);
 	public com.shadowgame.rpg.persist.entity.Player entity;
 	
@@ -35,6 +37,8 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	public JSONObject extAttribute;
 	public Knapsack knapsack;
 	public ProcessQueue processQueue = new ProcessQueue(Services.threadService.threadPool);
+	public BaseObservable eventManager;
+	public PlayerMissionManager missionManager;
 
 	/**
 	 * @param key
@@ -45,18 +49,23 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 		return dao.get(key);
 	}
 	
-	public Player init(com.shadowgame.rpg.persist.entity.Player entity) {
+	public Player init(com.shadowgame.rpg.persist.entity.Player entity, Object attachment) {
 		this.objectId = entity.id;
 		this.entity = entity;
 		this.daily = new DailyAttribute(!StringUtils.hasText(this.entity.daily) ? "{}" : this.entity.daily);
 		this.extAttribute = JsonUtils.parseObject(!StringUtils.hasText(this.entity.extAttribute) ? "{}" : this.entity.extAttribute);
-		this.knapsack = Services.cacheService.get(this.objectId, Knapsack.class, true);
+		this.knapsack = Services.cacheService.get(this.objectId, Knapsack.class, true, null);
 		return this;
 	}
 	
 	public void onLogin() {
 		Services.appService.world.allPlayers.add(this);
 		Services.tcpService.joinGroup(Groups.World, channel);
+		
+		missionManager = Services.cacheService.get(this.entity.id, PlayerMissionManager.class, true, this);
+		if(missionManager == null) {
+			missionManager = Services.cacheService.create(this.getObjectId(), PlayerMissionManager.class, this);
+		}
 	}
 	
 	public void onLogout() {
@@ -66,7 +75,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 		this.channel = null;
 		
 		Services.cacheService.saveAsync(this);
-		Services.cacheService.saveAsync(this.knapsack);
+//		Services.cacheService.saveAsync(this.knapsack);
 	}
 
 	@Override
@@ -85,10 +94,6 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	
 	public void send(Object message) {
 		Services.tcpService.send(message, this.channel);
-	}
-
-	public void disconnectWaitCompleted() {
-		disconnect(false);
 	}
 	
 	public void disconnect(boolean synchronize) {
@@ -124,8 +129,9 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	 * 
 	 */
 	@Override
-	public void insert() {
+	public com.shadowgame.rpg.persist.entity.Player create(Object attachment) {
 		dao.insert(entity);
+		return null;
 	}
 
 	/**

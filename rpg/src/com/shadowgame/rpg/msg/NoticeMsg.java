@@ -14,21 +14,13 @@ public class NoticeMsg extends Message {
 	/**
 	 * 飘字提示消息内容
 	 */
-	private String content;
+	public String content;
 
 	public NoticeMsg() {
 	}
 
 	public NoticeMsg(String content) {
 		super();
-		this.content = content;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
 		this.content = content;
 	}
 }
