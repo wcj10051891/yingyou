@@ -16,11 +16,41 @@ import java.util.Map;
  *			调用CacheObject的insert方法插入数据库数据落地，然后调用CacheService的put方法将CacheObject放入缓存。<br/>
  */
 public interface CacheObject<K, E> {
-	CacheObject<K, E> init(E entity, Object attachment);
+	/**
+	 * 缓存对象的初始化逻辑，CacheService会在get实体对象后调用init来初始化
+	 * @param entity		对应的数据库实体数据
+	 * @param contextParam	初始化需要用到的一些辅助对象
+	 * @return
+	 */
+	CacheObject<K, E> init(E entity, Object... contextParam);
+	/**
+	 * 从数据库查询数据的逻辑
+	 * @param key			数据主键
+	 * @return
+	 */
 	E get(K key);
-	Map<K, CacheObject<K, E>> gets(List<K> keys);
-	E create(Object attachment);
+	/**
+	 * 批量查询数据库entity对象
+	 * @param keys			主键列表
+	 * @return				数据库实体列表
+	 */
+	Map<K, E> gets(List<K> keys);
+	/**
+	 * 如果对应的数据库记录还没有，用这个方法创建，即执行数据插入数据库操作，，CacheService会在create实体对象后调用init来初始化
+	 * @param contextParam	创建需要的一些辅助对象，用于create和init
+	 * @return
+	 */
+	E create(Object... contextParam);
+	/**
+	 * 删除逻辑
+	 */
 	void delete();
+	/**
+	 * 更新逻辑
+	 */
 	void update();
+	/**
+	 * @return	缓存对象的key
+	 */
 	K getKey();
 }

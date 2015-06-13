@@ -8,13 +8,13 @@ import xgame.core.db.annotation.Sql;
 import com.shadowgame.rpg.persist.entity.Item;
 @Dao
 public interface ItemDao {
-	@Sql(value="insert into item(	`id`,	`name`,	`description`,	`playerLevel`,	`parentType`,	`itemType`,	`bindType`,	`quality`,	`maxStack`,	`function`,	`extAttribute`	) values(	:item.id,	:item.name,	:item.description,	:item.playerLevel,	:item.parentType,	:item.itemType,	:item.bindType,	:item.quality,	:item.maxStack,	:item.function,	:item.extAttribute	)")
+	@Sql(value="insert into item(	`id`,	`name`,	`description`,	`playerLv`,	`parentType`,	`itemType`,	`bindType`,	`quality`,	`maxStack`,	`function`,	`extAttribute`	) values(	:item.id,	:item.name,	:item.description,	:item.playerLv,	:item.parentType,	:item.itemType,	:item.bindType,	:item.quality,	:item.maxStack,	:item.function,	:item.extAttribute	)")
 	Integer insert(@Arg(value="item") Item o);
 	
 	@Sql(value="delete from item where id=:id")
 	void delete(@Arg(value="id")Integer id);
 	
-	@Sql(value="update item set 	`id`=:item.id,	`name`=:item.name,	`description`=:item.description,	`playerLevel`=:item.playerLevel,	`parentType`=:item.parentType,	`itemType`=:item.itemType,	`bindType`=:item.bindType,	`quality`=:item.quality,	`maxStack`=:item.maxStack,	`function`=:item.function,	`extAttribute`=:item.extAttribute	 where id=:item.id")
+	@Sql(value="update item set 	`id`=:item.id,	`name`=:item.name,	`description`=:item.description,	`playerLv`=:item.playerLv,	`parentType`=:item.parentType,	`itemType`=:item.itemType,	`bindType`=:item.bindType,	`quality`=:item.quality,	`maxStack`=:item.maxStack,	`function`=:item.function,	`extAttribute`=:item.extAttribute	 where id=:item.id")
 	void update(@Arg(value="item") Item o);
 
 	@Sql(value="select * from item where id=:id")

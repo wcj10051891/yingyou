@@ -30,24 +30,32 @@ public class Knapsack extends AbstractCacheObject<Long, com.shadowgame.rpg.persi
 	 */
 	@Override
 	public PlayerKnapsack get(Long key) {
-		PlayerKnapsack dbEntity = dao.get(key);
-		if(dbEntity == null) {
-			PlayerKnapsack knapsack = new PlayerKnapsack();
-			knapsack.id = key;
-			knapsack.items = "[]";
-			knapsack.capacity = DEFAULT_CAPACITY;
-			dao.insert(knapsack);
-			return dbEntity;
-		}
-		return dbEntity;
+		return dao.get(key);
 	}
-
+	
 	/**
-	 * @param entity
+	 * 创建背包，需要参数contextParam[playerId]
+	 * @param contextParam
 	 * @return
 	 */
 	@Override
-	public CacheObject<Long, PlayerKnapsack> init(PlayerKnapsack entity, Object attachment) {
+	public PlayerKnapsack create(Object... contextParam) {
+		PlayerKnapsack entity = new PlayerKnapsack();
+		entity.id = (Long)contextParam[0];
+		entity.items = "[]";
+		entity.capacity = DEFAULT_CAPACITY;
+		dao.insert(entity);
+		return entity;
+	}
+
+	/**
+	 * 初始化背包
+	 * @param entity
+	 * @param contextParam
+	 * @return
+	 */
+	@Override
+	public CacheObject<Long, PlayerKnapsack> init(PlayerKnapsack entity, Object... contextParam) {
 		this.entity = entity;
 		this.items = new Long[entity.capacity];
 		JSONArray data = JsonUtils.parseArray(this.entity.items);
@@ -57,7 +65,7 @@ public class Knapsack extends AbstractCacheObject<Long, com.shadowgame.rpg.persi
 			if(object != null && object instanceof Long) {
 				Long playerItemId = (Long)object;
 				if(playerItemId > 0) {
-					PlayerItem playerItem = Services.cacheService.get(playerItemId, PlayerItem.class, true, attachment);
+					PlayerItem playerItem = Services.cacheService.get(playerItemId, PlayerItem.class, true);
 					if(playerItem != null)
 						items[i] = playerItemId;
 				}

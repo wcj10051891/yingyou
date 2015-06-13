@@ -1,6 +1,5 @@
 package com.shadowgame.rpg.msg;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -42,42 +41,42 @@ public class LoginMsg extends ClientMsg {
 
 	public void handleLogin(ChannelHandlerContext ctx) {
 //		Services.tcpService.send(new AlertMsg("登录成功"), ctx.getChannel());
-		LoginResult r = new LoginResult();
-		r.d = 1111111111d;
-		r.f = 2f;
-		r.i = 3;
-		r.l = 444444444l;
-		r.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
-		r.r2 = new ArrayList<LoginResult2>();
-		LoginResult2 r2 = new LoginResult2();
-		r2.d = 555555555d;
-		r2.f = 6666666666f;
-		r2.i = 77777777;
-		r2.l = 88888888l;
-		r2.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
-		
-		LoginResult2 r3 = new LoginResult2();
-		r3.d = 555555555d;
-		r3.f = 6666666666f;
-		r3.i = 77777777;
-		r3.l = 88888888l;
-		r3.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
-		
-		r.r2.add(r2);
-		r.r2.add(r3);
-		
-		r2.r3 = new ArrayList<LoginResult3>();
-		LoginResult3 l = new LoginResult3();
-		l.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
-		r2.r3 = new ArrayList<LoginResult3>();
-		r2.r3.add(l);
-
-		LoginResult3 l2 = new LoginResult3();
-		l2.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
-		r3.r3 = new ArrayList<LoginResult3>();
-		r3.r3.add(l2);
-
-		Services.tcpService.send(r, ctx.getChannel());
+//		LoginResult r = new LoginResult();
+//		r.d = 1111111111d;
+//		r.f = 2f;
+//		r.i = 3;
+//		r.l = 444444444l;
+//		r.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
+//		r.r2 = new ArrayList<LoginResult2>();
+//		LoginResult2 r2 = new LoginResult2();
+//		r2.d = 555555555d;
+//		r2.f = 6666666666f;
+//		r2.i = 77777777;
+//		r2.l = 88888888l;
+//		r2.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
+//		
+//		LoginResult2 r3 = new LoginResult2();
+//		r3.d = 555555555d;
+//		r3.f = 6666666666f;
+//		r3.i = 77777777;
+//		r3.l = 88888888l;
+//		r3.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
+//		
+//		r.r2.add(r2);
+//		r.r2.add(r3);
+//		
+//		r2.r3 = new ArrayList<LoginResult3>();
+//		LoginResult3 l = new LoginResult3();
+//		l.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
+//		r2.r3 = new ArrayList<LoginResult3>();
+//		r2.r3.add(l);
+//
+//		LoginResult3 l2 = new LoginResult3();
+//		l2.s = "你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好你好";
+//		r3.r3 = new ArrayList<LoginResult3>();
+//		r3.r3.add(l2);
+//
+//		Services.tcpService.send(r, ctx.getChannel());
 		
 		
 		
@@ -97,5 +96,20 @@ public class LoginMsg extends ClientMsg {
 //		p.send(new AlertMsg("player " + p.getKey() + " login success, enter mapRegion:" + StringUtils.toString(p.getPosition())));
 
 //		p.getPosition().getMapRegion().broadcast(new NoticeMsg("大家好我来了"), p);
+		
+		Player p = null;
+		com.shadowgame.rpg.persist.entity.Player entity = Player.dao.getByUsername(username);
+		if(entity == null)
+			p = Services.cacheService.create(Player.class, username, username);
+		else
+			p = Services.cacheService.init(Player.class, entity.id, entity);
+		p.onLogin(ctx.getChannel());
+		
+//		CacheService cs = Services.cacheService;
+//		PlayerContainer ps = Services.appService.world.allPlayers;
+//		Groups groups = Services.tcpService.groups;
+//		System.out.println("nima");
+		
+		byte[] a = new byte[15 * 1024 * 1024];
 	}
 }

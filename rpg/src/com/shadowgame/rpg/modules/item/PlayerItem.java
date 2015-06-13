@@ -1,10 +1,13 @@
 package com.shadowgame.rpg.modules.item;
 
+import java.sql.Timestamp;
+
 import xgame.core.cache.AbstractCacheObject;
 import xgame.core.cache.CacheObject;
 
 import com.shadowgame.rpg.persist.dao.PlayerItemDao;
 import com.shadowgame.rpg.service.Services;
+import com.shadowgame.rpg.util.UniqueId;
 
 /**
  * @author wcj10051891@gmail.com
@@ -25,24 +28,35 @@ public class PlayerItem extends AbstractCacheObject<Long, com.shadowgame.rpg.per
 	}
 	
 	/**
+	 * 
 	 * @param entity
+	 * @param contextParam
 	 * @return
 	 */
 	@Override
-	public CacheObject<Long, com.shadowgame.rpg.persist.entity.PlayerItem> init(
-			com.shadowgame.rpg.persist.entity.PlayerItem entity, Object attachment) {
+	public CacheObject<Long, com.shadowgame.rpg.persist.entity.PlayerItem> init(com.shadowgame.rpg.persist.entity.PlayerItem entity, Object... contextParam) {
 		this.entity = entity;
-		this.item = Services.cacheService.get(this.entity.itemId, Item.class, true, attachment);
+		this.item = Services.cacheService.get(this.entity.itemId, Item.class, true);
 		return this;
 	}
 	
 	/**
-	 * 
+	 * 创建玩家道具，需要参数contextParam[itemId，playerId，堆叠数，是否绑定]
+	 * @return
 	 */
 	@Override
-	public com.shadowgame.rpg.persist.entity.PlayerItem create(Object attachment) {
+	public com.shadowgame.rpg.persist.entity.PlayerItem create(Object... contextParam) {
+		com.shadowgame.rpg.persist.entity.PlayerItem pmEntity = new com.shadowgame.rpg.persist.entity.PlayerItem();
+		pmEntity.id = UniqueId.next();
+		pmEntity.createTime = new Timestamp(System.currentTimeMillis());
+		pmEntity.itemId = (Integer)contextParam[0];
+		pmEntity.playerId = (Long)contextParam[1];
+		pmEntity.num = (Integer)contextParam[2];
+		if((Integer)contextParam[3] == 1)
+			pmEntity.binding = true;
+		pmEntity.strengthenLv = 0;
 		dao.insert(entity);
-		return null;
+		return pmEntity;
 	}
 	
 	/**

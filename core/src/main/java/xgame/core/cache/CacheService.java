@@ -2,7 +2,7 @@ package xgame.core.cache;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ import xgame.core.util.Service;
 public class CacheService implements Service {
 	private static final Logger log = LoggerFactory.getLogger(CacheService.class);
     private ReferenceQueue<CacheObject> refQueue = new ReferenceQueue<CacheObject>();
-	private ConcurrentHashMap<String, SoftReference<CacheObject>> softCache = new ConcurrentHashMap<String, SoftReference<CacheObject>>();
+	private ConcurrentHashMap<String, WeakReference<CacheObject>> softCache = new ConcurrentHashMap<String, WeakReference<CacheObject>>();
 	private AtomicInteger putCount = new AtomicInteger();
 	private static int removeQueuedSize = 1000;
 	private Lock cacheLock = new ReentrantLock();
@@ -46,25 +46,33 @@ public class CacheService implements Service {
 		saveQueue.saveOnStop();
 	}
 	
-	public <T extends CacheObject, K> T get(K key, Class<T> objectClass, boolean loadFromDB, Object attachment) {
+	/**
+	 * 从缓存中获取缓存对象，如果缓存中没有，且loadFromDB为true，会从数据库中加载，调用缓存对象的get方法，查出entity对象并调用init方法
+	 * @param key			缓存对象的key
+	 * @param objectClass	缓存对象类
+	 * @param loadFromDB	是否从数据库加载
+	 * @param contextParam	初始化缓存对象所需的辅助参数，传给init方法
+	 * @return
+	 */
+	public <T extends CacheObject, K> T get(K key, Class<T> objectClass, boolean loadFromDB, Object... contextParam) {
 		if(key == null || key.toString().equals("0")) {
-			log.info("get object invalid key:{}, class:{}, loadFromDB:{}.", 
+			log.info("get object invalid key:{}, class:{}, loadFromDB:{}", 
 				key, objectClass, loadFromDB);
 			return null;
 		}
 		String k = k(key, objectClass);
 		try {
 			cacheLock.lock();
-			SoftReference<CacheObject> ref = softCache.get(k);
+			WeakReference<CacheObject> ref = softCache.get(k);
 			if(ref != null && ref.get() != null) {
 				T result = (T) ref.get();
-				log.info("get object from cache, key:{}, class:{}, instance:{}, fromDB:{}.", 
+				log.info("get object from cache, key:{}, class:{}, instance:{}, fromDB:{}", 
 						key, objectClass, result, loadFromDB);				
 				return result;
 			}
 			
 			if(!loadFromDB) {
-				log.info("get object not in cache, nonCreate it. key:{}, class:{}, fromDB:{}.", 
+				log.info("get object not in cache, nonCreate it. key:{}, class:{}, fromDB:{}", 
 						key, objectClass, loadFromDB);	
 				return null;
 			}
@@ -74,33 +82,33 @@ public class CacheService implements Service {
 				Object entity = newObject.get(key);
 				if(entity == null)
 					return null;
-				newObject.init(entity, attachment);
+				newObject.init(entity, contextParam);
 				put(k, new CacheObjectReference<CacheObject>(k, newObject, refQueue));
-				log.info("get object not in cache, create it. key:{}, class:{}, instance:{}, fromDB:{}.", 
+				log.info("get object not in cache, load it. key:{}, class:{}, instance:{}, fromDB:{}", 
 						key, objectClass, newObject, loadFromDB);
 				return newObject;
 			} catch (Exception e) {
-				log.error("instantiate object failure, key:{}, class:{}, fromDB:{}, error:{}.", key, objectClass, loadFromDB, e);
+				log.error("instantiate object failure, key:{}, class:{}, fromDB:{}, error:{}", key, objectClass, loadFromDB, e);
 				return null;
 			}
-		}finally{
+		} finally {
 			cacheLock.unlock();
 		}
 	}
 	
-	private SoftReference<CacheObject> putIfAbsent(String key, SoftReference<CacheObject> value) {
+	private WeakReference<CacheObject> putIfAbsent(String key, WeakReference<CacheObject> value) {
 		if(putCount.incrementAndGet() % removeQueuedSize == 0)
 			removeStaleEntries();
 		return this.softCache.putIfAbsent(key, value);
 	}
 	
-	private SoftReference<CacheObject> put(String key, SoftReference<CacheObject> value) {
+	private WeakReference<CacheObject> put(String key, WeakReference<CacheObject> value) {
 		if(putCount.incrementAndGet() % removeQueuedSize == 0)
 			removeStaleEntries();
 		return this.softCache.put(key, value);
 	}
 	
-	private static class CacheObjectReference<T extends CacheObject> extends SoftReference<T> {
+	private static class CacheObjectReference<T extends CacheObject> extends WeakReference<T> {
 		public String key;
 		public CacheObjectReference(String key, T referent, ReferenceQueue<? super T> q) {
 			super(referent, q);
@@ -113,7 +121,7 @@ public class CacheService implements Service {
 			cacheLock.lock();
 	        for (Reference<? extends CacheObject> x; (x = refQueue.poll()) != null; ) {
 	        	String key = ((CacheObjectReference<? extends CacheObject>)x).key;
-	        	SoftReference<CacheObject> ref = softCache.get(key);
+	        	WeakReference<CacheObject> ref = softCache.get(key);
 	        	if(ref != null && ref.get() == null)
 	        		softCache.remove(key);
 	        }
@@ -122,9 +130,17 @@ public class CacheService implements Service {
         }
     }
 	
-	public <T extends CacheObject<K, E>, K, E> Map<K, T> gets(Collection<K> keys, Class<T> objectClass, boolean loadFromDB, Object attachment) {
+	/**
+	 * 批量获取缓存对象，如果缓存中没有，且loadFromDB为true，会从数据库中加载，调用缓存对象的get方法，查出entity对象并调用init方法
+	 * @param keys				key数组
+	 * @param objectClass		缓存类
+	 * @param loadFromDB		是否从数据库加载
+	 * @param contextParam		初始化缓存对象所需的辅助参数，传给init方法
+	 * @return
+	 */
+	public <T extends CacheObject<K, E>, K, E> Map<K, T> gets(Collection<K> keys, Class<T> objectClass, boolean loadFromDB, Object... contextParam) {
 		if(keys == null || keys.isEmpty()) {
-			log.info("gets object invalid keys:{}, class:{}, loadFromDB:{}.", 
+			log.info("gets object invalid keys:{}, class:{}, loadFromDB:{}", 
 				keys, objectClass, loadFromDB);
 			return null;
 		}
@@ -134,39 +150,38 @@ public class CacheService implements Service {
 		for(K key : keys) {
 			if(key == null || key.toString().equals("0"))
 				continue;
-			T target = get(key, objectClass, false, attachment);
+			T target = get(key, objectClass, false, contextParam);
 			if(target == null)
 				notInCache.add(key);
 			else
 				inCacheObjects.put(key, target);
 		}
-		log.info("gets object, keys:{}, class:{}, loadFromDB:{}, notInCache:{}.", keys, objectClass, loadFromDB, notInCache); 
+		log.info("gets object, keys:{}, class:{}, loadFromDB:{}, notInCache:{}", keys, objectClass, loadFromDB, notInCache); 
 		if(loadFromDB && !notInCache.isEmpty()) {
 			try {
 				cacheLock.lock();
-				Map<K, CacheObject<K, E>> gets = objectClass.newInstance().gets(notInCache);
-				if(gets != null && !gets.isEmpty()) {
-					log.info("gets object load from db:{}.", gets.keySet());
-					for (Entry<K, ?> entrys : gets.entrySet()) {
-						CacheObject value = (CacheObject)entrys.getValue();
-						if(value != null) {
-							Object key = entrys.getKey();
-							String k = k(key, objectClass);
-							SoftReference<CacheObject> ref = new SoftReference<CacheObject>(value);
-							SoftReference<CacheObject> old = putIfAbsent(k, ref);
-							if(old == null) {
-								inCacheObjects.put(key, value);
-							} else if(old.get() == null) {
-								put(k, ref);
-								inCacheObjects.put(key, value);
-							} else {
-								inCacheObjects.put(key, old.get());
-							}
+				Map<K, E> entitys = objectClass.newInstance().gets(notInCache);
+				if(entitys != null && !entitys.isEmpty()) {
+					log.info("gets object load from db:{}", entitys);
+					for (Entry<K, E> entry : entitys.entrySet()) {
+						Object key = entry.getKey();
+						String k = k(key, objectClass);
+						CacheObject<K, E> o = objectClass.newInstance();
+						o.init(entry.getValue(), contextParam);
+						WeakReference<CacheObject> ref = new WeakReference<CacheObject>(o);
+						WeakReference<CacheObject> old = putIfAbsent(k, ref);
+						if(old == null) {
+							inCacheObjects.put(key, o);
+						} else if(old.get() == null) {
+							put(k, ref);
+							inCacheObjects.put(key, o);
+						} else {
+							inCacheObjects.put(key, old.get());
 						}
 					}
 				}
 			} catch (Exception e) {
-				log.error("gets object failure, keys:{}, class:{}, fromDB:{}, error:{}.", keys, objectClass, loadFromDB, e);
+				log.error("gets object failure, keys:{}, class:{}, fromDB:{}, error:{}", keys, objectClass, loadFromDB, e);
 			} finally {
 				cacheLock.unlock();
 			}
@@ -177,83 +192,134 @@ public class CacheService implements Service {
 			if(t != null)
 				result.put(key, t);
 		}
-		log.info("gets object, keys:{}, class:{}, fromDB:{}, result:{}.", keys, objectClass, loadFromDB, result.keySet()); 
+		log.info("gets object, keys:{}, class:{}, fromDB:{}, result:{}", keys, objectClass, loadFromDB, result.keySet()); 
 		return result;
 	}
 	
-	public <T extends CacheObject, K> T create(K key, Class<T> objectClass, Object attachment) {
-		if(key == null || key.toString().equals("0")) {
-			log.info("create object invalid key:{}, class:{}.", key, objectClass);
+	/**
+	 * 新建缓存对象，即插入相应记录到数据库，并调用init方法初始化
+	 * @param objectClass		缓存类
+	 * @param contextParam		初始化缓存对象所需的辅助参数，传给init方法
+	 * @return
+	 */
+	public <T extends CacheObject, K> T create(Class<T> objectClass, Object... contextParam) {
+		try {
+			cacheLock.lock();
+			T newObject = (T) objectClass.newInstance();
+			Object entity = newObject.create(contextParam);
+			newObject.init(entity, contextParam);
+			Object key = newObject.getKey();
+			String k = k(key, objectClass);
+
+			WeakReference<CacheObject> ref = softCache.get(k);
+			if(ref != null && ref.get() != null) {
+				T result = (T) ref.get();
+				log.info("create object already in cache, key:{}, class:{}, instance:{}", 
+						key, objectClass, result);				
+				return result;
+			}
+			
+			put(k, new CacheObjectReference<CacheObject>(k, newObject, refQueue));
+			log.info("create object put to cache, key:{}, class:{}, instance:{}", 
+					key, objectClass, newObject);
+			return newObject;
+		} catch (Exception e) {
+			log.error("instantiate object failure, class:{}, error:{}", objectClass, e);
+			return null;
+		} finally {
+			cacheLock.unlock();
+		}
+	}
+	
+
+	/**
+	 * 用数据库实体来初始化出缓存对象并放入缓存
+	 * @param newObject
+	 * @return
+	 */
+	public <T extends CacheObject, E> T init(Class<T> objectClass, Object key, E entity, Object... contextParam) {
+		if(key == null || key.equals("0")) {
+			log.info("put object invalid key:{}, class:{}", key, objectClass);
 			return null;
 		}
 		String k = k(key, objectClass);
 		try {
 			cacheLock.lock();
-			SoftReference<CacheObject> ref = softCache.get(k);
-			if(ref != null && ref.get() != null) {
-				T result = (T) ref.get();
-				log.info("create object from cache, key:{}, class:{}, instance:{}.", 
-						key, objectClass, result);				
-				return result;
-			}
-			try {
-				T newObject = (T) objectClass.newInstance();
-				Object entity = newObject.create(attachment);
-				newObject.init(entity, attachment);
-				put(k, new CacheObjectReference<CacheObject>(k, newObject, refQueue));
-				log.info("create object not in cache, create it. key:{}, class:{}, instance:{}.", 
-						key, objectClass, newObject);
-				return newObject;
-			} catch (Exception e) {
-				log.error("instantiate object failure, key:{}, class:{}, error:{}.", key, objectClass, e);
-				return null;
-			}
-		}finally{
+			WeakReference<CacheObject> ref = softCache.get(k);
+			if(ref != null && ref.get() != null)
+				return (T) ref.get();
+			
+			T newObject = (T) objectClass.newInstance();
+			newObject.init(entity, contextParam);
+			
+			put(k, new CacheObjectReference<CacheObject>(k, newObject, refQueue));
+			log.info("put object, key:{}, class:{}, instance:{}", newObject.getKey(), newObject.getClass(), newObject); 
+			return newObject;
+		}  catch (Exception e) {
+			log.error("instantiate object failure, class:{}, error:{}", objectClass, e);
+			return null;
+		} finally {
 			cacheLock.unlock();
 		}
 	}
 	
+	/**
+	 * 把缓存对象放入缓存中
+	 * @param newObject
+	 * @return
+	 */
 	public <T extends CacheObject> T put(T newObject) {
 		if(newObject.getKey() == null || newObject.getKey().equals("0")) {
-			log.info("put object invalid key:{}, class:{}, instance:{}.", 
+			log.info("put object invalid key:{}, class:{}, instance:{}", 
 				newObject.getKey(), newObject.getClass(), newObject);
 			return null;
 		}
 		String k = k(newObject.getKey(), newObject.getClass());
 		try {
 			cacheLock.lock();
-			SoftReference<CacheObject> ref = softCache.get(k);
+			WeakReference<CacheObject> ref = softCache.get(k);
 			if(ref != null && ref.get() != null)
 				return (T) ref.get();
 			
 			put(k, new CacheObjectReference<CacheObject>(k, newObject, refQueue));
-			log.info("put object, key:{}, class:{}, instance:{}.", newObject.getKey(), newObject.getClass(), newObject); 
+			log.info("put object, key:{}, class:{}, instance:{}", newObject.getKey(), newObject.getClass(), newObject); 
 			return newObject;
 		}finally{
 			cacheLock.unlock();
 		}
 	}
 	
+	/**
+	 * 把缓存对象从缓存中移除，如果deleteEntity为true会调用缓存对象的delete方法删除对应的数据库记录
+	 * @param object		缓存对象
+	 * @param deleteEntity	是否删除数据库记录
+	 */
 	public <T extends CacheObject> void remove(T object, boolean deleteEntity) {
 		remove(object.getKey(), object.getClass(), deleteEntity);
 	}
 	
-	public <T extends CacheObject> void remove(Object key, Class<T> objectClass, boolean deleteDBEntity) {
+	/**
+	 * 把缓存对象从缓存中移除，如果deleteEntity为true会调用缓存对象的delete方法删除对应的数据库记录
+	 * @param key				缓存对象的key
+	 * @param objectClass		缓存类
+	 * @param deleteEntity		是否调用缓存对象的delete方法删除数据库记录
+	 */
+	public <T extends CacheObject> void remove(Object key, Class<T> objectClass, boolean deleteEntity) {
 		if(key == null || key.toString().equals("0")) {
-			log.info("remove object invalid key:{}, class:{}, deleteDBEntity:{}.", 
-				key, objectClass, deleteDBEntity);			
+			log.info("remove object invalid key:{}, class:{}, deleteEntity:{}", 
+				key, objectClass, deleteEntity);			
 			return;
 		}
 		String k = k(key, objectClass);
 		try {
 			cacheLock.lock();
-			SoftReference<CacheObject> ref = this.softCache.remove(k);
-			if(deleteDBEntity && ref != null && ref.get() != null) {
+			WeakReference<CacheObject> ref = this.softCache.remove(k);
+			if(deleteEntity && ref != null && ref.get() != null) {
 				try {
 					ref.get().delete();
 				} catch (Exception e) {
-					log.error("remove object delete failure, key:{}, class:{}, deleteDBEntity:{}, error:{}.", 
-						key, objectClass, deleteDBEntity, e); 
+					log.error("remove object delete failure, key:{}, class:{}, deleteDBEntity:{}, error:{}", 
+						key, objectClass, deleteEntity, e); 
 				}
 			}
 		}finally{
@@ -261,14 +327,25 @@ public class CacheService implements Service {
 		}
 	}
 
+	/**
+	 * 异步保存，根据缓存对象的{@link SaveDelay}延迟秒数来调度保存
+	 * @param object
+	 */
 	public void saveAsync(CacheObject object) {
 		this.saveQueue.saveAsync(object);
 	}
 
+	/**
+	 * 立即保存
+	 * @param object
+	 */
 	public void saveNow(CacheObject object) {
 		this.saveQueue.saveNow(object);
 	}
 	
+	/**
+	 * 立即保存所有已定时调度还未保存的对象
+	 */
 	public void saveAllNow() {
 		this.saveQueue.saveAllNow();
 	}

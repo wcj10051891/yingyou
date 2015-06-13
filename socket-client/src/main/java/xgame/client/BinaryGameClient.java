@@ -2,7 +2,10 @@ package xgame.client;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +32,7 @@ import com.shadowgame.rpg.core.AppConfig;
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.msg.AlertMsg;
 import com.shadowgame.rpg.msg.LoginMsg;
+import com.shadowgame.rpg.msg.LogoutMsg;
 import com.shadowgame.rpg.msg.NoticeMsg;
 import com.shadowgame.rpg.net.msg.Message;
 
@@ -148,40 +152,75 @@ public class BinaryGameClient {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		LoginMsg login = new LoginMsg();
-		login.username = "用户名";
+		final LoginMsg login = new LoginMsg();
+		login.username = "u1";
 		login.password = "密码";
 		login.msgs1 = (Arrays.asList(new NoticeMsg("消息1"), new NoticeMsg("消息2"), new NoticeMsg("消息3")));
 		login.msgs2 = (Arrays.asList(new AlertMsg("消息4"), new AlertMsg("消息5"), new AlertMsg("消息6")));
 		
+		final LogoutMsg logout = new LogoutMsg();
+		
 		BinaryGameClient.init();
-		for (int i = 0; i < 1500; i++) {
-			oneClient(login, true);
+		final Map<Integer, Channel> channels = new HashMap<Integer, Channel>();
+		for (int i = 0; i < 1; i++) {
+			Channel channel = connect(login);
+			channels.put(i, channel);
 		}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Scanner sc = new Scanner(System.in);
+				while(sc.hasNextLine()) {
+					String cmd = sc.next();
+					if(cmd.equalsIgnoreCase("exit")) {
+						sc.close();
+						System.exit(0);
+					} else if(cmd.equalsIgnoreCase("0")) {
+//						pool.scheduleAtFixedRate(new Runnable() {
+//							@Override
+//							public void run() {
+								for (Channel c : channels.values()) {
+									c.write(login);
+								}
+//							}
+//						}, 1, 1, TimeUnit.SECONDS);
+					} else if(cmd.equalsIgnoreCase("1")) {
+						channels.get(0).write(logout);
+						channels.remove(0);
+						if(channels.isEmpty()) {
+							sc.close();
+							System.exit(0);
+						}
+					}
+				}
+			}
+		}, "debug exit listener").start();
+		
 	}
 	
 	private static Random r = new Random();
 	private static ScheduledExecutorService pool = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
-	private static void oneClient(final Object msg, boolean schedule) {
-		try {
-			final Channel channel = BinaryGameClient.connect(new Callback() {
-				@Override
-				public void call(Object msg) {
-					log.info("received msg:{}", ToStringBuilder.reflectionToString(msg));
-				}
-			});
-			if(schedule) {
-				pool.scheduleAtFixedRate(new Runnable() {
-					@Override
-					public void run() {
-						channel.write(msg);
-					}
-				}, 0, r.nextInt(1000) + 500, TimeUnit.MILLISECONDS);
-			} else {
-				channel.write(msg);
+	private static Channel connect(Object msg) throws Exception {
+		return BinaryGameClient.connect(new Callback() {
+			@Override
+			public void call(Object msg) {
+				log.info("received msg:{}", ToStringBuilder.reflectionToString(msg));
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		});
+	}
+	
+	private static void sendTest(final Channel client, final Object msg, boolean schedule) {
+		if(schedule) {
+			pool.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					client.write(msg);
+				}
+			}, 0, r.nextInt(1000) + 500, TimeUnit.MILLISECONDS);
+		} else {
+			client.write(msg);
 		}
 	}
+	
+	
 }

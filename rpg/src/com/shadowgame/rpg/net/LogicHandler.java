@@ -122,6 +122,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 						log.error("player:{}, channel:{} logout error:{}", player, ctx.getChannel(), ex.getCause());
 						ex.printStackTrace();
 					}
+					player.channel = null;
 					ctx.getChannel().setAttachment(null);
 				}
 				log.info("player:{}, channel:{} channelClosed", player, ctx.getChannel());

@@ -8,15 +8,15 @@ public class PlayerItem{
 	/** 玩家id */
 	public Long playerId=0l;
 	/** 是否绑定 */
-	public Boolean binding;
-	/** 堆叠数量 */
-	public Integer num;
+	public Boolean binding=false;
+	/** 堆叠数 */
+	public Integer num=0;
 	/** 强化等级 */
-	public Integer strengthenLevel;
+	public Integer strengthenLv=0;
 	/** 宝石镶嵌孔 */
 	public String hole;
 	/** 创建时间 */
-	public java.sql.Timestamp createTime;
+	public java.sql.Timestamp createTime=new java.sql.Timestamp(System.currentTimeMillis());
 	public Long getId(){
 		return this.id;
 	}
@@ -32,8 +32,8 @@ public class PlayerItem{
 	public Integer getNum(){
 		return this.num;
 	}
-	public Integer getStrengthenLevel(){
-		return this.strengthenLevel;
+	public Integer getStrengthenLv(){
+		return this.strengthenLv;
 	}
 	public String getHole(){
 		return this.hole;
@@ -56,8 +56,8 @@ public class PlayerItem{
 	public void setNum(Integer num){
 		this.num = num;
 	}
-	public void setStrengthenLevel(Integer strengthenLevel){
-		this.strengthenLevel = strengthenLevel;
+	public void setStrengthenLv(Integer strengthenLv){
+		this.strengthenLv = strengthenLv;
 	}
 	public void setHole(String hole){
 		this.hole = hole;

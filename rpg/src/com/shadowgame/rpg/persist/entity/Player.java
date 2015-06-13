@@ -8,15 +8,15 @@ public class Player{
 	/** 昵称 */
 	public String nickname="";
 	/** 等级 */
-	public Integer level=0;
+	public Integer lv=0;
 	/** 当前经验 */
 	public Integer exp=0;
 	/** 创建时间 */
-	public java.sql.Timestamp createTime=new java.sql.Timestamp(System.currentTimeMillis());
+	public java.sql.Timestamp createTime;
 	/** 上次登录时间 */
-	public java.sql.Timestamp loginTime=new java.sql.Timestamp(System.currentTimeMillis());
+	public java.sql.Timestamp loginTime;
 	/** 上次登出时间 */
-	public java.sql.Timestamp logoutTime=new java.sql.Timestamp(System.currentTimeMillis());
+	public java.sql.Timestamp logoutTime;
 	/** 每日属性 */
 	public String daily;
 	/** 扩展属性 */
@@ -30,8 +30,8 @@ public class Player{
 	public String getNickname(){
 		return this.nickname;
 	}
-	public Integer getLevel(){
-		return this.level;
+	public Integer getLv(){
+		return this.lv;
 	}
 	public Integer getExp(){
 		return this.exp;
@@ -60,8 +60,8 @@ public class Player{
 	public void setNickname(String nickname){
 		this.nickname = nickname;
 	}
-	public void setLevel(Integer level){
-		this.level = level;
+	public void setLv(Integer lv){
+		this.lv = lv;
 	}
 	public void setExp(Integer exp){
 		this.exp = exp;

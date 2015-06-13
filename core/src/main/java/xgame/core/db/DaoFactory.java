@@ -3,6 +3,7 @@ package xgame.core.db;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
@@ -188,32 +189,28 @@ public class DaoFactory {
 	
 	public DaoFactory(TransactionalQueryRunner queryRunner) {
 		this.jdbc = queryRunner;
+		Connection conn = null;
 		try {
-			Connection conn = this.jdbc.getDataSource().getConnection();
+			conn = this.jdbc.getDataSource().getConnection();
+			DatabaseMetaData meta = conn.getMetaData();
+			String databaseName = meta.getDatabaseProductName();
+			currentDialect = dialects.get(databaseName);
+			if(currentDialect == null){
+				Method gdbmvMethod = DatabaseMetaData.class.getMethod("getDatabaseMajorVersion");
+				int databaseMajorVersion = ( (Integer) gdbmvMethod.invoke(meta) ).intValue();
+				currentDialect = dialects.get(databaseName + "" + databaseMajorVersion);
+			}
+			if(currentDialect == null)
+				currentDialect = new Dialect();
+		} catch (InvocationTargetException e) {
+			throw new DaoException("datasource init error", e.getTargetException());
+		} catch (Exception e) {
+			throw new DaoException("datasource init error", e);
+		} finally {
 			try {
-				DatabaseMetaData meta = conn.getMetaData();
-				String databaseName = meta.getDatabaseProductName();
-				currentDialect = dialects.get(databaseName);
-				if(currentDialect == null){
-					int databaseMajorVersion = 0;
-					try {
-						Method gdbmvMethod = DatabaseMetaData.class.getMethod("getDatabaseMajorVersion");
-						databaseMajorVersion = ( (Integer) gdbmvMethod.invoke(meta) ).intValue();
-					}
-					catch (Exception e) {
-						throw new DaoException("datasource init error.", e);
-					}
-					currentDialect = dialects.get(databaseName + "" + databaseMajorVersion);
-				}
-				if(currentDialect == null)
-					currentDialect = new Dialect();
-			}
-			finally {
 				DbUtils.close(conn);
+			} catch (Exception e2) {
 			}
-		}
-		catch (Exception e) {
-			throw new DaoException("fetch database info error.", e);
 		}
 		shardingStrategys.put(IdModSharding.class, new IdModStrategy());
 	}
@@ -223,8 +220,10 @@ public class DaoFactory {
 		public Object invoke(Object proxy, Method method, Object[] args) {
 			try {
 				return invoke0(proxy, method, args);
+			} catch (InvocationTargetException e) {
+				throw new DaoException("dao method invoke error", e.getTargetException());
 			} catch (Exception e) {
-				throw new DaoException("dao method invoke error.", e);
+				throw new DaoException("dao method invoke error", e);
 			}
 		}
 		

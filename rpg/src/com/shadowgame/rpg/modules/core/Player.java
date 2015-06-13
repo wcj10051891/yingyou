@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.modules.core;
 
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -21,14 +21,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.modules.common.DailyAttribute;
 import com.shadowgame.rpg.modules.item.Item;
 import com.shadowgame.rpg.modules.item.Knapsack;
-import com.shadowgame.rpg.modules.item.PlayerItem;
 import com.shadowgame.rpg.modules.map.Position;
 import com.shadowgame.rpg.modules.mission.PlayerMissionManager;
 import com.shadowgame.rpg.persist.dao.PlayerDao;
 import com.shadowgame.rpg.service.Services;
+import com.shadowgame.rpg.util.UniqueId;
 
 public class Player extends AbstractFighter implements CacheObject<Long, com.shadowgame.rpg.persist.entity.Player> {
-	private static final PlayerDao dao = Services.daoFactory.get(PlayerDao.class);
+	public static final PlayerDao dao = Services.daoFactory.get(PlayerDao.class);
 	private static final Logger log = LoggerFactory.getLogger(Player.class);
 	public com.shadowgame.rpg.persist.entity.Player entity;
 	
@@ -48,34 +48,42 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	public com.shadowgame.rpg.persist.entity.Player get(Long key) {
 		return dao.get(key);
 	}
-	
-	public Player init(com.shadowgame.rpg.persist.entity.Player entity, Object attachment) {
+
+	@Override
+	public Player init(com.shadowgame.rpg.persist.entity.Player entity, Object... contextParam) {
 		this.objectId = entity.id;
 		this.entity = entity;
 		this.daily = new DailyAttribute(!StringUtils.hasText(this.entity.daily) ? "{}" : this.entity.daily);
 		this.extAttribute = JsonUtils.parseObject(!StringUtils.hasText(this.entity.extAttribute) ? "{}" : this.entity.extAttribute);
-		this.knapsack = Services.cacheService.get(this.objectId, Knapsack.class, true, null);
+		this.knapsack = Services.cacheService.get(this.objectId, Knapsack.class, true);
+		if(this.knapsack == null)
+			this.knapsack = Services.cacheService.create(Knapsack.class, this.objectId);
 		return this;
 	}
 	
-	public void onLogin() {
+	public void onLogin(Channel channel) {
+		this.channel = channel;
+		this.channel.setAttachment(this);
+		
 		Services.appService.world.allPlayers.add(this);
 		Services.tcpService.joinGroup(Groups.World, channel);
 		
 		missionManager = Services.cacheService.get(this.entity.id, PlayerMissionManager.class, true, this);
-		if(missionManager == null) {
-			missionManager = Services.cacheService.create(this.getObjectId(), PlayerMissionManager.class, this);
-		}
+		if(missionManager == null)
+			missionManager = Services.cacheService.create(PlayerMissionManager.class, this);
 	}
 	
 	public void onLogout() {
 		Services.appService.world.allPlayers.remove(this);
 		Services.tcpService.leaveGroup(Groups.World, channel);
-		this.getPosition().getMapRegion().remove(this);
-		this.channel = null;
+		try {
+			this.getPosition().getMapRegion().remove(this);
+		} catch (Exception e) {
+			log.error("player {} not in map", this.getObjectId());
+		}
 		
 		Services.cacheService.saveAsync(this);
-//		Services.cacheService.saveAsync(this.knapsack);
+		Services.cacheService.saveAsync(this.knapsack);
 	}
 
 	@Override
@@ -107,12 +115,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	}
 	
 	public void give(CountMap<Integer, Integer> itemIdAndNums) throws Exception {
-		List<PlayerItem> items = Item.createPlayerItem(itemIdAndNums, this.objectId);
-		this.knapsack.put(items);
-		List<com.shadowgame.rpg.persist.entity.PlayerItem> playerItemEntitys = new ArrayList<com.shadowgame.rpg.persist.entity.PlayerItem>(items.size());
-		for (PlayerItem playerItem : items)
-			playerItemEntitys.add(playerItem.entity);
-		PlayerItem.dao.insertBatch(playerItemEntitys);
+		this.knapsack.put(Item.createPlayerItem(itemIdAndNums, this.objectId));
 	}
 
 	/**
@@ -120,18 +123,28 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	 * @return
 	 */
 	@Override
-	public Map<Long, CacheObject<Long, com.shadowgame.rpg.persist.entity.Player>> gets(
-			List<Long> keys) {
+	public Map<Long, com.shadowgame.rpg.persist.entity.Player> gets(List<Long> keys) {
 		return null;
 	}
 
 	/**
-	 * 
+	 * 玩家创建，需要参数contextParam[username, nickname]
+	 * @param contextParam
+	 * @return
 	 */
 	@Override
-	public com.shadowgame.rpg.persist.entity.Player create(Object attachment) {
-		dao.insert(entity);
-		return null;
+	public com.shadowgame.rpg.persist.entity.Player create(Object... contextParam) {
+		com.shadowgame.rpg.persist.entity.Player p = new com.shadowgame.rpg.persist.entity.Player();
+		p.id = UniqueId.next();
+		p.createTime = new Timestamp(System.currentTimeMillis());
+		p.daily = "{}";
+		p.lv = 1;
+		p.exp = 0;
+		p.extAttribute = "{}";
+		p.username = (String)contextParam[0];
+		p.nickname = (String)contextParam[1];
+		dao.insert(p);
+		return p;
 	}
 
 	/**

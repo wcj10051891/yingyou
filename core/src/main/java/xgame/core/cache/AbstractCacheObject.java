@@ -8,20 +8,16 @@ public abstract class AbstractCacheObject<K, E> implements CacheObject<K, E> {
 	@Override
 	public abstract E get(K key);
 
-	/**
-	 * @param keys
-	 * @return
-	 */
 	@Override
-	public Map<K, CacheObject<K, E>> gets(List<K> keys) {
+	public Map<K, E> gets(List<K> keys) {
 		return null;
 	}
 	
 	@Override
-	public abstract CacheObject<K, E> init(E entity, Object attachement);
+	public abstract CacheObject<K, E> init(E entity, Object... contextParam);
 
 	@Override
-	public E create(Object attachment) {
+	public E create(Object... contextParam) {
 		return null;
 	}
 

@@ -26,10 +26,16 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, PlayerMissio
     private AtomicInteger serialId = new AtomicInteger(Long.valueOf(System.currentTimeMillis() / 1000l).intValue());
     private Player player;
 	
+	/**
+	 * 初始化，需要参数contextParam[player]
+	 * @param entity
+	 * @param contextParam
+	 * @return
+	 */
 	@Override
-	public CacheObject<Long, PlayerMission> init(PlayerMission entity, Object attachment) {
+	public CacheObject<Long, PlayerMission> init(PlayerMission entity, Object... contextParam) {
 		this.entity = entity;
-		this.player = (Player) attachment;
+		this.player = (Player) contextParam[0];
 		if(StringUtils.hasText(entity.finishMission))
 			this.finishedMissions.addAll(JSONArray.parseArray(entity.finishMission, Integer.class));
 		if(StringUtils.hasText(entity.acceptMission))
@@ -46,9 +52,14 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, PlayerMissio
 		return dao.get(key);
 	}
 
+	/**
+	 * 创建缓存对象，需要参数contextParam[player]
+	 * @param contextParam
+	 * @return
+	 */
 	@Override
-	public PlayerMission create(Object attachment) {
-		this.player = (Player)attachment;
+	public PlayerMission create(Object... contextParam) {
+		this.player = (Player)contextParam[0];
 		PlayerMission entity = new PlayerMission();
 		entity.id = this.player.getObjectId();
 		entity.acceptMission = "[]";

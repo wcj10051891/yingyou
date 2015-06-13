@@ -5,3 +5,4 @@
 10004=com.shadowgame.rpg.msg.LoginResult
 10005=com.shadowgame.rpg.msg.LoginResult2
 10006=com.shadowgame.rpg.msg.LoginResult3
+10007=com.shadowgame.rpg.msg.LogoutMsg

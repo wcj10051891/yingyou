@@ -3,25 +3,25 @@ package com.shadowgame.rpg.persist.entity;
 public class Item{
 	/** 道具id */
 	public Integer id;
-	/** 名称 */
+	/** 道具名称 */
 	public String name="";
 	/** 道具描述 */
-	public String description;
+	public String description="";
 	/** 需求玩家等级 */
-	public Integer playerLevel;
+	public Integer playerLv=0;
 	/** 父分类 */
-	public Integer parentType;
+	public Integer parentType=0;
 	/** 道具分类 */
-	public Integer itemType;
+	public Integer itemType=0;
 	/** 绑定类型（0不绑定1获得绑定2使用绑定） */
-	public Integer bindType;
+	public Integer bindType=0;
 	/** 品质 */
-	public Integer quality;
+	public Integer quality=0;
 	/** 最大堆叠数 */
-	public Integer maxStack;
+	public Integer maxStack=0;
 	/** 道具功能列表 */
-	public String function;
-	/** 参数 */
+	public String function="";
+	/** 扩展属性 */
 	public String extAttribute;
 	public Integer getId(){
 		return this.id;
@@ -32,8 +32,8 @@ public class Item{
 	public String getDescription(){
 		return this.description;
 	}
-	public Integer getPlayerLevel(){
-		return this.playerLevel;
+	public Integer getPlayerLv(){
+		return this.playerLv;
 	}
 	public Integer getParentType(){
 		return this.parentType;
@@ -65,8 +65,8 @@ public class Item{
 	public void setDescription(String description){
 		this.description = description;
 	}
-	public void setPlayerLevel(Integer playerLevel){
-		this.playerLevel = playerLevel;
+	public void setPlayerLv(Integer playerLv){
+		this.playerLv = playerLv;
 	}
 	public void setParentType(Integer parentType){
 		this.parentType = parentType;
