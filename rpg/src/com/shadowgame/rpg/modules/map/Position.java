@@ -13,17 +13,16 @@ public class Position {
 	 */
 	private MapRegion mapRegion;
 	/**
-	 * World position x
+	 * 坐标点
 	 */
-	private int x;
+	private Point point;
 	/**
-	 * World position y
+	 * 方向
 	 */
-	private int y;
+	private int heading;
 	
 	public Position(int x, int y) {
-		this.x = x;
-		this.y = y;
+		this.point = new Point(x, y);
 	}
 
 	/**
@@ -32,7 +31,7 @@ public class Position {
 	 * @return x
 	 */
 	public int getX() {
-		return x;
+		return this.point.x;
 	}
 
 	/**
@@ -41,7 +40,7 @@ public class Position {
 	 * @return y
 	 */
 	public int getY() {
-		return y;
+		return this.point.y;
 	}
 
 	/**
@@ -59,14 +58,29 @@ public class Position {
 	 * @param newX			新坐标x
 	 * @param newY			新坐标y
 	 */
-	void setXY(MapObject owner, MapInstance newInstance, int newX, int newY) {
-		this.x = newX;
-		this.y = newY;
+	void setPoint(MapObject owner, MapInstance newInstance, Point newPoint) {
+		this.point = newPoint;
 		//是否切换区域
-		MapRegion newRegion = newInstance.getRegion(newX, newY);
+		MapRegion newRegion = newInstance.getRegion(newPoint);
 		if (newRegion != mapRegion) {
 			newRegion.add(owner);
 			this.mapRegion = newRegion;
 		}
+	}
+
+	public int getHeading() {
+		return heading;
+	}
+
+	public void setHeading(int heading) {
+		this.heading = heading;
+	}
+
+	public Point getPoint() {
+		return point;
+	}
+
+	public void setPoint(Point point) {
+		this.point = point;
 	}
 }

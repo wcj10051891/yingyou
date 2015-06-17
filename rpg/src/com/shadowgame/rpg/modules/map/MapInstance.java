@@ -68,7 +68,7 @@ public class MapInstance {
 	 * @return a MapRegion
 	 */
 	public MapRegion getRegion(MapObject object) {
-		return getRegion(object.getPosition().getX(), object.getPosition().getY());
+		return getRegion(object.getPosition().getPoint());
 	}
 
 	/**
@@ -77,8 +77,8 @@ public class MapInstance {
 	 * @param y
 	 * @return a MapRegion
 	 */
-	public MapRegion getRegion(int x, int y) {
-		return regions.get(getRegionId(x, y));
+	public MapRegion getRegion(Point point) {
+		return regions.get(getRegionId(point));
 	}
 
 	/**
@@ -87,8 +87,8 @@ public class MapInstance {
 	 * @param y
 	 * @return region id.
 	 */
-	private String getRegionId(int x, int y) {
-		return x / MapRegion.width + "_" + y / MapRegion.height;
+	private String getRegionId(Point point) {
+		return point.x / MapRegion.width + "_" + point.y / MapRegion.height;
 	}
 
 	/**

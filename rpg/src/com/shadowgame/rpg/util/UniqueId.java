@@ -1,7 +1,5 @@
 package com.shadowgame.rpg.util;
 
-import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +9,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import xgame.core.util.RandomUtils;
+import xgame.core.util.StopWatch;
 
 import com.shadowgame.rpg.core.AppConfig;
 
@@ -117,8 +116,11 @@ public abstract class UniqueId {
 	public static void main(String[] args) {
 //		System.out.println(Arrays.toString(decode(4501493532967145472l)));
 		
-		long id = next();
-		System.out.println(Arrays.toString(decode(id)));
-		System.out.println(new Timestamp(1432885799195l).getDate());
+		StopWatch s = new StopWatch();
+		s.start();
+		System.out.println(next());
+		System.out.println(next());
+		s.stop();
+		System.out.println(s.prettyPrint());
 	}
 }

@@ -3,6 +3,7 @@ package com.shadowgame.rpg.modules.core;
 import java.util.Collection;
 
 import com.shadowgame.rpg.modules.map.Position;
+import com.shadowgame.rpg.modules.map.World;
 
 /**
  * 地图上的对象
@@ -42,5 +43,9 @@ public abstract class MapObject {
 	
 	public <T extends MapObject> Collection<T> getSeeObjectsByType(Class<T> objectType) {
 		return this.position.getMapRegion().getMapObjectByType(objectType);
+	}
+	
+	public World getWorld() {
+		return this.position.getMapRegion().getMapInstance().getGameMap().getWorld();
 	}
 }

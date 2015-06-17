@@ -60,7 +60,11 @@ public class World {
 	/**
 	 * 更新可见对象位置，计算是否切换区域
 	 */
-	public void updatePosition(MapObject object, MapInstance mapInstance, int newX, int newY) {
-		object.getPosition().setXY(object, mapInstance, newX, newY);
+	public void updatePosition(MapObject object, MapInstance mapInstance, Point newPoint) {
+		object.getPosition().setPoint(object, mapInstance, newPoint);
+	}
+	
+	public void updatePosition(MapObject object, Point newPoint) {
+		updatePosition(object, object.getPosition().getMapRegion().getMapInstance(), newPoint);
 	}
 }
