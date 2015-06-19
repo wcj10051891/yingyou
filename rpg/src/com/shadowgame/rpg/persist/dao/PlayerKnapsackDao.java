@@ -8,12 +8,12 @@ import com.shadowgame.rpg.persist.entity.PlayerKnapsack;
 
 @Dao
 public interface PlayerKnapsackDao {
-    @Sql(value = "update player_knapsack set 	`id`=:playerKnapsack.id,	`items`=:playerKnapsack.items,	`capacity`=:playerKnapsack.capacity	 where id=:playerKnapsack.id")
+    @Sql(value = "update t_player_knapsack set 	`id`=:playerKnapsack.id,	`items`=:playerKnapsack.items,	`capacity`=:playerKnapsack.capacity	 where id=:playerKnapsack.id")
     void update(@Arg(value = "playerKnapsack") PlayerKnapsack o);
 
-    @Sql(value = "insert into player_knapsack(	`id`,	`items`,	`capacity`	) values(	:playerKnapsack.id,	:playerKnapsack.items,	:playerKnapsack.capacity	)")
+    @Sql(value = "insert into t_player_knapsack(	`id`,	`items`,	`capacity`	) values(	:playerKnapsack.id,	:playerKnapsack.items,	:playerKnapsack.capacity	)")
     void insert(@Arg(value = "playerKnapsack") PlayerKnapsack o);
 
-    @Sql(value = "select * from player_knapsack where id=:id")
+    @Sql(value = "select * from t_player_knapsack where id=:id")
     PlayerKnapsack get(@Arg(value = "id") Long id);
 }

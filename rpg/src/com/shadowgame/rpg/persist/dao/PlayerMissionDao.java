@@ -6,13 +6,13 @@ import xgame.core.db.annotation.Sql;
 import com.shadowgame.rpg.persist.entity.PlayerMission;
 @Dao
 public interface PlayerMissionDao {
-	@Sql(value="insert into player_mission(	`id`,	`acceptMission`,	`finishMission`	) values(	:playerMission.id,	:playerMission.acceptMission,	:playerMission.finishMission	)")
+	@Sql(value="insert into t_player_mission(	`id`,	`acceptMission`,	`finishMission`	) values(	:playerMission.id,	:playerMission.acceptMission,	:playerMission.finishMission	)")
 	void insert(@Arg(value="playerMission") PlayerMission o);
 	
-	@Sql(value="update player_mission set 	`id`=:playerMission.id,	`acceptMission`=:playerMission.acceptMission,	`finishMission`=:playerMission.finishMission	 where id=:playerMission.id")
+	@Sql(value="update t_player_mission set 	`id`=:playerMission.id,	`acceptMission`=:playerMission.acceptMission,	`finishMission`=:playerMission.finishMission	 where id=:playerMission.id")
 	void update(@Arg(value="playerMission") PlayerMission o);
 
-	@Sql(value="select * from player_mission where id=:id")
+	@Sql(value="select * from t_player_mission where id=:id")
 	PlayerMission get(@Arg(value="id") Long id);
 }
 

@@ -9,6 +9,7 @@ import xgame.core.util.StringUtils;
 
 import com.shadowgame.rpg.core.AlertException;
 import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.map.MapInstance;
 import com.shadowgame.rpg.net.msg.ClientMsg;
 import com.shadowgame.rpg.service.Services;
 import com.shadowgame.rpg.util.UniqueId;
@@ -82,12 +83,11 @@ public class C_Login extends ClientMsg {
 		r.stringValue = "呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵";
 //		Services.tcpService.send(r, ctx.getChannel());
 //		throw new AlertException("尼玛");
-		StopWatch s = new StopWatch();
-		s.start();
-		for(int i = 0; i < 1; i++)
-			UniqueId.next();
-		s.stop();
-		System.out.println(s.prettyPrint());
+		
+		Player player = Services.cacheService.get(4672337295849525248l, Player.class, true);
+		player.onLogin(ctx.getChannel());
+		MapInstance target = Services.app.world.gameMaps.get(1).getDefaultInstance();
+		Services.app.world.updatePosition(player, target, 0, 0);
 	}
 
 }

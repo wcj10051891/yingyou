@@ -8,19 +8,19 @@ import xgame.core.db.annotation.Sql;
 import com.shadowgame.rpg.persist.entity.PlayerSkill;
 @Dao
 public interface PlayerSkillDao {
-	@Sql(value="insert into player_skill(	`id`,	`skills`	) values(	:playerSkill.id,	:playerSkill.skills	)")
+	@Sql(value="insert into t_player_skill(	`id`,	`skills`	) values(	:playerSkill.id,	:playerSkill.skills	)")
 	void insert(@Arg(value="playerSkill") PlayerSkill o);
 	
-	@Sql(value="delete from player_skill where id=:id")
+	@Sql(value="delete from t_player_skill where id=:id")
 	void delete(@Arg(value="id")Long id);
 	
-	@Sql(value="update player_skill set 	`id`=:playerSkill.id,	`skills`=:playerSkill.skills	 where id=:playerSkill.id")
+	@Sql(value="update t_player_skill set 	`id`=:playerSkill.id,	`skills`=:playerSkill.skills	 where id=:playerSkill.id")
 	void update(@Arg(value="playerSkill") PlayerSkill o);
 
-	@Sql(value="select * from player_skill where id=:id")
+	@Sql(value="select * from t_player_skill where id=:id")
 	PlayerSkill get(@Arg(value="id") Long id);
 	
-	@Sql(value="select * from player_skill")
+	@Sql(value="select * from t_player_skill")
 	List<PlayerSkill> getAll();
 }
 

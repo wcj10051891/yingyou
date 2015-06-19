@@ -25,7 +25,7 @@ public class World {
 	/**
 	 * 地图集合，地图配置id->地图对象(包括多个该对象创建出的实际场景)
 	 */
-	public ConcurrentHashMap<Integer, GameMap> worldMaps = new ConcurrentHashMap<Integer, GameMap>();
+	public ConcurrentHashMap<Integer, GameMap> gameMaps = new ConcurrentHashMap<Integer, GameMap>();
 	/**
 	 * 实际场景集合
 	 */
@@ -35,7 +35,7 @@ public class World {
 	
 	public World() {
 		for (TGameMap entity : Services.config.mapConfig.maps.values())
-			worldMaps.put(entity.id, Services.cacheService.get(entity.id, GameMap.class, true, this));
+			gameMaps.put(entity.id, Services.cacheService.get(entity.id, GameMap.class, true, this));
 	}
 	
 	public int nextInstanceId() {
@@ -43,7 +43,7 @@ public class World {
 	}
 
 	public GameMap getWorldMap(int id) {
-		GameMap map = worldMaps.get(id);
+		GameMap map = gameMaps.get(id);
 		if (map == null)
 			throw new AppException("Map: " + id + " not exist");
 		return map;
