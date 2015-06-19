@@ -7,9 +7,10 @@ import xgame.core.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.modules.exec.Execution;
+import com.shadowgame.rpg.persist.entity.TMission;
 
 public class Mission {
-	public com.shadowgame.rpg.persist.entity.Mission entity;
+	public TMission entity;
 	/**
 	 * 接受条件
 	 */
@@ -19,7 +20,7 @@ public class Mission {
 	 */
 	public List<JSONObject> goals;
 	
-	public Mission(com.shadowgame.rpg.persist.entity.Mission entity) {
+	public Mission(TMission entity) {
 		this.entity = entity;
 		this.acceptConditions = new ArrayList<>();
 		if(StringUtils.hasText(this.entity.acceptCond1))

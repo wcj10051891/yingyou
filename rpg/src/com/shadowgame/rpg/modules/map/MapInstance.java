@@ -1,13 +1,13 @@
 package com.shadowgame.rpg.modules.map;
 
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.shadowgame.rpg.modules.core.AbstractSpirit;
 import com.shadowgame.rpg.modules.core.MapObject;
+import com.shadowgame.rpg.modules.core.Monster;
 import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.persist.entity.TMonster;
 import com.shadowgame.rpg.service.Services;
 
 /**
@@ -19,39 +19,23 @@ public class MapInstance {
 	/**
 	 * 当前地图副本序号id
 	 */
-	private int instanceId;
+	private int id;
 	/**
 	 * 副本所属地图
 	 */
 	private GameMap gameMap;
 	/**
-	 * 宽
-	 */
-	private int width = 1000;
-	/**
-	 * 高
-	 */
-	private int height = 1000;
-	/**
 	 * 地图分块
 	 */
 	private ConcurrentHashMap<String, MapRegion> regions = new ConcurrentHashMap<String, MapRegion>();
-	/**
-	 * 当前地图上的所有对象
-	 */
-	private ConcurrentHashMap<Long, MapObject> objects = new ConcurrentHashMap<Long, MapObject>();
-	/**
-	 * 当前地图上所有玩家
-	 */
-	private ConcurrentHashMap<Long, Player> players = new ConcurrentHashMap<Long, Player>();
 	/**
 	 * 副本销毁任务
 	 */
 	private Future<?> destroyTask;
 
-	public MapInstance(GameMap gameMap, int instanceId) {
+	public MapInstance(GameMap gameMap) {
+		this.id = gameMap.getWorld().nextInstanceId();
 		this.gameMap = gameMap;
-		this.instanceId = instanceId;
 		this.init();
 	}
 
@@ -94,15 +78,17 @@ public class MapInstance {
 	/**
 	 * 创建所有区块，每个区块引用周围8块，一起9块合成一个广播区域
 	 */
-	public void init() {
-		int rows = height / MapRegion.height;
-		int columns = width / MapRegion.width;
+	private void init() {
+		this.gameMap.addInstance(this);
+		
+		int rows = this.gameMap.entity.height / MapRegion.height;
+		int columns = this.gameMap.entity.width / MapRegion.width;
 		for (int r = 0; r < rows; r++)
 			for (int c = 0; c < columns; c++) {
 				String id = r + "_" + c;
 				regions.put(id, new MapRegion(id, this));
 			}
-		for (int r = 0; r < rows; r++)
+		for (int r = 0; r < rows; r++) {
 			for (int c = 0; c < columns; c++) {
 				MapRegion current = regions.get(r + "_" + c);
 				int r1 = r - 1;
@@ -128,29 +114,55 @@ public class MapInstance {
 				if (c2 >= 0)
 					current.addNeighbourRegion(regions.get(r + "_" + c2));
 			}
+		}
+		
+		//初始化怪物
+		for (TMonster e : Services.config.mapConfig.monsters.get(this.gameMap.entity.id)) {
+			Point p = new Point(e.x, e.y);
+			add(new Monster(new Position(p), e), p);
+		}
 		//设置定时销毁
 //		setDestroyTime(destroySecond);
 	}
 	
 	public void destory() {
-		gameMap.removeInstance(instanceId);
-		for(Iterator<MapObject> it = objects.values().iterator();it.hasNext();) {
-			MapObject obj = it.next();
-			if(obj instanceof Player) {			
-				Player player = (Player) obj;
+		this.gameMap.removeInstance(this);
+//		for (MapRegion r : regions.values()) {
+//			for (Player player : r.getMapObjectByType(Player.class)) {
+//				
+//			}
+//		}
+		
+//		for(Iterator<MapObject> it = objects.values().iterator();it.hasNext();) {
+//			MapObject obj = it.next();
+//			if(obj instanceof Player) {			
+//				Player player = (Player) obj;
 //				moveToEntryPoint((Player) obj, portal, true);
-			} else {
+//			} else {
 //				obj.getController().delete();
-			}
-				
+//			}
+//				
+//		}
+	}
+	
+	public void add(MapObject object, Point point) {
+		Position pos = object.getPosition();
+		if(pos == null) {
+			pos = new Position(point);
+			object.setPosition(pos);
 		}
+		pos.setNewPoint(object, this, point);
+	}
+	
+	public void remove(MapObject object) {
+		object.getPosition().getMapRegion().remove(object);
 	}
 
-	public void onEnter(AbstractSpirit spirit) {
+	public void onEnter(Player player) {
 		
 	}
 	
-	public void onLeave(AbstractSpirit spirit) {
+	public void onLeave(Player player) {
 		
 	}
 
@@ -158,27 +170,10 @@ public class MapInstance {
 	 * 获取副本序号id
 	 * @return
 	 */
-	public int getInstanceId() {
-		return instanceId;
+	public int getId() {
+		return id;
 	}
 
-	/**
-	 * 检查玩家是否在这里
-	 * @param objectId
-	 * @return
-	 */
-	public boolean isInInstance(Long objectId) {
-		return players.containsKey(objectId);
-	}
-
-	/**
-	 * 当前地图副本上所有玩家
-	 * @return
-	 */
-	public Iterator<Player> playerIterator() {
-		return players.values().iterator();
-	}
-	
 	/**
 	 * 设置副本销毁
 	 */

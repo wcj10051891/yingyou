@@ -9,24 +9,25 @@ import java.util.Map.Entry;
 import xgame.core.cache.AbstractCacheObject;
 import xgame.core.util.CountMap;
 
-import com.shadowgame.rpg.persist.dao.ItemDao;
+import com.shadowgame.rpg.persist.dao.TItemDao;
+import com.shadowgame.rpg.persist.entity.TItem;
 import com.shadowgame.rpg.service.Services;
 
 /**
  * @author wcj10051891@gmail.com
  */
-public class Item extends AbstractCacheObject<Integer, com.shadowgame.rpg.persist.entity.Item> {
+public class Item extends AbstractCacheObject<Integer, TItem> {
 	
-	private static final ItemDao dao = Services.daoFactory.get(ItemDao.class);
-	public com.shadowgame.rpg.persist.entity.Item entity;
+	private static final TItemDao dao = Services.daoFactory.get(TItemDao.class);
+	public TItem entity;
 
 	@Override
-	public com.shadowgame.rpg.persist.entity.Item get(Integer key) {
+	public TItem get(Integer key) {
 		return dao.get(key);
 	}
 	
 	@Override
-	public Item init(com.shadowgame.rpg.persist.entity.Item entity, Object... contextParam) {
+	public Item init(TItem entity, Object... contextParam) {
 		this.entity = entity;
 		return this;
 	}
@@ -61,9 +62,9 @@ public class Item extends AbstractCacheObject<Integer, com.shadowgame.rpg.persis
 	 * @return
 	 */
 	@Override
-	public Map<Integer, com.shadowgame.rpg.persist.entity.Item> gets(List<Integer> keys) {
-		Map<Integer, com.shadowgame.rpg.persist.entity.Item> result = new HashMap<Integer, com.shadowgame.rpg.persist.entity.Item>(keys.size());
-		for(com.shadowgame.rpg.persist.entity.Item item : dao.getByItemIds(keys))
+	public Map<Integer, TItem> gets(List<Integer> keys) {
+		Map<Integer, TItem> result = new HashMap<Integer, TItem>(keys.size());
+		for(TItem item : dao.getByItemIds(keys))
 			result.put(item.getId(), item);
 		return result;
 	}

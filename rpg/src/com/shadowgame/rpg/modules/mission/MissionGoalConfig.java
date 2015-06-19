@@ -6,17 +6,18 @@ import java.util.Map;
 import xgame.core.util.ObjectUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shadowgame.rpg.persist.dao.MissionGoalDao;
+import com.shadowgame.rpg.persist.dao.TMissionGoalDao;
+import com.shadowgame.rpg.persist.entity.TMissionGoal;
 import com.shadowgame.rpg.service.Services;
 
 public class MissionGoalConfig {
-	private MissionGoalDao dao = Services.daoFactory.get(MissionGoalDao.class);
+	private TMissionGoalDao dao = Services.daoFactory.get(TMissionGoalDao.class);
 
 	public Map<String, Class<?>> goals = new HashMap<String, Class<?>>();
-	public Map<String, com.shadowgame.rpg.persist.entity.MissionGoal> entitys = new HashMap<String, com.shadowgame.rpg.persist.entity.MissionGoal>();
+	public Map<String, TMissionGoal> entitys = new HashMap<String, TMissionGoal>();
 
 	public MissionGoalConfig() {
-		for (com.shadowgame.rpg.persist.entity.MissionGoal entity : dao.getAll()) {
+		for (TMissionGoal entity : dao.getAll()) {
 			entitys.put(entity.key, entity);
 			goals.put(entity.key, ObjectUtils.forName(entity.clazz));
 		}

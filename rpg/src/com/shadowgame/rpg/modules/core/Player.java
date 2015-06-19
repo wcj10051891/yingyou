@@ -65,7 +65,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 		this.channel = channel;
 		this.channel.setAttachment(this);
 		
-		Services.appService.world.allPlayers.add(this);
+		Services.app.world.allPlayers.add(this);
 		Services.tcpService.joinGroup(Groups.World, channel);
 		
 		missionManager = Services.cacheService.get(this.entity.id, PlayerMissionManager.class, true, this);
@@ -74,10 +74,10 @@ public class Player extends AbstractFighter implements CacheObject<Long, com.sha
 	}
 	
 	public void onLogout() {
-		Services.appService.world.allPlayers.remove(this);
+		Services.app.world.allPlayers.remove(this);
 		Services.tcpService.leaveGroup(Groups.World, channel);
 		try {
-			this.getPosition().getMapRegion().remove(this);
+			this.getPosition().getMapInstance().remove(this);
 		} catch (Exception e) {
 			log.error("player {} not in map", this.getObjectId());
 		}

@@ -30,10 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import com.shadowgame.rpg.core.AppConfig;
 import com.shadowgame.rpg.core.AppException;
-import com.shadowgame.rpg.msg.AlertMsg;
-import com.shadowgame.rpg.msg.LoginMsg;
-import com.shadowgame.rpg.msg.LogoutMsg;
-import com.shadowgame.rpg.msg.NoticeMsg;
+import com.shadowgame.rpg.msg.login.C_Login;
+import com.shadowgame.rpg.msg.login.C_LoginAttachment;
 import com.shadowgame.rpg.net.msg.Message;
 
 public class BinaryGameClient {
@@ -50,29 +48,6 @@ public class BinaryGameClient {
 			@Override
 			public ChannelPipeline getPipeline() throws Exception {
 				ChannelPipeline p = Channels.pipeline();
-			     p.addLast("encoder", new OneToOneEncoder() {
-					@Override
-					protected Object encode(ChannelHandlerContext ctx, Channel channel, Object msg) throws Exception {
-						if(!(msg instanceof Message))
-							throw new AppException("message must instanceof " + Message.class.getName());
-						/**
-						 * 4字节长度			+		bytes		<br/>
-						 * 长度=4(len)+4(协议号)+bytes数据长度
-						 */
-						ChannelBuffer data = null;
-						try {
-							data = msgService.encode((Message)msg);
-						} catch (Exception e) {
-							throw new AppException("encode message error, msg:" + msg, e);
-						}
-						int dataBodySize = AppConfig.packet_length_size + AppConfig.msgId_size + data.readableBytes();
-						ChannelBuffer packet = ChannelBuffers.buffer(dataBodySize);
-						packet.writeInt(dataBodySize);
-						packet.writeInt(msgService.msg2Id.get(msg.getClass()));
-						packet.writeBytes(data);
-						return packet;
-					}
-				});
 			     p.addLast("decoder", new FrameDecoder() {
 					
 					@Override
@@ -98,11 +73,38 @@ public class BinaryGameClient {
 						buffer.readBytes(data, dataBodySize);
 						try {
 							Object msg = msgService.decode(msgId, data);
+							log.info("decode message from player:{}, channel:{} success, msg:{}", channel.getAttachment(), channel, msg);
 							return msg;
 						} catch (Exception e) {
 							throw new AppException("decode message from player:" + channel.getAttachment() + 
 									", channel:" + channel + " error", e);
 						}
+					}
+				});
+				p.addLast("encoder", new OneToOneEncoder() {
+
+					@Override
+					protected Object encode(ChannelHandlerContext ctx,
+							Channel channel, Object msg) throws Exception {
+						if(!(msg instanceof Message))
+							throw new AppException("message must instanceof " + Message.class.getName());
+						/**
+						 * 4字节长度			+		bytes		<br/>
+						 * 长度=4(len)+4(协议号)+bytes数据长度
+						 */
+						ChannelBuffer data = null;
+						try {
+							data = msgService.encode((Message)msg);
+						} catch (Exception e) {
+							throw new AppException("encode message error, msg:" + msg, e);
+						}
+						int dataBodySize = AppConfig.packet_length_size + AppConfig.msgId_size + data.readableBytes();
+						ChannelBuffer packet = ChannelBuffers.buffer(dataBodySize);
+						packet.writeInt(dataBodySize);
+						packet.writeInt(msgService.msg2Id.get(msg.getClass()));
+						packet.writeBytes(data);
+						log.info("encode message success, msg:{}", msg);
+						return packet;
 					}
 				});
 			     p.addLast("logic", new SimpleChannelUpstreamHandler() {
@@ -152,13 +154,25 @@ public class BinaryGameClient {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		final LoginMsg login = new LoginMsg();
-		login.username = "u1";
-		login.password = "密码";
-		login.msgs1 = (Arrays.asList(new NoticeMsg("消息1"), new NoticeMsg("消息2"), new NoticeMsg("消息3")));
-		login.msgs2 = (Arrays.asList(new AlertMsg("消息4"), new AlertMsg("消息5"), new AlertMsg("消息6")));
+//		final LoginMsg login = new LoginMsg();
+//		login.username = "u1";
+//		login.password = "密码";
+//		login.msgs1 = (Arrays.asList(new NoticeMsg("消息1"), new NoticeMsg("消息2"), new NoticeMsg("消息3")));
+//		login.msgs2 = (Arrays.asList(new AlertMsg("消息4"), new AlertMsg("消息5"), new AlertMsg("消息6")));
+//		
+//		final LogoutMsg logout = new LogoutMsg();
 		
-		final LogoutMsg logout = new LogoutMsg();
+		final C_Login login = new C_Login();
+		login.byteValue = 1;
+		login.doubleValue = 2;
+		login.floatValue = 3;
+		login.intValue = 4;
+		login.longValue = 5;
+		login.nestValue1 = Arrays.asList(new C_LoginAttachment("s1"), new C_LoginAttachment("s2"));
+		login.nestValue2 = Arrays.asList(6, 7, 8);
+		login.nestValue3 = Arrays.asList("9", "10", "11");
+		login.shortValue = 12;
+		login.stringValue = "这是字符串";
 		
 		BinaryGameClient.init();
 		final Map<Integer, Channel> channels = new HashMap<Integer, Channel>();
@@ -185,12 +199,12 @@ public class BinaryGameClient {
 //							}
 //						}, 1, 1, TimeUnit.SECONDS);
 					} else if(cmd.equalsIgnoreCase("1")) {
-						channels.get(0).write(logout);
-						channels.remove(0);
-						if(channels.isEmpty()) {
-							sc.close();
-							System.exit(0);
-						}
+//						channels.get(0).write(logout);
+//						channels.remove(0);
+//						if(channels.isEmpty()) {
+//							sc.close();
+//							System.exit(0);
+//						}
 					}
 				}
 			}

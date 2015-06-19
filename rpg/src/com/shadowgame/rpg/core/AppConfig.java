@@ -62,9 +62,9 @@ public abstract class AppConfig {
 	 */
 	public static final String JMX_PACKAGE;
 	/**
-	 * dto包名
+	 * msg包名
 	 */
-	public static final String DTO_PACKAGE;
+	public static final String MSG_PACKAGE;
 	/**
 	 * 包长度的字节数
 	 */
@@ -89,7 +89,7 @@ public abstract class AppConfig {
 		HTTP_DEFAULT_CHARSET = config.getString("http.defaultCharset", "UTF-8");
 		HTTP_CONTEXT_ROOT = config.getString("http.context.root", "server");
 		PHPRPC_BEAN_PACKAGE = config.getString("phprpc.bean.package");
-		DTO_PACKAGE = config.getString("dto.package");
+		MSG_PACKAGE = config.getString("msg.package");
 		SERVER_ID = config.getString("serverId");
 		try {
 			Matcher matcher = serverIdPTN.matcher(SERVER_ID);

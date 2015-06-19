@@ -37,7 +37,7 @@ public abstract class UniqueId {
 	private static synchronized long nextMillis() {
 		try {
 			Thread.sleep(1l);
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 		}
 		return System.currentTimeMillis();
 	}
@@ -61,7 +61,7 @@ public abstract class UniqueId {
 	}
 	
 	private static long decodeUTC(long encoded) {
-		int days = (int)(encoded >> 27);
+		int days = (int)(encoded >> 27 & 0xffff);
 		int hour = (int)(encoded >> 22 & 0x1f);
 		int minute = (int)(encoded >> 16 & 0x3f);
 		int second = (int)(encoded >> 10 & 0x3f);
@@ -116,9 +116,21 @@ public abstract class UniqueId {
 	public static void main(String[] args) {
 //		System.out.println(Arrays.toString(decode(4501493532967145472l)));
 		
+//		StopWatch s = new StopWatch();
+//		s.start();
+//		System.out.println(next());
+//		System.out.println(next());
+//		s.stop();
+//		System.out.println(s.prettyPrint());
+//		Long next = next();
+//		System.out.println(next);
+//		Object[] decode = decode(next);
+//		System.out.println(Arrays.toString(decode));
+//		System.out.println(new Timestamp((Long)decode[0]));
+//		for(int i = 0; i < 100; i++)
+//			System.out.println(next());
 		StopWatch s = new StopWatch();
 		s.start();
-		System.out.println(next());
 		System.out.println(next());
 		s.stop();
 		System.out.println(s.prettyPrint());

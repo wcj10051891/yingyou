@@ -30,7 +30,7 @@ public class MoveManager {
 		moveTask = Services.timerService.jdkScheduler.schedule(new Runnable() {
 			@Override
 			public void run() {
-				Services.appService.world.updatePosition(spirit, next);
+				Services.app.world.updatePosition(spirit, next);
 				startMove();
 			}
 		}, costMills, TimeUnit.MILLISECONDS);

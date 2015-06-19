@@ -24,6 +24,10 @@ public class Position {
 	public Position(int x, int y) {
 		this.point = new Point(x, y);
 	}
+	
+	public Position(Point point) {
+		this.point = point;
+	}
 
 	/**
 	 * Return World position x
@@ -45,10 +49,18 @@ public class Position {
 
 	/**
 	 * 获取所在区块
-	 * @return Map region
+	 * @return 	MapRegion
 	 */
 	public MapRegion getMapRegion() {
 		return mapRegion;
+	}
+	
+	/**
+	 * 获取所在地图
+	 * @return	MapInstance
+	 */
+	public MapInstance getMapInstance() {
+		return mapRegion.getMapInstance();
 	}
 
 	/**
@@ -58,7 +70,7 @@ public class Position {
 	 * @param newX			新坐标x
 	 * @param newY			新坐标y
 	 */
-	void setPoint(MapObject owner, MapInstance newInstance, Point newPoint) {
+	void setNewPoint(MapObject owner, MapInstance newInstance, Point newPoint) {
 		this.point = newPoint;
 		//是否切换区域
 		MapRegion newRegion = newInstance.getRegion(newPoint);
@@ -78,9 +90,5 @@ public class Position {
 
 	public Point getPoint() {
 		return point;
-	}
-
-	public void setPoint(Point point) {
-		this.point = point;
 	}
 }

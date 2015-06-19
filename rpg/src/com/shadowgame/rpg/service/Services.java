@@ -31,12 +31,11 @@ public class Services {
 	public static TimerService timerService;
 	public static JMXService jmxService;
 	public static CacheService cacheService;
-	public static AppService appService;
-//	public static MsgService msgService;
 	public static BinaryMsgService msgService;
 	public static DaoFactory daoFactory;
 	public static QueryRunner jdbc;
 	public static ConfigService config;
+	public static AppService app;
 	
 	public static void start() throws Exception {
 		timerService = new TimerService();
@@ -57,10 +56,6 @@ public class Services {
 		cacheService = new CacheService(timerService.jdkScheduler);
 		cacheService.start();
 		log.info("[cacheService] start ok.");
-		
-		appService = new AppService();
-		appService.start();
-		log.info("[appService] start ok.");
 
 		msgService = new BinaryMsgService();
 		msgService.start();
@@ -89,6 +84,10 @@ public class Services {
 		config = new ConfigService();
 		config.start();
 		log.info("[ConfigService] start ok.");
+		
+		app = new AppService();
+		app.start();
+		log.info("[appService] start ok.");
 	}
 	
 	public static void stop() throws Exception {
@@ -102,8 +101,8 @@ public class Services {
 			log.info("[tcpService] stop ok.");
 		}
 
-		if(appService != null) {
-			appService.stop();
+		if(app != null) {
+			app.stop();
 			log.info("[appService] stop ok.");
 		}
 

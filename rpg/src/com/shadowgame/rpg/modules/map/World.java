@@ -1,14 +1,16 @@
 package com.shadowgame.rpg.modules.map;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.modules.core.MapObject;
-import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.modules.core.PlayerContainer;
+import com.shadowgame.rpg.persist.entity.TGameMap;
+import com.shadowgame.rpg.service.Services;
 
 /**
  * 世界对象
@@ -21,50 +23,57 @@ public class World {
 
 	public PlayerContainer allPlayers = new PlayerContainer();
 	/**
-	 * 包括玩家在内的所有地图上的可见对象
-	 */
-	public ConcurrentHashMap<Long, MapObject> allObjects = new ConcurrentHashMap<Long, MapObject>();
-	/**
-	 * 地图集合
+	 * 地图集合，地图配置id->地图对象(包括多个该对象创建出的实际场景)
 	 */
 	public ConcurrentHashMap<Integer, GameMap> worldMaps = new ConcurrentHashMap<Integer, GameMap>();
+	/**
+	 * 实际场景集合
+	 */
+	public ConcurrentHashMap<Integer, MapInstance> mapInstances = new ConcurrentHashMap<Integer, MapInstance>();
+	
+	private AtomicInteger instanceId = new AtomicInteger();
 	
 	public World() {
-		worldMaps.put(1, new GameMap(this));
+		for (TGameMap entity : Services.config.mapConfig.maps.values())
+			worldMaps.put(entity.id, Services.cacheService.get(entity.id, GameMap.class, true, this));
+	}
+	
+	public int nextInstanceId() {
+		return this.instanceId.incrementAndGet();
 	}
 
 	public GameMap getWorldMap(int id) {
 		GameMap map = worldMaps.get(id);
 		if (map == null)
-			throw new AppException("Map: " + id + " not exist!");
+			throw new AppException("Map: " + id + " not exist");
 		return map;
-	}
-
-	public void addObject(MapObject object) {
-		if (allObjects.putIfAbsent(object.getObjectId(), object) == null) {
-			if (object instanceof Player)
-				allPlayers.add((Player) object);
-		}
-	}
-
-	public void removeObject(MapObject object) {
-		allObjects.remove(object.getObjectId());
-		if (object instanceof Player)
-			allPlayers.remove((Player) object);
-	}
-
-	public MapObject findObject(Long objectId) {
-		return allObjects.get(objectId);
 	}
 
 	/**
 	 * 更新可见对象位置，计算是否切换区域
 	 */
-	public void updatePosition(MapObject object, MapInstance mapInstance, Point newPoint) {
-		object.getPosition().setPoint(object, mapInstance, newPoint);
+	public void updatePosition(MapObject object, MapInstance mapInstance, int newX, int newY) {
+		updatePosition(object, mapInstance, new Point(newX, newY));
 	}
 	
+	/**
+	 * 更新可见对象位置，计算是否切换区域
+	 */
+	public void updatePosition(MapObject object, int newX, int newY) {
+		updatePosition(object, new Point(newX, newY));
+	}
+	
+	/**
+	 * 更新可见对象位置，计算是否切换区域
+	 */
 	public void updatePosition(MapObject object, Point newPoint) {
 		updatePosition(object, object.getPosition().getMapRegion().getMapInstance(), newPoint);
+	}
+	
+	/**
+	 * 更新可见对象位置，计算是否切换区域
+	 */
+	public void updatePosition(MapObject object, MapInstance mapInstance, Point newPoint) {
+		mapInstance.add(object, newPoint);
 	}
 }

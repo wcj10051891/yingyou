@@ -7,18 +7,18 @@ import xgame.core.util.ObjectUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.modules.core.Player;
-import com.shadowgame.rpg.persist.dao.ExecutionDao;
-import com.shadowgame.rpg.persist.entity.Execution;
+import com.shadowgame.rpg.persist.dao.TExecutionDao;
+import com.shadowgame.rpg.persist.entity.TExecution;
 import com.shadowgame.rpg.service.Services;
 
 public class ExecutionConfig {
-	private ExecutionDao dao = Services.daoFactory.get(ExecutionDao.class);
+	private TExecutionDao dao = Services.daoFactory.get(TExecutionDao.class);
 	
 	public Map<String, Exec> key2exec = new HashMap<>();
 	private Map<String, Object> execImplObject = new HashMap<>();
 	
 	public ExecutionConfig() {
-		for (Execution entity : dao.getAll()) {
+		for (TExecution entity : dao.getAll()) {
 			execImplObject.put(entity.clazz, ObjectUtils.create(entity.clazz));
 			this.key2exec.put(entity.key,
 					new Exec(entity.key, execImplObject.get(entity.clazz), entity.method, JSONObject.parseObject(entity.param)));
