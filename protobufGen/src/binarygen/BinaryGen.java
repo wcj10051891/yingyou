@@ -48,18 +48,17 @@ public class BinaryGen {
 		for (JavaClass cls : builder.getClasses()) {
 			if(cls.isA(messageType)) {
 				StringBuilder msg = new StringBuilder();
-				msg.append(comment(cls.getComment())).append("\n");
+				msg.append(comment(cls.getComment(), true)).append("\n");
 				msg.append("message ").append(cls.getName()).append("{").append("\n");
-				msg.append("\t").append(typeRegister.get(Integer.class.getSimpleName())).append(" cmd=").append(cls.getFullyQualifiedName().hashCode()).append(";\n");
 				for (JavaField f : cls.getFields()) {
 					if(f.getType().isA(listType)) {
 						String t = f.getType().getActualTypeArguments()[0].getJavaClass().getName();
 						String at = typeRegister.get(t);
 						if(at != null)
 							t = at;
-						msg.append("\t").append("array ").append(t).append(" ").append(f.getName()).append(";").append(comment(f.getComment()));
+						msg.append("\t").append("array ").append(t).append(" ").append(f.getName()).append("; ").append(comment(f.getComment(), false));
 					} else {
-						msg.append("\t").append(typeRegister.get(f.getType().getJavaClass().getName())).append(" ").append(f.getName()).append(";").append(comment(f.getComment()));
+						msg.append("\t").append(typeRegister.get(f.getType().getJavaClass().getName())).append(" ").append(f.getName()).append("; ").append(comment(f.getComment(), false));
 					}
 					msg.append("\n");
 				}
@@ -81,14 +80,18 @@ public class BinaryGen {
 				outDirectory.mkdirs();
 			
 			for (Entry<String, List<String>> e : msgs.entrySet()) {
-				File file = xgame.core.util.IOUtils.writeFile(msg_file_out_dir + File.separator + e.getKey().replace("\\.", File.separator), "Message.txt", StringUtils.join(e.getValue(), "\n"));
-				log.info("package " + e.getKey() + " msg generate success->" + file.getCanonicalPath());
+				String packageName = e.getKey();
+				String filename = packageName.substring(packageName.lastIndexOf(".") + 1);
+				String[] s = filename.split("_");
+				filename = s[1] + "_" + s[0];
+				File file = xgame.core.util.IOUtils.writeFile(msg_file_out_dir + File.separator, filename + ".txt", StringUtils.join(e.getValue(), "\n"));
+				log.info("package " + packageName + " msg generate success->" + file.getCanonicalPath());
 			}
 		}
 	}
 	
-	private static String comment(String comment) {
-		StringBuilder sb = new StringBuilder("//");
+	private static String comment(String comment, boolean isClassComment) {
+		StringBuilder sb = new StringBuilder(isClassComment ? "// ======== " : "//");
 		if(comment != null) {
 			StringTokenizer s = new StringTokenizer(comment, System.lineSeparator());
 			while(s.hasMoreTokens()) {

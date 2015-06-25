@@ -1,4 +1,4 @@
-package com.shadowgame.rpg.msg.login;
+package com.shadowgame.rpg.msg.login_11;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import com.shadowgame.rpg.net.msg.Message;
  * @author wcj10051891@gmail.com
  * @date 2015年6月18日 下午5:02:48
  */
-public class S_LoginResult extends Message {
+public class Sc_11000 extends Message {
 	/**
 	 * 字节
 	 */
@@ -43,7 +43,7 @@ public class S_LoginResult extends Message {
 	 */
 	public List<String> nestValue1;
 	/**
-	 * 数组[S_LoginResultAttachment]
+	 * 数组[LoginResultAttachment]
 	 */
-	public List<S_LoginResultAttachment> nestValue2;
+	public List<LoginResultAttachment> nestValue2;
 }

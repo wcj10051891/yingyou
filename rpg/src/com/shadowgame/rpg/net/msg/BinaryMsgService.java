@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -21,17 +23,25 @@ import com.shadowgame.rpg.core.AppException;
 
 public class BinaryMsgService implements Service {
 	private static final Logger log = LoggerFactory.getLogger(BinaryMsgService.class);
-	private Map<Integer, Class<?>> id2msg = new HashMap<Integer, Class<?>>();
-	public Map<Class<?>, Integer> msg2Id = new HashMap<Class<?>, Integer>();
+	private Map<Integer, Class<?>> Cs_id2msg = new HashMap<Integer, Class<?>>();
+	public Map<Class<?>, Integer> Sc_msg2Id = new HashMap<Class<?>, Integer>();
 	private Map<Class<?>, Field[]> msg2Fields = new HashMap<Class<?>, Field[]>();
+	private static final Pattern msgClassPattern = Pattern.compile("\\w+_(\\d+)");
+	
 	@Override
 	public void start() throws Exception {
 		for (Class<?> clazz : ClassUtils.scanPackage(AppConfig.MSG_PACKAGE)) {
 			if(Message.class.isAssignableFrom(clazz)) {
-				int id = clazz.getName().hashCode();
-				id2msg.put(id, clazz);
-				msg2Id.put(clazz, id);
-				log.info("find msg {}->{}", id, clazz);
+				String clsName = clazz.getSimpleName();
+				Matcher m = msgClassPattern.matcher(clsName);
+				if(m.matches()) {
+					int id = Integer.valueOf(m.group(1));
+					if(clsName.startsWith("Cs"))
+						Cs_id2msg.put(id, clazz);
+					else if(clsName.startsWith("Sc"))
+						Sc_msg2Id.put(clazz, id);
+					log.info("find msg {}->{}", id, clazz);
+				}
 			}
 		}
 	}
@@ -80,15 +90,12 @@ public class BinaryMsgService implements Service {
 			}
 		} else if(msgType == List.class) {
 			List<?> l = (List<?>)msg;
-			int len = 0;
 			ChannelBuffer n = null;
-			if(l != null && l.size() > 0) {
+			int len = 0;
+			if(l != null && (len = l.size()) > 0) {
 				n = ChannelBuffers.dynamicBuffer();
-				for (Object o : l) {
-					ChannelBuffer nested = encode(o.getClass(), o);
-					len += nested.readableBytes();
-					n.writeBytes(nested);
-				}
+				for (Object o : l)
+					n.writeBytes(encode(o.getClass(), o));
 			}
 			out.writeShort(len);
 			if(n != null)
@@ -102,10 +109,10 @@ public class BinaryMsgService implements Service {
 
 	@SuppressWarnings("unchecked")
 	public Message decode(int msgId, ChannelBuffer buf) throws Exception {
-		return decodeMessageType((Class<Message>)id2msg.get(msgId), buf);
+		return decodeMessageType((Class<Message>)Cs_id2msg.get(msgId), buf);
 	}
 	
-	private Message decodeMessageType(Class<Message> msgClass, ChannelBuffer buf) throws Exception {
+	protected Message decodeMessageType(Class<Message> msgClass, ChannelBuffer buf) throws Exception {
 		Object result = msgClass.newInstance();
 		for (Field field : getFields(msgClass))
 			field.set(result, decodeField(field, buf));
@@ -114,7 +121,7 @@ public class BinaryMsgService implements Service {
 	
 
 	@SuppressWarnings("unchecked")
-	private Object decodeNotArrayType(Class<?> type, ChannelBuffer buf) throws Exception {
+	protected Object decodeNotArrayType(Class<?> type, ChannelBuffer buf) throws Exception {
 		if(type == byte.class || type == Byte.class)
 			return buf.readByte();
 		else if(type == short.class || type == Short.class)
@@ -143,22 +150,25 @@ public class BinaryMsgService implements Service {
 		}
 	}
 
-	private List<?> decodeArrayType(Class<?> nestedType, ChannelBuffer buf) throws Exception {
+	protected List<?> decodeArrayType(Class<?> nestedType, ChannelBuffer buf) throws Exception {
 		short len = buf.readShort();
 		if(len > 0) {
-			ChannelBuffer data = ChannelBuffers.buffer(len);
-			buf.readBytes(data);
 			List<Object> l = new ArrayList<Object>();
-			while(data.readable()) {
-				l.add(decodeNotArrayType(nestedType, data));
-			}
+			for(int i = 0; i < len; i++)
+				l.add(decodeNotArrayType(nestedType, buf));
+//			ChannelBuffer data = ChannelBuffers.buffer(len);
+//			buf.readBytes(data);
+//			List<Object> l = new ArrayList<Object>();
+//			while(data.readable()) {
+//				l.add(decodeNotArrayType(nestedType, data));
+//			}
 			return l;
 		} else {
 			return Collections.emptyList();
 		}
 	}
 	
-	private Object decodeField(Field f, ChannelBuffer buf) throws Exception {
+	protected Object decodeField(Field f, ChannelBuffer buf) throws Exception {
 		Class<?> type = f.getType();
 		if(type == List.class) {
 			Class<?> subType = (Class<?>)((ParameterizedType)f.getGenericType()).getActualTypeArguments()[0];

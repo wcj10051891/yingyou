@@ -16,8 +16,8 @@ import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.core.NoticeException;
 import com.shadowgame.rpg.jmx.impl.Statistics;
 import com.shadowgame.rpg.modules.core.Player;
-import com.shadowgame.rpg.msg.core.S_Tips;
-import com.shadowgame.rpg.msg.login.C_Login;
+import com.shadowgame.rpg.msg.core_10.Sc_10000;
+import com.shadowgame.rpg.msg.login_11.Cs_11000;
 import com.shadowgame.rpg.net.msg.ClientMsg;
 import com.shadowgame.rpg.service.Services;
 
@@ -76,7 +76,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 		long start = System.currentTimeMillis();
 		try {
 			log.info("process client msg:{}, player:{}, channel:{}", msg, player, ctx.getChannel());
-			if(msg instanceof C_Login) {//未登录，没有player
+			if(msg instanceof Cs_11000) {//未登录，没有player
 				Method loginMethod = msg.getClass().getMethod("handleLogin", ChannelHandlerContext.class);
 				loginMethod.invoke(msg, ctx);
 			} else {
@@ -87,10 +87,10 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 			Throwable cause = ex.getCause();
 			if(cause != null) {
 				if(cause instanceof AlertException) {
-					Services.tcpService.send(new S_Tips(1, ((AlertException)cause).msg), ctx.getChannel());
+					Services.tcpService.send(new Sc_10000(1, ((AlertException)cause).msg), ctx.getChannel());
 					return;
 				} else if(cause instanceof NoticeException) {
-					Services.tcpService.send(new S_Tips(((NoticeException)cause).msg), ctx.getChannel());
+					Services.tcpService.send(new Sc_10000(((NoticeException)cause).msg), ctx.getChannel());
 					return;
 				}
 			}

@@ -31,7 +31,7 @@ public class BinaryEncoder implements Encoder {
 		int dataBodySize = AppConfig.packet_length_size + AppConfig.msgId_size + data.readableBytes();
 		ChannelBuffer packet = ChannelBuffers.buffer(dataBodySize);
 		packet.writeInt(dataBodySize);
-		packet.writeInt(Services.msgService.msg2Id.get(msg.getClass()));
+		packet.writeInt(Services.msgService.Sc_msg2Id.get(msg.getClass()));
 		packet.writeBytes(data);
 		log.info("encode message success, msg:{}", msg);
 		return packet;

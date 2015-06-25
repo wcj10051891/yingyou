@@ -1,6 +1,0 @@
-//提示消息	
-message S_Tips{
-	uint32 cmd=-2055371982;
-	uint32 type;//0飘字提示，1弹窗提示	
-	string content;//提示内容	
-}

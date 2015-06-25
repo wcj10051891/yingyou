@@ -1,82 +1,111 @@
 package com.shadowgame.rpg.modules.map;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PathFinding {
-	static class Node {
-		int x;
-		int y;
-		float f;
-		float g;
-		float h;
-		Node parent;
+	public static class PathNode {
+		public float f;
+		public float g;
+		public float h;
+		public Grid grid;
+		public PathNode parent;
 		
-		public Node(int x, int y) {
-			this.x = x;
-			this.y = y;
+		public PathNode(Grid grid) {
+			this.grid = grid;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			Node n = ((Node)obj);
-			return n.x == x && n.y == y;
+			PathNode n = ((PathNode)obj);
+			return n.grid.x == grid.x && n.grid.y == grid.y;
 		}
-		
+
 		@Override
 		public int hashCode() {
-			return (x + "_" + y).hashCode();
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + grid.x;
+			result = prime * result + grid.y;
+			return result;
 		}
 		
 		@Override
 		public String toString() {
-			return x + "," + y;
+			return grid.x + "," + grid.y + "[" + f + "]";
 		}
 	}
-	private List<Node> open = new ArrayList<PathFinding.Node>();
-	private List<Node> close = new ArrayList<Node>();
 	
-	public List<Node> find(Node start, Node end) {
+	static class PathNodeComparator implements Comparator<PathNode> {
+		static final PathNodeComparator INSTANCE = new PathNodeComparator();
+		
+		@Override
+		public int compare(PathNode o1, PathNode o2) {
+			if(o1.f - o2.f < 0)
+				return -1;
+			else if(o1.f - o2.f == 0)
+				return 0;
+			return 1;
+		}
+		
+	}
+	
+	public static List<PathNode> find(GameMap map, Point startPoint, Point endPoint) {
+		PathNode start = new PathNode(map.getGrid(startPoint));
+		PathNode end = new PathNode(map.getGrid(endPoint));
+		TreeSet<PathNode> open = new TreeSet<PathNode>(PathNodeComparator.INSTANCE);
+		Set<PathNode> close = new HashSet<PathNode>();
 		open.add(start);
 		while(open.size() > 0) {
-			Node current = open.get(0);
+			PathNode current = open.pollFirst();
 			if(current.equals(end)) {
 				end = current;
 				break;
 			}
-			open.remove(0);
 			close.add(current);
-			for (Node node : getAroundNodes(current)) {
-				if(isBarrier(node))
+			for (PathNode node : getAroundNodes(map, current)) {
+				if(node.grid.block)
 					continue;
 				if(close.contains(node))
 					continue;
-				node.g = Math.round(Math.sqrt(Math.pow(Math.abs(start.x - node.x), 2) + Math.pow(Math.abs(start.y - node.y), 2)));
-				node.h = Math.abs(end.x - node.x) + Math.abs(end.y - node.y);
+//				if (node.y != current.y && node.x != current.y) {
+//					if (mapInfos[round.getY()][grid.getGrid().getX()].getBlock() == 0 && mapInfos[grid.getGrid().getY()][round.getX()].getBlock() == 0) {
+//						continue;
+//					}
+//				} 
+				node.g = Double.valueOf(Math.sqrt(Math.pow(Math.abs(start.grid.x - node.grid.x), 2) + Math.pow(Math.abs(start.grid.y - node.grid.y), 2))).floatValue();
+				node.h = Math.abs(end.grid.x - node.grid.x) + Math.abs(end.grid.y - node.grid.y);
 				node.f = node.g + node.h;
 				node.parent = current;
-				if(open.contains(node)) {
-					float newG = 0;
-					if(node.x == current.x || node.y == current.y)
-						newG = current.g + 1;
-					else
-						newG = current.g + 1.4f;
-					if(newG < node.g) {
-						node.parent = current;
-						node.g = newG;
-						node.h = Math.abs(end.x - node.x) + Math.abs(end.y - node.y);
-						node.f = node.g + node.f;
-						open.remove(node);
-						add(open, node);
-					}
-				} else {
-					add(open, node);
-				}
+//				if(open.contains(node)) {
+//					float newG = 0;
+//					if(node.x == current.x || node.y == current.y)
+//						newG = current.g + 1;
+//					else
+//						newG = current.g + 1.4f;
+//					if(newG < node.g) {
+//						node.parent = current;
+//						node.g = newG;
+//						node.h = Math.abs(end.x - node.x) + Math.abs(end.y - node.y);
+//						node.f = node.g + node.f;
+//						open.remove(node);
+//						open.add(node);
+//					}
+//				} else {
+//					open.add(node);
+//				}
+				open.add(node);
 			}
 		}
 		if(end.parent != null) {
-			List<Node> result = new ArrayList<PathFinding.Node>();
-			Node current = end.parent;
+			List<PathNode> result = new ArrayList<PathFinding.PathNode>();
+			PathNode current = end.parent;
 			while(current != null) {
 				result.add(0, current);
 				current = current.parent;
@@ -87,46 +116,65 @@ public class PathFinding {
 		return null;
 	}
 	
-	private void add(List<Node> list, Node n) {
-		if(list.isEmpty()) {
-			list.add(n);
-			return;
-		}
-		for (int i = 0; i < list.size(); i++) {
-			Node node = list.get(i);
-			if(node.f >= n.f) {
-				list.add(i, n);
-				return;
-			}
-		}
-	}
-	
-	private boolean isBarrier(Node n) {
-		return false;
-	}
-	
-	private List<Node> getAroundNodes(Node n) {
-		List<Node> result = new ArrayList<PathFinding.Node>();
-		for(int i = n.x - 1; i <= n.x + 1; i++) {
+	private static List<PathNode> getAroundNodes(GameMap map, PathNode current) {
+		List<PathNode> result = new ArrayList<PathNode>();
+		for(int i = current.grid.x - 1; i <= current.grid.x + 1; i++) {
 			if(i < 0)
 				continue;
-			for(int j = n.y - 1; j <= n.y + 1; j++) {
+			for(int j = current.grid.y - 1; j <= current.grid.y + 1; j++) {
 				if(j < 0)
 					continue;
-				if(i == n.x && j == n.y)
+				if(i == current.grid.x && j == current.grid.y)
 					continue;
-				result.add(new Node(i, j));
+				result.add(new PathNode(map.getGrid(i, j)));
 			}
 		}
 		return result;
 	}
 	
-	public static void main(String[] args) {
-		PathFinding finding = new PathFinding();
-		Node start = new Node(0, 2);
-		Node end = new Node(2, 9);
-		System.out.println(finding.find(start, end));
+//	public static void main(String[] args) throws Exception {
+//		PathFinding2 finding = new PathFinding2();
+//		PathNode start = new PathNode(0, 8);
+//		PathNode end = new PathNode(28, 7);
+//		List<PathNode> find = finding.find(start, end);
+//		if(find == null)
+//			System.out.println("not found");
+//		else
+//			show(find);
+//	}
+//	
+	private static void show(List<PathNode> p) throws Exception {
+		int max_x = 0;
+		int max_y = 0;
+		for (PathNode point : p) {
+			if(point.grid.x > max_x)
+				max_x = point.grid.x;
+			if(point.grid.y > max_y)
+				max_y = point.grid.y;
+		}
+		max_y++;
+		max_x++;
+		char[][] map = new char[max_y][max_x];
+		for (int i = 0; i < max_y; i++) {
+			Arrays.fill(map[i], '0');
+		}
+		boolean first = false;
+		for (Iterator<PathNode> it = p.iterator(); it.hasNext();) {
+			PathNode pp = it.next();
+			if(!first) {
+				map[pp.grid.y][pp.grid.x] = 'S';
+				first = true;
+			} else if(it.hasNext()) {
+				map[pp.grid.y][pp.grid.x] = '*';
+			} else {
+				map[pp.grid.y][pp.grid.x] = 'E';
+			}
+			Thread.sleep(200l);
+			System.out.println("-------------------------------------------------------------");
+			for (int i = 0; i < max_y; i++) {
+				System.out.println(Arrays.toString(map[i]));
+			}
+		}
 	}
-	
 	
 }

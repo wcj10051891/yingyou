@@ -89,6 +89,7 @@ public class CacheService implements Service {
 				return newObject;
 			} catch (Exception e) {
 				log.error("instantiate object failure, key:{}, class:{}, fromDB:{}, error:{}", key, objectClass, loadFromDB, e);
+				e.printStackTrace();
 				return null;
 			}
 		} finally {
@@ -182,6 +183,7 @@ public class CacheService implements Service {
 				}
 			} catch (Exception e) {
 				log.error("gets object failure, keys:{}, class:{}, fromDB:{}, error:{}", keys, objectClass, loadFromDB, e);
+				e.printStackTrace();
 			} finally {
 				cacheLock.unlock();
 			}
@@ -225,6 +227,7 @@ public class CacheService implements Service {
 			return newObject;
 		} catch (Exception e) {
 			log.error("instantiate object failure, class:{}, error:{}", objectClass, e);
+			e.printStackTrace();
 			return null;
 		} finally {
 			cacheLock.unlock();
@@ -257,6 +260,7 @@ public class CacheService implements Service {
 			return newObject;
 		}  catch (Exception e) {
 			log.error("instantiate object failure, class:{}, error:{}", objectClass, e);
+			e.printStackTrace();
 			return null;
 		} finally {
 			cacheLock.unlock();
@@ -320,6 +324,7 @@ public class CacheService implements Service {
 				} catch (Exception e) {
 					log.error("remove object delete failure, key:{}, class:{}, deleteDBEntity:{}, error:{}", 
 						key, objectClass, deleteEntity, e); 
+					e.printStackTrace();
 				}
 			}
 		}finally{

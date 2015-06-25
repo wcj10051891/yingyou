@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import com.shadowgame.rpg.core.AppConfig;
 import com.shadowgame.rpg.core.AppException;
-import com.shadowgame.rpg.msg.login.C_Login;
-import com.shadowgame.rpg.msg.login.C_LoginAttachment;
+import com.shadowgame.rpg.msg.login_11.Cs_11000;
+import com.shadowgame.rpg.msg.login_11.LoginAttachment;
 import com.shadowgame.rpg.net.msg.Message;
 
 public class BinaryGameClient {
@@ -101,7 +101,7 @@ public class BinaryGameClient {
 						int dataBodySize = AppConfig.packet_length_size + AppConfig.msgId_size + data.readableBytes();
 						ChannelBuffer packet = ChannelBuffers.buffer(dataBodySize);
 						packet.writeInt(dataBodySize);
-						packet.writeInt(msgService.msg2Id.get(msg.getClass()));
+						packet.writeInt(msgService.Cs_msg2Id.get(msg.getClass()));
 						packet.writeBytes(data);
 						log.info("encode message success, msg:{}", msg);
 						return packet;
@@ -162,13 +162,13 @@ public class BinaryGameClient {
 //		
 //		final LogoutMsg logout = new LogoutMsg();
 		
-		final C_Login login = new C_Login();
+		final Cs_11000 login = new Cs_11000();
 		login.byteValue = 1;
 		login.doubleValue = 2;
 		login.floatValue = 3;
 		login.intValue = 4;
 		login.longValue = 5;
-		login.nestValue1 = Arrays.asList(new C_LoginAttachment("s1"), new C_LoginAttachment("s2"));
+		login.nestValue1 = Arrays.asList(new LoginAttachment("s1"), new LoginAttachment("s2"));
 		login.nestValue2 = Arrays.asList(6, 7, 8);
 		login.nestValue3 = Arrays.asList("9", "10", "11");
 		login.shortValue = 12;

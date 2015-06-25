@@ -1,4 +1,4 @@
-<project name="game-core" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="dist">
+<project name="game-core" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="copy-maven-lib-jar">
 	<property name="src" value="src/main/java" />
 	<property name="resources" value="src/main/resources" />
 	<property name="target" value="target" />

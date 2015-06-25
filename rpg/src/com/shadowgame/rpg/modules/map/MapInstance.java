@@ -81,6 +81,7 @@ public class MapInstance {
 	private void init() {
 		this.gameMap.addInstance(this);
 		
+		//初始化视野区域
 		int rows = this.gameMap.entity.height / MapRegion.height;
 		int columns = this.gameMap.entity.width / MapRegion.width;
 		for (int r = 0; r < rows; r++)
@@ -115,7 +116,6 @@ public class MapInstance {
 					current.addNeighbourRegion(regions.get(r + "_" + c2));
 			}
 		}
-		
 		//初始化怪物
 		for (TMonster e : Services.config.mapConfig.monsters.get(this.gameMap.entity.id)) {
 			Point p = new Point(e.x, e.y);

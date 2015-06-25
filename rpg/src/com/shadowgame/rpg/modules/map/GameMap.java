@@ -19,6 +19,7 @@ public class GameMap extends AbstractCacheObject<Integer, TGameMap> {
 	private static final TGameMapDao dao = Services.daoFactory.get(TGameMapDao.class);
 	public TGameMap entity;
 	private World world;
+	public Grid[][] blocks;
 	/**
 	 * 地图的所有副本
 	 */
@@ -76,6 +77,16 @@ public class GameMap extends AbstractCacheObject<Integer, TGameMap> {
 			Object... contextParam) {
 		this.entity = entity;
 		this.world = (World)contextParam[0];
+		//初始化地图阻挡
+		int gridRows = entity.height / Grid.GRID_BORDER;
+		int gridCols = entity.width / Grid.GRID_BORDER;
+		blocks = new Grid[gridRows][gridCols];
+		for (int y = 0; y < gridRows; y++) {
+			for (int x = 0; x < gridCols; x++) {
+				blocks[y][x] = new Grid(x, y, new Point(x * Grid.GRID_BORDER + Grid.GRID_BORDER / 2, y * Grid.GRID_BORDER + Grid.GRID_BORDER / 2), false);
+			}
+		}
+		
 		if(this.defaultInstance == null)
 			this.defaultInstance = createInstance();
 		return this;
@@ -84,5 +95,21 @@ public class GameMap extends AbstractCacheObject<Integer, TGameMap> {
 	@Override
 	public Integer getKey() {
 		return entity.getId();
+	}
+	
+	public Grid getGrid(Point p) {
+		int _x = p.x / Grid.GRID_BORDER;
+		int _y = p.y / Grid.GRID_BORDER;
+		if(_y < this.blocks.length && _x < this.blocks[0].length)
+			return this.blocks[_y][_x];
+		return null;
+	}
+	
+	public Grid getGrid(int x, int y) {
+		int _x = x / Grid.GRID_BORDER;
+		int _y = y / Grid.GRID_BORDER;
+		if(_y < this.blocks.length && _x < this.blocks[0].length)
+			return this.blocks[_y][_x];
+		return null;
 	}
 }
