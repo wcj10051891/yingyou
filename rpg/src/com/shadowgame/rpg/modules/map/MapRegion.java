@@ -198,4 +198,9 @@ public class MapRegion {
 	public Collection<MapObject> getMapObjects() {
 		return this.objects.values();
 	}
+	
+	@Override
+	public String toString() {
+		return mapInstance.toString() + ",region:" + regionId;
+	}
 }

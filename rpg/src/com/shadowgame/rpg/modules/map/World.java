@@ -53,27 +53,13 @@ public class World {
 	 * 更新可见对象位置，计算是否切换区域
 	 */
 	public void updatePosition(MapObject object, MapInstance mapInstance, int newX, int newY) {
-		updatePosition(object, mapInstance, new Point(newX, newY));
+		mapInstance.add(object, newX, newY);
 	}
 	
 	/**
 	 * 更新可见对象位置，计算是否切换区域
 	 */
 	public void updatePosition(MapObject object, int newX, int newY) {
-		updatePosition(object, new Point(newX, newY));
-	}
-	
-	/**
-	 * 更新可见对象位置，计算是否切换区域
-	 */
-	public void updatePosition(MapObject object, Point newPoint) {
-		updatePosition(object, object.getPosition().getMapRegion().getMapInstance(), newPoint);
-	}
-	
-	/**
-	 * 更新可见对象位置，计算是否切换区域
-	 */
-	public void updatePosition(MapObject object, MapInstance mapInstance, Point newPoint) {
-		mapInstance.add(object, newPoint);
+		updatePosition(object, object.getPosition().getMapRegion().getMapInstance(), newX, newY);
 	}
 }

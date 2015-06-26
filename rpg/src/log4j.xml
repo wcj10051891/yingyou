@@ -64,7 +64,7 @@
     <logger name="org.apache.commons.digester"><level value="error"/></logger>
     <logger name="org.apache.commons.beanutils"><level value="error"/></logger>
     <root>
-		<priority value="info" />
+		<priority value="debug" />
 		<appender-ref ref="CONSOLE" />
 	</root>
 

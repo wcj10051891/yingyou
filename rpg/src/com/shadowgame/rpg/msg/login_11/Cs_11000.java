@@ -1,13 +1,17 @@
 package com.shadowgame.rpg.msg.login_11;
 
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
 
 import xgame.core.util.StringUtils;
 
-import com.shadowgame.rpg.core.AlertException;
 import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.map.GameMap;
+import com.shadowgame.rpg.modules.map.MapInstance;
+import com.shadowgame.rpg.modules.map.PathFinding;
+import com.shadowgame.rpg.modules.map.Point;
 import com.shadowgame.rpg.net.msg.ClientMsg;
 import com.shadowgame.rpg.service.Services;
 
@@ -68,24 +72,26 @@ public class Cs_11000 extends ClientMsg {
 	public void handleLogin(ChannelHandlerContext ctx) {
 		System.out.println("receive:" + StringUtils.toString(this));
 		
-		Sc_11000 r = new Sc_11000();
-		r.byteValue = 1;
-		r.doubleValue = 2;
-		r.floatValue = 3;
-		r.intValue = 4;
-		r.longValue = 5;
-		r.nestValue1 = Arrays.asList("尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛", "尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛", "尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛");
-		r.nestValue2 = Arrays.asList(new LoginResultAttachment("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"), new LoginResultAttachment("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"), new LoginResultAttachment("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"));
-		r.shortValue = 6;
-		r.stringValue = "呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵";
-		Services.tcpService.send(r, ctx.getChannel());
+//		Sc_11000 r = new Sc_11000();
+//		r.byteValue = 1;
+//		r.doubleValue = 2;
+//		r.floatValue = 3;
+//		r.intValue = 4;
+//		r.longValue = 5;
+//		r.nestValue1 = Arrays.asList("尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛", "尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛", "尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛尼玛");
+//		r.nestValue2 = Arrays.asList(new LoginResultAttachment("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"), new LoginResultAttachment("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"), new LoginResultAttachment("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"));
+//		r.shortValue = 6;
+//		r.stringValue = "呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵";
+//		Services.tcpService.send(r, ctx.getChannel());
 //		throw new AlertException("尼玛");
 		
-//		Player player = Services.cacheService.get(4672337295849525248l, Player.class, true);
-//		player.onLogin(ctx.getChannel());
-//		MapInstance target = Services.app.world.gameMaps.get(1).getDefaultInstance();
-//		Services.app.world.updatePosition(player, target, 0, 0);
+		Player player = Services.cacheService.get(4672337295849525248l, Player.class, true);
+		player.onLogin(ctx.getChannel());
+		GameMap gameMap = Services.app.world.gameMaps.get(1);
+		MapInstance target = gameMap.getDefaultInstance();
+		Services.app.world.updatePosition(player, target, 0, 0);
 		
-		
+		LinkedList<Point> newPath = PathFinding.find(gameMap, player.getPosition().getPoint(), new Point(98, 400));
+		player.getMoveManager().start(newPath);
 	}
 }

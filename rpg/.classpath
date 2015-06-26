@@ -32,7 +32,7 @@
 	<classpathentry kind="lib" path="lib/protoparser-3.1.5.jar"/>
 	<classpathentry kind="lib" path="lib/qdox-1.12.jar"/>
 	<classpathentry kind="lib" path="lib/quartz-1.5.2.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar" sourcepath="C:/Users/Administrator/.m2/repository/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/undertow-core-1.2.6.Final.jar"/>
 	<classpathentry kind="lib" path="lib/undertow-servlet-1.2.6.Final.jar"/>

@@ -52,7 +52,8 @@ public class MapInstance {
 	 * @return a MapRegion
 	 */
 	public MapRegion getRegion(MapObject object) {
-		return getRegion(object.getPosition().getPoint());
+		Point point = object.getPosition().getPoint();
+		return getRegion(point.x, point.y);
 	}
 
 	/**
@@ -61,8 +62,8 @@ public class MapInstance {
 	 * @param y
 	 * @return a MapRegion
 	 */
-	public MapRegion getRegion(Point point) {
-		return regions.get(getRegionId(point));
+	public MapRegion getRegion(int pointX, int pointY) {
+		return regions.get(getRegionId(pointX, pointY));
 	}
 
 	/**
@@ -71,8 +72,8 @@ public class MapInstance {
 	 * @param y
 	 * @return region id.
 	 */
-	private String getRegionId(Point point) {
-		return point.x / MapRegion.width + "_" + point.y / MapRegion.height;
+	private String getRegionId(int pointX, int pointY) {
+		return pointX / MapRegion.width + "_" + pointY / MapRegion.height;
 	}
 
 	/**
@@ -84,42 +85,41 @@ public class MapInstance {
 		//初始化视野区域
 		int rows = this.gameMap.entity.height / MapRegion.height;
 		int columns = this.gameMap.entity.width / MapRegion.width;
-		for (int r = 0; r < rows; r++)
-			for (int c = 0; c < columns; c++) {
-				String id = r + "_" + c;
+		for (int y = 0; y < rows; y++)
+			for (int x = 0; x < columns; x++) {
+				String id = x + "_" + y;
 				regions.put(id, new MapRegion(id, this));
 			}
-		for (int r = 0; r < rows; r++) {
-			for (int c = 0; c < columns; c++) {
-				MapRegion current = regions.get(r + "_" + c);
-				int r1 = r - 1;
-				int r2 = r + 1;
-				int c1 = c - 1;
-				int c2 = c + 1;
-				if (r1 >= 0) {
-					current.addNeighbourRegion(regions.get(r1 + "_" + c));
-					if (c1 >= 0)
-						current.addNeighbourRegion(regions.get(r1 + "_" + c1));
-					if (c2 >= 0)
-						current.addNeighbourRegion(regions.get(r1 + "_" + c2));
+		for (int y = 0; y < rows; y++) {
+			for (int x = 0; x < columns; x++) {
+				MapRegion current = regions.get(x + "_" + y);
+				int x1 = x - 1;
+				int x2 = x + 1;
+				int y1 = y - 1;
+				int y2 = y + 1;
+				if (x1 >= 0)
+					current.addNeighbourRegion(regions.get(x1 + "_" + y));
+				if (x2 >= 0)
+					current.addNeighbourRegion(regions.get(x2 + "_" + y));
+				if (y1 >= 0) {
+					current.addNeighbourRegion(regions.get(x + "_" + y1));
+					if (x1 >= 0)
+						current.addNeighbourRegion(regions.get(x1 + "_" + y1));
+					if (x2 >= 0)
+						current.addNeighbourRegion(regions.get(x2 + "_" + y1));
 				}
-				if (r2 >= 0) {
-					current.addNeighbourRegion(regions.get(r2 + "_" + c));
-					if (c1 >= 0)
-						current.addNeighbourRegion(regions.get(r2 + "_" + c1));
-					if (c2 >= 0)
-						current.addNeighbourRegion(regions.get(r2 + "_" + c2));
+				if (y2 >= 0) {
+					current.addNeighbourRegion(regions.get(x + "_" + y2));
+					if (x1 >= 0)
+						current.addNeighbourRegion(regions.get(x1 + "_" + y2));
+					if (x2 >= 0)
+						current.addNeighbourRegion(regions.get(x2 + "_" + y2));
 				}
-				if (c1 >= 0)
-					current.addNeighbourRegion(regions.get(r + "_" + c1));
-				if (c2 >= 0)
-					current.addNeighbourRegion(regions.get(r + "_" + c2));
 			}
 		}
 		//初始化怪物
 		for (TMonster e : Services.config.mapConfig.monsters.get(this.gameMap.entity.id)) {
-			Point p = new Point(e.x, e.y);
-			add(new Monster(new Position(p), e), p);
+			add(new Monster(new Position(e.x, e.y), e), e.x, e.y);
 		}
 		//设置定时销毁
 //		setDestroyTime(destroySecond);
@@ -145,13 +145,13 @@ public class MapInstance {
 //		}
 	}
 	
-	public void add(MapObject object, Point point) {
+	public void add(MapObject object, int pointX, int pointY) {
 		Position pos = object.getPosition();
 		if(pos == null) {
-			pos = new Position(point);
+			pos = new Position(pointX, pointY);
 			object.setPosition(pos);
 		}
-		pos.setNewPoint(object, this, point);
+		pos.update(object, this, pointX, pointY);
 	}
 	
 	public void remove(MapObject object) {
@@ -187,5 +187,10 @@ public class MapInstance {
 				destory();
 			}
 		}, destroySecond, TimeUnit.SECONDS);
+	}
+	
+	@Override
+	public String toString() {
+		return "mapModelId:" + this.gameMap.getKey() + ",mapId:" + this.id;
 	}
 }

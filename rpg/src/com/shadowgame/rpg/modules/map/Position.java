@@ -1,6 +1,10 @@
 package com.shadowgame.rpg.modules.map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.shadowgame.rpg.modules.core.MapObject;
+import com.shadowgame.rpg.util.MapUtil;
 
 /**
  * 世界地图上的位置
@@ -8,6 +12,7 @@ import com.shadowgame.rpg.modules.core.MapObject;
  * @Date 2015年5月25日 下午7:16:57
  */
 public class Position {
+	private static final Logger log = LoggerFactory.getLogger(Position.class);
 	/**
 	 * 所在区块
 	 */
@@ -17,16 +22,12 @@ public class Position {
 	 */
 	private Point point;
 	/**
-	 * 方向
+	 * 朝向，小键盘数字 7：↖， 4：←， 1：↙， 2：↓， 3：↘， 6：→，9：↗，8：↑
 	 */
-	private int heading;
+	private int direction = 2;
 	
 	public Position(int x, int y) {
 		this.point = new Point(x, y);
-	}
-	
-	public Position(Point point) {
-		this.point = point;
 	}
 
 	/**
@@ -70,25 +71,31 @@ public class Position {
 	 * @param newX			新坐标x
 	 * @param newY			新坐标y
 	 */
-	void setNewPoint(MapObject owner, MapInstance newInstance, Point newPoint) {
-		this.point = newPoint;
+	void update(MapObject owner, MapInstance newInstance, int newPointX, int newPointY) {
+		Point old = this.point;
+		this.point = new Point(newPointX, newPointY);
+		if(old != null)
+			this.direction = MapUtil.calcDirection(old, this.point);
+		log.debug("{} update position {}", owner, this);
 		//是否切换区域
-		MapRegion newRegion = newInstance.getRegion(newPoint);
+		MapRegion newRegion = newInstance.getRegion(newPointX, newPointY);
 		if (newRegion != mapRegion) {
 			newRegion.add(owner);
+			log.debug("{} change mapRegion from {} to {}", owner, mapRegion, newRegion);
 			this.mapRegion = newRegion;
 		}
 	}
 
-	public int getHeading() {
-		return heading;
-	}
-
-	public void setHeading(int heading) {
-		this.heading = heading;
-	}
-
 	public Point getPoint() {
 		return point;
+	}
+
+	public int getDirection() {
+		return direction;
+	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(mapRegion) + ",point:" + getX() + "," + getY() + ",dir:" + direction;
 	}
 }

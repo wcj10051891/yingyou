@@ -10,7 +10,7 @@ public class Grid {
 	/**
 	 * 格子边长
 	 */
-	public static int GRID_BORDER = 25;
+	public static int SIZE = 25;
 	/**
 	 * 格子坐标x
 	 */
@@ -34,5 +34,20 @@ public class Grid {
 		this.y = y;
 		this.center = center;
 		this.block = block;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		Grid t = (Grid)obj;
+		return t.x == x && t.y == y;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
 	}
 }

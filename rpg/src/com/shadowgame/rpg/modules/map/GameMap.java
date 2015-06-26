@@ -1,5 +1,8 @@
 package com.shadowgame.rpg.modules.map;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +22,7 @@ public class GameMap extends AbstractCacheObject<Integer, TGameMap> {
 	private static final TGameMapDao dao = Services.daoFactory.get(TGameMapDao.class);
 	public TGameMap entity;
 	private World world;
-	public Grid[][] blocks;
+	public Map<String, Grid> grids;
 	/**
 	 * 地图的所有副本
 	 */
@@ -78,13 +81,12 @@ public class GameMap extends AbstractCacheObject<Integer, TGameMap> {
 		this.entity = entity;
 		this.world = (World)contextParam[0];
 		//初始化地图阻挡
-		int gridRows = entity.height / Grid.GRID_BORDER;
-		int gridCols = entity.width / Grid.GRID_BORDER;
-		blocks = new Grid[gridRows][gridCols];
-		for (int y = 0; y < gridRows; y++) {
-			for (int x = 0; x < gridCols; x++) {
-				blocks[y][x] = new Grid(x, y, new Point(x * Grid.GRID_BORDER + Grid.GRID_BORDER / 2, y * Grid.GRID_BORDER + Grid.GRID_BORDER / 2), false);
-			}
+		int gridRows = entity.height / Grid.SIZE;
+		int gridCols = entity.width / Grid.SIZE;
+		grids = new HashMap<String, Grid>();
+		for (int x = 0; x < gridCols; x++) {
+			for (int y = 0; y < gridRows; y++)
+				grids.put(x +"_" + y, new Grid(x, y, new Point(x * Grid.SIZE + Grid.SIZE / 2, y * Grid.SIZE + Grid.SIZE / 2), false));
 		}
 		
 		if(this.defaultInstance == null)
@@ -97,19 +99,27 @@ public class GameMap extends AbstractCacheObject<Integer, TGameMap> {
 		return entity.getId();
 	}
 	
-	public Grid getGrid(Point p) {
-		int _x = p.x / Grid.GRID_BORDER;
-		int _y = p.y / Grid.GRID_BORDER;
-		if(_y < this.blocks.length && _x < this.blocks[0].length)
-			return this.blocks[_y][_x];
-		return null;
+	public Grid getGridByMapPoint(int pointX, int pointY) {
+		return getGridByGridXY(pointX / Grid.SIZE, pointY / Grid.SIZE);
 	}
 	
-	public Grid getGrid(int x, int y) {
-		int _x = x / Grid.GRID_BORDER;
-		int _y = y / Grid.GRID_BORDER;
-		if(_y < this.blocks.length && _x < this.blocks[0].length)
-			return this.blocks[_y][_x];
-		return null;
+	public Grid getGridByGridXY(int gridX, int gridY) {
+		return this.grids.get(gridX + "_" + gridY);
+	}
+	
+	public List<Grid> getRoundGrids(Grid current) {
+		List<Grid> result = new ArrayList<Grid>();
+		for(int x = current.x - 1; x <= current.x + 1; x++) {
+			if(x < 0)
+				continue;
+			for(int y = current.y - 1; y <= current.y + 1; y++) {
+				if(y < 0)
+					continue;
+				if(x == current.x && y == current.y)
+					continue;
+				result.add(getGridByGridXY(x, y));
+			}
+		}
+		return result;
 	}
 }

@@ -1,10 +1,9 @@
 package com.shadowgame.rpg.modules.map;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -56,9 +55,9 @@ public class PathFinding {
 		
 	}
 	
-	public static List<PathNode> find(GameMap map, Point startPoint, Point endPoint) {
-		PathNode start = new PathNode(map.getGrid(startPoint));
-		PathNode end = new PathNode(map.getGrid(endPoint));
+	public static LinkedList<Point> find(GameMap map, Point startPoint, Point endPoint) {
+		PathNode start = new PathNode(map.getGridByMapPoint(startPoint.x, startPoint.y));
+		PathNode end = new PathNode(map.getGridByMapPoint(endPoint.x, endPoint.y));
 		TreeSet<PathNode> open = new TreeSet<PathNode>(PathNodeComparator.INSTANCE);
 		Set<PathNode> close = new HashSet<PathNode>();
 		open.add(start);
@@ -104,13 +103,12 @@ public class PathFinding {
 			}
 		}
 		if(end.parent != null) {
-			List<PathNode> result = new ArrayList<PathFinding.PathNode>();
-			PathNode current = end.parent;
+			LinkedList<Point> result = new LinkedList<Point>();
+			PathNode current = end;
 			while(current != null) {
-				result.add(0, current);
+				result.offerFirst(current.grid.center);
 				current = current.parent;
 			}
-			result.add(end);
 			return result;
 		}
 		return null;
@@ -118,63 +116,54 @@ public class PathFinding {
 	
 	private static List<PathNode> getAroundNodes(GameMap map, PathNode current) {
 		List<PathNode> result = new ArrayList<PathNode>();
-		for(int i = current.grid.x - 1; i <= current.grid.x + 1; i++) {
-			if(i < 0)
+		for(int x = current.grid.x - 1; x <= current.grid.x + 1; x++) {
+			if(x < 0)
 				continue;
-			for(int j = current.grid.y - 1; j <= current.grid.y + 1; j++) {
-				if(j < 0)
+			for(int y = current.grid.y - 1; y <= current.grid.y + 1; y++) {
+				if(y < 0)
 					continue;
-				if(i == current.grid.x && j == current.grid.y)
+				if(x == current.grid.x && y == current.grid.y)
 					continue;
-				result.add(new PathNode(map.getGrid(i, j)));
+				result.add(new PathNode(map.getGridByGridXY(x, y)));
 			}
 		}
 		return result;
 	}
-	
-//	public static void main(String[] args) throws Exception {
-//		PathFinding2 finding = new PathFinding2();
-//		PathNode start = new PathNode(0, 8);
-//		PathNode end = new PathNode(28, 7);
-//		List<PathNode> find = finding.find(start, end);
-//		if(find == null)
-//			System.out.println("not found");
-//		else
-//			show(find);
-//	}
 //	
-	private static void show(List<PathNode> p) throws Exception {
-		int max_x = 0;
-		int max_y = 0;
-		for (PathNode point : p) {
-			if(point.grid.x > max_x)
-				max_x = point.grid.x;
-			if(point.grid.y > max_y)
-				max_y = point.grid.y;
-		}
-		max_y++;
-		max_x++;
-		char[][] map = new char[max_y][max_x];
-		for (int i = 0; i < max_y; i++) {
-			Arrays.fill(map[i], '0');
-		}
-		boolean first = false;
-		for (Iterator<PathNode> it = p.iterator(); it.hasNext();) {
-			PathNode pp = it.next();
-			if(!first) {
-				map[pp.grid.y][pp.grid.x] = 'S';
-				first = true;
-			} else if(it.hasNext()) {
-				map[pp.grid.y][pp.grid.x] = '*';
-			} else {
-				map[pp.grid.y][pp.grid.x] = 'E';
-			}
-			Thread.sleep(200l);
-			System.out.println("-------------------------------------------------------------");
-			for (int i = 0; i < max_y; i++) {
-				System.out.println(Arrays.toString(map[i]));
-			}
-		}
-	}
-	
+//	private static void show(List<Point> ps) {
+//		int max_x = 0;
+//		int max_y = 0;
+//		for (Point point : ps) {
+//			if(point.x > max_x)
+//				max_x = point.x;
+//			if(point.y > max_y)
+//				max_y = point.y;
+//		}
+//		max_y++;
+//		max_x++;
+//		char[][] map = new char[max_y][max_x];
+//		for (int i = 0; i < max_y; i++) {
+//			Arrays.fill(map[i], '0');
+//		}
+//		boolean first = false;
+//		for (Iterator<Point> it = ps.iterator(); it.hasNext();) {
+//			Point pp = it.next();
+//			if(!first) {
+//				map[pp.y][pp.x] = 'S';
+//				first = true;
+//			} else if(it.hasNext()) {
+//				map[pp.y][pp.x] = '*';
+//			} else {
+//				map[pp.y][pp.x] = 'E';
+//			}
+//			try {
+//				Thread.sleep(200l);
+//			} catch (Exception e) {
+//			}
+//			System.out.println("-------------------------------------------------------------");
+//			for (int i = 0; i < max_y; i++) {
+//				System.out.println(Arrays.toString(map[i]));
+//			}
+//		}
+//	}
 }
