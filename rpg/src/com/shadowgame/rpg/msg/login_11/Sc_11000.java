@@ -1,7 +1,5 @@
 package com.shadowgame.rpg.msg.login_11;
 
-import java.util.List;
-
 import com.shadowgame.rpg.net.msg.Message;
 
 /**
@@ -11,39 +9,7 @@ import com.shadowgame.rpg.net.msg.Message;
  */
 public class Sc_11000 extends Message {
 	/**
-	 * 字节
+	 * 角色列表
 	 */
-	public byte byteValue;
-	/**
-	 * 短整型
-	 */
-	public short shortValue;
-	/**
-	 * 整型
-	 */
-	public int intValue;
-	/**
-	 * 长整型
-	 */
-	public long longValue;
-	/**
-	 * float浮点型
-	 */
-	public float floatValue;
-	/**
-	 * double浮点型
-	 */
-	public double doubleValue;
-	/**
-	 * 字符串
-	 */
-	public String stringValue;
-	/**
-	 * 数组[String]
-	 */
-	public List<String> nestValue1;
-	/**
-	 * 数组[LoginResultAttachment]
-	 */
-	public List<LoginResultAttachment> nestValue2;
+	public CharacterList characters;
 }

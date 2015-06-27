@@ -1,12 +1,12 @@
 package com.shadowgame.rpg.persist.entity;
 /** 玩家背包 */
-public class PlayerKnapsack{
+public class TPlayerKnapsack{
 	/** 玩家id */
 	public Long id;
 	/** 道具列表 */
 	public String items;
 	/** 当前容量 */
-	public Integer capacity;
+	public Integer capacity=0;
 	public Long getId(){
 		return this.id;
 	}

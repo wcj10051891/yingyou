@@ -5,17 +5,18 @@ import java.sql.Timestamp;
 import xgame.core.cache.AbstractCacheObject;
 import xgame.core.cache.CacheObject;
 
-import com.shadowgame.rpg.persist.dao.PlayerItemDao;
+import com.shadowgame.rpg.persist.dao.TPlayerItemDao;
+import com.shadowgame.rpg.persist.entity.TPlayerItem;
 import com.shadowgame.rpg.service.Services;
 import com.shadowgame.rpg.util.UniqueId;
 
 /**
  * @author wcj10051891@gmail.com
  */
-public class PlayerItem extends AbstractCacheObject<Long, com.shadowgame.rpg.persist.entity.PlayerItem> {
+public class PlayerItem extends AbstractCacheObject<Long, TPlayerItem> {
 	
-	public static final PlayerItemDao dao = Services.daoFactory.get(PlayerItemDao.class);
-	public com.shadowgame.rpg.persist.entity.PlayerItem entity;
+	public static final TPlayerItemDao dao = Services.daoFactory.get(TPlayerItemDao.class);
+	public TPlayerItem entity;
 	public Item item;
 
 	/**
@@ -23,7 +24,7 @@ public class PlayerItem extends AbstractCacheObject<Long, com.shadowgame.rpg.per
 	 * @return
 	 */
 	@Override
-	public com.shadowgame.rpg.persist.entity.PlayerItem get(Long key) {
+	public TPlayerItem get(Long key) {
 		return dao.get(key);
 	}
 	
@@ -34,7 +35,7 @@ public class PlayerItem extends AbstractCacheObject<Long, com.shadowgame.rpg.per
 	 * @return
 	 */
 	@Override
-	public CacheObject<Long, com.shadowgame.rpg.persist.entity.PlayerItem> init(com.shadowgame.rpg.persist.entity.PlayerItem entity, Object... contextParam) {
+	public CacheObject<Long, TPlayerItem> init(TPlayerItem entity, Object... contextParam) {
 		this.entity = entity;
 		this.item = Services.cacheService.get(this.entity.itemId, Item.class, true);
 		return this;
@@ -45,8 +46,8 @@ public class PlayerItem extends AbstractCacheObject<Long, com.shadowgame.rpg.per
 	 * @return
 	 */
 	@Override
-	public com.shadowgame.rpg.persist.entity.PlayerItem create(Object... contextParam) {
-		com.shadowgame.rpg.persist.entity.PlayerItem pmEntity = new com.shadowgame.rpg.persist.entity.PlayerItem();
+	public TPlayerItem create(Object... contextParam) {
+		TPlayerItem pmEntity = new TPlayerItem();
 		pmEntity.id = UniqueId.next();
 		pmEntity.createTime = new Timestamp(System.currentTimeMillis());
 		pmEntity.itemId = (Integer)contextParam[0];

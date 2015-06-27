@@ -1,7 +1,5 @@
 package com.shadowgame.rpg.net;
 
-import java.lang.reflect.Method;
-
 import org.jboss.netty.channel.ChannelHandler.Sharable;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
@@ -17,8 +15,8 @@ import com.shadowgame.rpg.core.NoticeException;
 import com.shadowgame.rpg.jmx.impl.Statistics;
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.msg.core_10.Sc_10000;
-import com.shadowgame.rpg.msg.login_11.Cs_11000;
 import com.shadowgame.rpg.net.msg.ClientMsg;
+import com.shadowgame.rpg.net.msg.NoPlayerClientMsg;
 import com.shadowgame.rpg.service.Services;
 
 @Sharable
@@ -76,9 +74,8 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 		long start = System.currentTimeMillis();
 		try {
 			log.info("process client msg:{}, player:{}, channel:{}", msg, player, ctx.getChannel());
-			if(msg instanceof Cs_11000) {//未登录，没有player
-				Method loginMethod = msg.getClass().getMethod("handleLogin", ChannelHandlerContext.class);
-				loginMethod.invoke(msg, ctx);
+			if(msg instanceof NoPlayerClientMsg) {
+				msg.getClass().getMethod("handleNoPlayer", ChannelHandlerContext.class).invoke(msg, ctx);
 			} else {
 				msg.handle(player);
 			}
@@ -118,11 +115,11 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 					try {
 						player.onLogout();
 					} catch (Exception ex) {
-						log.error("player:{}, channel:{} logout error:{}", player, ctx.getChannel(), ex.getCause());
-						ex.printStackTrace();
+						throw new AppException("logout error", ex);
+					} finally {
+						player.channel = null;
+						ctx.getChannel().setAttachment(null);
 					}
-					player.channel = null;
-					ctx.getChannel().setAttachment(null);
 				}
 				log.info("player:{}, channel:{} channelClosed", player, ctx.getChannel());
 			}

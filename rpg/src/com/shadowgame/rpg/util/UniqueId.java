@@ -1,5 +1,6 @@
 package com.shadowgame.rpg.util;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,11 +9,13 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import xgame.core.util.RandomUtils;
-import xgame.core.util.StopWatch;
-
 import com.shadowgame.rpg.core.AppConfig;
 
+/**
+ * 全局唯一id，跨服务器唯一
+ * @author wcj10051891@gmail.com
+ * @date 2015年6月27日 下午3:54:28
+ */
 public abstract class UniqueId {
 	private static final String CAPITAL_LETTER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private static final Map<String, Integer> letter2index = new HashMap<String, Integer>(26);
@@ -77,24 +80,21 @@ public abstract class UniqueId {
 		return dateTime.getMillis();
 	}
 	/**
-	 * 64位唯一id=43位utc时间戳+5位随机数+5位服务器单字母标记+11位服务器唯一序号
+	 * 64位唯一id=43位utc时间戳+5位服务器单字母标记+16位服务器唯一序号
 	 * 16位天数：20991231-19700101日期相隔天数 最大值47481<br/>
 	 * 5位小时：最大值23<br/>
 	 * 6位分钟：最大值59<br/>
 	 * 6位秒钟：最大值59<br/>
 	 * 10位毫秒：最大值999<br/>
-	 * 5位随机数：最大值31<br/>
-	 * 5位服务器单字母标记（26个字母）：最大值25<br/>
-	 * 11位服务器序号：最大值2047
+	 * 5位服务器单字母标记（26个字母）
+	 * 16位服务器序号：最大值65535
 	 */
 	private static long encode(long original) {
 		long utc = encodeUTC(original);
-		long rand = RandomUtils.nextRandomInt(0, randomMax);
 		long serverKey = letter2index.get(AppConfig.SERVER_KEY);
 		long serverSeq = AppConfig.SERVER_SEQ;
-		long n = utc << 21;//(64 - 43);
-		n |= (rand << 16);//(64 - 5 - 10 - 6 - 5 - 6 - 16));
-		n |= (serverKey << 11);//(64 - 5 - 10 - 6 - 5 - 6 - 16 - 5));
+		long n = utc << 21;
+		n |= (serverKey << 16);
 		n |= serverSeq;
 		return n;
 	}
@@ -102,15 +102,13 @@ public abstract class UniqueId {
 	/**
 	 * @see UniqueId#encode(long)
 	 * @param encoded
-	 * @return [utc时间, 随机数, server标识, server编号]
+	 * @return [utc时间, server标识, server编号]
 	 */
 	private static Object[] decode(long encoded) {
-		//utc, rand, serverKey, serverSeq
 		return new Object[]{
 			decodeUTC(encoded >> 21), 
-			encoded >> 16 & 0x1f, 
-			index2letter.get((int)(encoded >> 11 & 0x1f)), 
-			encoded & 0x7ff};
+			index2letter.get((int)(encoded >> 16 & 0x1f)), 
+			encoded & 0xffff};
 	}
 	
 	public static void main(String[] args) {
@@ -122,17 +120,17 @@ public abstract class UniqueId {
 //		System.out.println(next());
 //		s.stop();
 //		System.out.println(s.prettyPrint());
-//		Long next = next();
-//		System.out.println(next);
-//		Object[] decode = decode(next);
-//		System.out.println(Arrays.toString(decode));
+		Long next = next();
+		System.out.println(next);
+		Object[] decode = decode(next);
+		System.out.println(Arrays.toString(decode));
 //		System.out.println(new Timestamp((Long)decode[0]));
 //		for(int i = 0; i < 100; i++)
 //			System.out.println(next());
-		StopWatch s = new StopWatch();
-		s.start();
-		System.out.println(next());
-		s.stop();
-		System.out.println(s.prettyPrint());
+//		StopWatch s = new StopWatch();
+//		s.start();
+//		System.out.println(next());
+//		s.stop();
+//		System.out.println(s.prettyPrint());
 	}
 }

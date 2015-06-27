@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.persist.entity;
 /** 玩家任务 */
-public class PlayerMission{
+public class TPlayerMission{
 	/** 玩家id */
 	public Long id;
 	/** 已接任务 */

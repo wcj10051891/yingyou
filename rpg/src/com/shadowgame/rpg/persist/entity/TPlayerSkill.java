@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.persist.entity;
 /** 玩家技能 */
-public class PlayerSkill{
+public class TPlayerSkill{
 	/** 玩家id */
 	public Long id;
 	/** 技能信息 */

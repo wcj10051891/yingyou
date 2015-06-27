@@ -49,7 +49,7 @@ public class BinaryMsgService implements Service {
 	private Field[] getFields(Class<?> clazz) {
 		Field[] fields = msg2Fields.get(clazz);
 		if(fields == null) {
-			fields = clazz.getDeclaredFields();
+			fields = clazz.getFields();
 			for (Field field : fields)
 				field.setAccessible(true);
 			msg2Fields.put(clazz, fields);

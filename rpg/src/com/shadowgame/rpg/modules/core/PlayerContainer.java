@@ -12,17 +12,17 @@ public class PlayerContainer {
 		return id2Player.containsKey(playerId);
 	}
 	public boolean isLogin(Player player) {
-		return player == null || !id2Player.contains(player.getObjectId());
+		return player == null || !id2Player.contains(player.getKey());
 	}
 	
 	public void add(Player player) {
-		id2Player.put(player.getObjectId(), player);
+		id2Player.put(player.entity.id, player);
 		nickname2Player.put(player.entity.nickname, player);
 		username2Player.put(player.entity.username, player);
 	}
 	
 	public void remove(Player player) {
-		id2Player.remove(player.getObjectId());
+		id2Player.remove(player.entity.id);
 		nickname2Player.remove(player.entity.nickname);
 		username2Player.remove(player.entity.username);
 	}

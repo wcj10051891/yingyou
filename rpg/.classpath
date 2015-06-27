@@ -22,7 +22,7 @@
 	<classpathentry kind="lib" path="lib/jboss-logging-3.1.4.GA.jar"/>
 	<classpathentry kind="lib" path="lib/jboss-servlet-api_3.1_spec-1.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/jcl-over-slf4j-1.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/joda-time-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-2.3.jar" sourcepath="C:/Users/Administrator/.m2/repository/joda-time/joda-time/2.3/joda-time-2.3-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jprotobuf-1.6.4-SNAPSHOT.jar" sourcepath="/jprotobuf"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.26.jar"/>

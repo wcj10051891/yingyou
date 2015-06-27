@@ -1,7 +1,7 @@
 package com.shadowgame.rpg.modules.map;
 
+import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,7 @@ import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.PlayerContainer;
 import com.shadowgame.rpg.persist.entity.TGameMap;
 import com.shadowgame.rpg.service.Services;
+import com.shadowgame.rpg.util.RuntimeUniqueId;
 
 /**
  * 世界对象
@@ -31,15 +32,16 @@ public class World {
 	 */
 	public ConcurrentHashMap<Integer, MapInstance> mapInstances = new ConcurrentHashMap<Integer, MapInstance>();
 	
-	private AtomicInteger instanceId = new AtomicInteger();
-	
 	public World() {
 		for (TGameMap entity : Services.config.mapConfig.maps.values())
 			gameMaps.put(entity.id, Services.cacheService.get(entity.id, GameMap.class, true, this));
 	}
 	
 	public int nextInstanceId() {
-		return this.instanceId.incrementAndGet();
+		int dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+		dayOfYear = dayOfYear << 23;
+		dayOfYear |= RuntimeUniqueId.next(MapInstance.class);
+		return dayOfYear;
 	}
 
 	public GameMap getWorldMap(int id) {

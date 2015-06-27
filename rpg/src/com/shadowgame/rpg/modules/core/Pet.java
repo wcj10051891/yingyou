@@ -6,7 +6,7 @@ import com.shadowgame.rpg.modules.map.Position;
 public class Pet extends AbstractFighter {
 
 	@Override
-	public Long getObjectId() {
+	public Integer getObjectId() {
 		return null;
 	}
 

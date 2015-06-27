@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.persist.entity;
 /** 玩家道具 */
-public class PlayerItem{
+public class TPlayerItem{
 	/** 玩家道具id */
 	public Long id;
 	/** 系统道具id */

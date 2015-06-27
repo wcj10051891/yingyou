@@ -43,11 +43,11 @@ public class MapRegion {
 	private MapRegionCollections<MapObject> objects = new MapRegionCollections<>();
 
 	@SuppressWarnings("unchecked")
-	private static final class MapRegionCollections<V extends MapObject> extends ConcurrentHashMap<Long, V> {
+	private static final class MapRegionCollections<V extends MapObject> extends ConcurrentHashMap<Integer, V> {
 		private static final long serialVersionUID = 1L;
 		private Map<Class<V>, Collection<V>> type2Objects = new ConcurrentHashMap<Class<V>, Collection<V>>();
 		@Override
-		public V put(Long key, V value) {
+		public V put(Integer key, V value) {
 			V result = super.put(key, value);
 			getObjectsByType((Class<V>) value.getClass()).add(value);
 			return result;
@@ -63,7 +63,7 @@ public class MapRegion {
 		}
 		
 		@Override
-		public V putIfAbsent(Long key, V value) {
+		public V putIfAbsent(Integer key, V value) {
 			V result = super.putIfAbsent(key, value);
 			getObjectsByType((Class<V>) value.getClass()).add(value);
 			return result;

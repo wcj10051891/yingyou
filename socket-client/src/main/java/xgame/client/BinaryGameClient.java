@@ -1,9 +1,6 @@
 package xgame.client;
 
 import java.net.InetSocketAddress;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
@@ -31,7 +28,8 @@ import org.slf4j.LoggerFactory;
 import com.shadowgame.rpg.core.AppConfig;
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.msg.login_11.Cs_11000;
-import com.shadowgame.rpg.msg.login_11.LoginAttachment;
+import com.shadowgame.rpg.msg.login_11.Cs_11001;
+import com.shadowgame.rpg.msg.login_11.Cs_11002;
 import com.shadowgame.rpg.net.msg.Message;
 
 public class BinaryGameClient {
@@ -161,25 +159,9 @@ public class BinaryGameClient {
 //		login.msgs2 = (Arrays.asList(new AlertMsg("消息4"), new AlertMsg("消息5"), new AlertMsg("消息6")));
 //		
 //		final LogoutMsg logout = new LogoutMsg();
-		
-		final Cs_11000 login = new Cs_11000();
-		login.byteValue = 1;
-		login.doubleValue = 2;
-		login.floatValue = 3;
-		login.intValue = 4;
-		login.longValue = 5;
-		login.nestValue1 = Arrays.asList(new LoginAttachment("s1"), new LoginAttachment("s2"));
-		login.nestValue2 = Arrays.asList(6, 7, 8);
-		login.nestValue3 = Arrays.asList("9", "10", "11");
-		login.shortValue = 12;
-		login.stringValue = "这是字符串";
-		
+
 		BinaryGameClient.init();
-		final Map<Integer, Channel> channels = new HashMap<Integer, Channel>();
-		for (int i = 0; i < 1; i++) {
-			Channel channel = connect(login);
-			channels.put(i, channel);
-		}
+		final Channel c = connect();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -189,22 +171,20 @@ public class BinaryGameClient {
 					if(cmd.equalsIgnoreCase("exit")) {
 						sc.close();
 						System.exit(0);
-					} else if(cmd.equalsIgnoreCase("0")) {
-//						pool.scheduleAtFixedRate(new Runnable() {
-//							@Override
-//							public void run() {
-								for (Channel c : channels.values()) {
-									c.write(login);
-								}
-//							}
-//						}, 1, 1, TimeUnit.SECONDS);
-					} else if(cmd.equalsIgnoreCase("1")) {
-//						channels.get(0).write(logout);
-//						channels.remove(0);
-//						if(channels.isEmpty()) {
-//							sc.close();
-//							System.exit(0);
-//						}
+					} else if(cmd.equalsIgnoreCase("login")) {
+						Cs_11000 login = new Cs_11000();
+						login.username = "123";
+						c.write(login);
+					} else if(cmd.equalsIgnoreCase("create")) {
+						Cs_11001 create = new Cs_11001();
+						create.nickname = "玩家3";
+						create.username = "123";
+						create.vocation = 3;
+						c.write(create);
+					} else if(cmd.equalsIgnoreCase("select")) {
+						Cs_11002 create = new Cs_11002();
+						create.playerId = 4676265064748060672l;
+						c.write(create);
 					}
 				}
 			}
@@ -214,7 +194,7 @@ public class BinaryGameClient {
 	
 	private static Random r = new Random();
 	private static ScheduledExecutorService pool = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
-	private static Channel connect(Object msg) throws Exception {
+	private static Channel connect() throws Exception {
 		return BinaryGameClient.connect(new Callback() {
 			@Override
 			public void call(Object msg) {

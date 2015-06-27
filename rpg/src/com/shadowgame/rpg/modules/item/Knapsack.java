@@ -10,18 +10,18 @@ import xgame.core.util.JsonUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.shadowgame.rpg.core.AppException;
-import com.shadowgame.rpg.persist.dao.PlayerKnapsackDao;
-import com.shadowgame.rpg.persist.entity.PlayerKnapsack;
+import com.shadowgame.rpg.persist.dao.TPlayerKnapsackDao;
+import com.shadowgame.rpg.persist.entity.TPlayerKnapsack;
 import com.shadowgame.rpg.service.Services;
 
 /**
  * @author wcj10051891@gmail.com
  */
-public class Knapsack extends AbstractCacheObject<Long, com.shadowgame.rpg.persist.entity.PlayerKnapsack> {
+public class Knapsack extends AbstractCacheObject<Long, TPlayerKnapsack> {
 	
 	public static final int DEFAULT_CAPACITY = 100;
-	private static final PlayerKnapsackDao dao = Services.daoFactory.get(PlayerKnapsackDao.class);
-	public com.shadowgame.rpg.persist.entity.PlayerKnapsack entity;
+	private static final TPlayerKnapsackDao dao = Services.daoFactory.get(TPlayerKnapsackDao.class);
+	public TPlayerKnapsack entity;
 	public Long[] items;
 
 	/**
@@ -29,7 +29,7 @@ public class Knapsack extends AbstractCacheObject<Long, com.shadowgame.rpg.persi
 	 * @return
 	 */
 	@Override
-	public PlayerKnapsack get(Long key) {
+	public TPlayerKnapsack get(Long key) {
 		return dao.get(key);
 	}
 	
@@ -39,8 +39,8 @@ public class Knapsack extends AbstractCacheObject<Long, com.shadowgame.rpg.persi
 	 * @return
 	 */
 	@Override
-	public PlayerKnapsack create(Object... contextParam) {
-		PlayerKnapsack entity = new PlayerKnapsack();
+	public TPlayerKnapsack create(Object... contextParam) {
+		TPlayerKnapsack entity = new TPlayerKnapsack();
 		entity.id = (Long)contextParam[0];
 		entity.items = "[]";
 		entity.capacity = DEFAULT_CAPACITY;
@@ -55,7 +55,7 @@ public class Knapsack extends AbstractCacheObject<Long, com.shadowgame.rpg.persi
 	 * @return
 	 */
 	@Override
-	public CacheObject<Long, PlayerKnapsack> init(PlayerKnapsack entity, Object... contextParam) {
+	public CacheObject<Long, TPlayerKnapsack> init(TPlayerKnapsack entity, Object... contextParam) {
 		this.entity = entity;
 		this.items = new Long[entity.capacity];
 		JSONArray data = JsonUtils.parseArray(this.entity.items);

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.shadowgame.rpg.modules.map.Position;
 import com.shadowgame.rpg.modules.map.World;
+import com.shadowgame.rpg.util.RuntimeUniqueId;
 
 /**
  * 地图上的对象
@@ -15,18 +16,18 @@ public abstract class MapObject {
 	/**
 	 * 对象唯一id
 	 */
-	protected Long objectId;
+	protected Integer objectId;
 	/**
 	 * 位置
 	 */
 	protected Position position;
-
-	public Long getObjectId() {
-		return objectId;
+	
+	public MapObject() {
+		this.objectId = RuntimeUniqueId.next(MapObject.class);
 	}
 
-	public void setObjectId(Long objectId) {
-		this.objectId = objectId;
+	public Integer getObjectId() {
+		return objectId;
 	}
 
 	public Position getPosition() {

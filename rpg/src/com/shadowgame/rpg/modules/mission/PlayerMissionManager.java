@@ -14,13 +14,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.core.NoticeException;
 import com.shadowgame.rpg.modules.core.Player;
-import com.shadowgame.rpg.persist.dao.PlayerMissionDao;
-import com.shadowgame.rpg.persist.entity.PlayerMission;
+import com.shadowgame.rpg.persist.dao.TPlayerMissionDao;
+import com.shadowgame.rpg.persist.entity.TPlayerMission;
 import com.shadowgame.rpg.service.Services;
 
-public class PlayerMissionManager extends AbstractCacheObject<Long, PlayerMission>  {
-	private PlayerMissionDao dao = Services.daoFactory.get(PlayerMissionDao.class);
-	private PlayerMission entity;
+public class PlayerMissionManager extends AbstractCacheObject<Long, TPlayerMission>  {
+	private TPlayerMissionDao dao = Services.daoFactory.get(TPlayerMissionDao.class);
+	private TPlayerMission entity;
     private Set<Integer> finishedMissions = new HashSet<Integer>();
     private Map<Integer, com.shadowgame.rpg.modules.mission.PlayerMission> acceptedMissions = new ConcurrentHashMap<Integer, com.shadowgame.rpg.modules.mission.PlayerMission>();
     private AtomicInteger serialId = new AtomicInteger(Long.valueOf(System.currentTimeMillis() / 1000l).intValue());
@@ -33,7 +33,7 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, PlayerMissio
 	 * @return
 	 */
 	@Override
-	public CacheObject<Long, PlayerMission> init(PlayerMission entity, Object... contextParam) {
+	public CacheObject<Long, TPlayerMission> init(TPlayerMission entity, Object... contextParam) {
 		this.entity = entity;
 		this.player = (Player) contextParam[0];
 		if(StringUtils.hasText(entity.finishMission))
@@ -48,7 +48,7 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, PlayerMissio
 	}
 
 	@Override
-	public PlayerMission get(Long key) {
+	public TPlayerMission get(Long key) {
 		return dao.get(key);
 	}
 
@@ -58,10 +58,10 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, PlayerMissio
 	 * @return
 	 */
 	@Override
-	public PlayerMission create(Object... contextParam) {
+	public TPlayerMission create(Object... contextParam) {
 		this.player = (Player)contextParam[0];
-		PlayerMission entity = new PlayerMission();
-		entity.id = this.player.getObjectId();
+		TPlayerMission entity = new TPlayerMission();
+		entity.id = this.player.getKey();
 		entity.acceptMission = "[]";
 		entity.finishMission = "[]";
 		dao.insert(entity);
