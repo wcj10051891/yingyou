@@ -42,6 +42,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	public ProcessQueue processQueue = new ProcessQueue(Services.threadService.threadPool);
 	public BaseObservable eventManager;
 	public PlayerMissionManager missionManager;
+	private boolean isOnline;
 
 	/**
 	 * @param key
@@ -64,6 +65,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	}
 	
 	public void onLogin(Channel channel) {
+		this.isOnline = true;
 		this.channel = channel;
 		this.channel.setAttachment(this);
 		
@@ -76,43 +78,42 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		
 		//返回上次场景
 		MapInstance lastMap = null;
-		if(entity.lastInstanceId > 0)
+		if(entity.lastInstanceId != null && entity.lastInstanceId > 0) {
 			lastMap = Services.app.world.mapInstances.get(entity.lastInstanceId);
-		if(lastMap == null && entity.lastMapId > 0)
+		}
+		if(lastMap == null && entity.lastMapId != null && entity.lastMapId > 0)
 			lastMap = Services.app.world.getWorldMap(entity.lastMapId).getDefaultInstance();
 		if(lastMap == null)
 			lastMap = Services.app.world.getWorldMap(1).getDefaultInstance();
 		int lastMapX = 0;
-		if(entity.lastMapX != null)
+		if(entity.lastMapX != null && entity.lastMapX > 0)
 			lastMapX = entity.lastMapX;
 		int lastMapY = 0;
-		if(entity.lastMapY != null)
+		if(entity.lastMapY != null && entity.lastMapY > 0)
 			lastMapY = entity.lastMapY;
 		Services.app.world.updatePosition(this, lastMap, lastMapX, lastMapY);
 	}
 	
 	public void onLogout() {
+		this.isOnline = false;
 		Services.app.world.allPlayers.remove(this);
 		Services.tcpService.leaveGroup(Groups.World, channel);
 		try {
-			this.getPosition().getMapInstance().remove(this);
+			//保存离线场景
+			MapInstance instance = this.position.getMapInstance();
+			instance.remove(this);
+			entity.lastInstanceId = instance.getId();
+			entity.lastMapId = instance.getGameMap().getKey();
+			entity.lastMapX = this.position.getX();
+			entity.lastMapY = this.position.getY();
 		} catch (Exception e) {
 			log.error("player {} not in map", this.getKey());
 		}
 		
-
-		//保存离线场景
-		MapInstance instance = this.position.getMapInstance();
-		entity.lastInstanceId = instance.getId();
-		entity.lastMapId = instance.getGameMap().getKey();
-		entity.lastMapX = this.position.getX();
-		entity.lastMapY = this.position.getY();
-		
-		
-		
 		
 		Services.cacheService.saveAsync(this);
 		Services.cacheService.saveAsync(this.knapsack);
+		
 	}
 	
 	public void disconnect() {
@@ -135,7 +136,8 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	}
 	
 	public void send(Object message) {
-		Services.tcpService.send(message, this.channel);
+		if(isOnline)
+			Services.tcpService.send(message, this.channel);
 	}
 	
 	public void disconnect(boolean synchronize) {
@@ -207,5 +209,9 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		else if(object instanceof Monster)
 			send(new Sc_12002().from((Monster)object));
 		log.debug("player {} not see object {}", this, object);
+	}
+	
+	public boolean isOnline() {
+		return this.isOnline;
 	}
 }

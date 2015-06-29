@@ -1,6 +1,5 @@
 package com.shadowgame.rpg.modules.map;
 
-import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.PlayerContainer;
 import com.shadowgame.rpg.persist.entity.TGameMap;
 import com.shadowgame.rpg.service.Services;
-import com.shadowgame.rpg.util.RuntimeUniqueId;
 
 /**
  * 世界对象
@@ -38,10 +36,13 @@ public class World {
 	}
 	
 	public int nextInstanceId() {
-		int dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-		dayOfYear = dayOfYear << 23;
-		dayOfYear |= RuntimeUniqueId.next(MapInstance.class);
-		return dayOfYear;
+		synchronized (mapInstances) {
+			int current = 0;
+			do {
+				current = Long.valueOf(System.currentTimeMillis() / 1000l).intValue();
+			} while(this.mapInstances.contains(current));
+			return current;
+		}
 	}
 
 	public GameMap getWorldMap(int id) {

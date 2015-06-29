@@ -27,10 +27,9 @@ public abstract class UniqueId {
 			index2letter.put(i, s);
 		}
 	}
-	private static final int randomMax = 31;
 	/**
 	 * 产生一个64位的唯一id，不同服务器间不会重复。
-	 * 64位唯一id=43位utc时间戳 +5位随机数+5位服务器单字母标记+11位服务器唯一序号
+	 * 64位唯一id=43位utc时间戳 +5位服务器单字母标记+16位服务器唯一序号
 	 * @return
 	 */
 	public static Long next() {

@@ -38,14 +38,5 @@ public class Cs_11000 extends NoPlayerClientMsg {
 		Sc_11000 result = new Sc_11000();
 		result.characters = new CharacterList().from(Services.daoFactory.get(TPlayerDao.class).getByUsername(username));
 		Services.tcpService.send(result, ctx.getChannel());
-		
-//		Player player = Services.cacheService.get(4672337295849525248l, Player.class, true);
-//		player.onLogin(ctx.getChannel());
-//		GameMap gameMap = Services.app.world.gameMaps.get(1);
-//		MapInstance target = gameMap.getDefaultInstance();
-//		Services.app.world.updatePosition(player, target, 0, 0);
-//		
-//		LinkedList<Point> newPath = PathFinding.find(gameMap, player.getPosition().getPoint(), new Point(98, 400));
-//		player.getMoveManager().start(newPath);
 	}
 }

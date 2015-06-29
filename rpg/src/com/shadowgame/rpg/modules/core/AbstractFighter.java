@@ -7,21 +7,13 @@ package com.shadowgame.rpg.modules.core;
  */
 public abstract class AbstractFighter extends AbstractSpirit {
 	/**
-	 * 当前气血
+	 * 当前生命
 	 */
 	public int hp;
 	/**
-	 * 气血最大值
+	 * 生命最大值
 	 */
 	public int maxhp;
-	/**
-	 * 当前法力
-	 */
-	public int mp;
-	/**
-	 * 最大法力
-	 */
-	public int maxmp;
 	/**
 	 * 攻击
 	 */
@@ -32,32 +24,109 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	public int def;
 	
 	/**
-	 * 力量
+	 * 命中
 	 */
-	public int power;
+	public int hit;
 	/**
-	 * 敏捷
+	 * 闪避
 	 */
-	public int agile;
+	public int dodge;
 	/**
-	 * 智力
+	 * 暴击率
 	 */
-	public int intell;
+	public int critRate;
 	/**
-	 * 耐力
+	 * 抗暴率
 	 */
-	public int endurance;
+	public int critDefRate;
+	/**
+	 * 暴击伤害
+	 */
+	public int crit;
+	/**
+	 * 暴击伤害减免
+	 */
+	public int critDef;
+	/**
+	 * 破击率
+	 */
+	public int breakBlockRate;
+	/**
+	 * 格挡率
+	 */
+	public int blockRate;
+	/**
+	 * 吸血几率
+	 */
+	public int suckHpRate;
+	/**
+	 * 吸血比例
+	 */
+	public int suckHpRatio;
+	/**
+	 * 反弹几率
+	 */
+	public int bounceRate;
+	/**
+	 * 反弹比例
+	 */
+	public int bounceRatio;
+
+	/**
+	 * 火焰伤害
+	 */
+	public int fireDamage;
+	/**
+	 * 寒冰伤害
+	 */
+	public int iceDamage;
+	/**
+	 * 雷电伤害
+	 */
+	public int thunderDamage;
+	/**
+	 * 毒素伤害
+	 */
+	public int poisonDamage;
+	/**
+	 * 神圣伤害
+	 */
+	public int holyDamage;
+	/**
+	 * 暗影伤害
+	 */
+	public int shadowDamage;
+	/**
+	 * 火焰伤害
+	 */
+	public int fireDef;
+	/**
+	 * 寒冰伤害
+	 */
+	public int iceDef;
+	/**
+	 * 雷电伤害
+	 */
+	public int thunderDef;
+	/**
+	 * 毒素伤害
+	 */
+	public int poisonDef;
+	/**
+	 * 神圣伤害
+	 */
+	public int holyDef;
+	/**
+	 * 暗影伤害
+	 */
+	public int shadowDef;
 	
-//	/**
-//	 * 攻击队列，串行处理
-//	 */
-//	public ProcessQueue attackQueue = new ProcessQueue(Services.threadService.threadPool);
-//	
-//	public Object onAttack(AbstractFighter source, AbstractSkill skill) {
-//		try {
-//			return attackQueue.submit(new AttackCommand(source, skill, this)).get();
-//		} catch (Exception e) {
-//			throw new AppException("skill attack error, source:" + source + ", target:" + this + ", skill:" + skill, e);
-//		}
-//	}
+	/**
+	 * 伤害加成
+	 */
+	public int damageIncrease;
+	/**
+	 * 伤害减免
+	 */
+	public int damageDecrease;
 }

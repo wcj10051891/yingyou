@@ -7,12 +7,9 @@ public class PlayerContainer {
 	private ConcurrentHashMap<Long, Player> id2Player = new ConcurrentHashMap<Long, Player>();
 	private ConcurrentHashMap<String, Player> nickname2Player = new ConcurrentHashMap<String, Player>();
 	private ConcurrentHashMap<String, Player> username2Player = new ConcurrentHashMap<String, Player>();
-	
-	public boolean isLogin(Long playerId) {
-		return id2Player.containsKey(playerId);
-	}
-	public boolean isLogin(Player player) {
-		return player == null || !id2Player.contains(player.getKey());
+
+	public boolean isOnline(Player player) {
+		return player != null && id2Player.contains(player.getKey());
 	}
 	
 	public void add(Player player) {
