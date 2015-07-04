@@ -2,6 +2,7 @@ package xgame.core.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -66,6 +67,11 @@ public abstract class ClassUtils {
 				result.addAll(loadInDir(loader, packageRootPath, dirFile));
 			} catch (Exception e) {
 				throw new IllegalArgumentException("scan path error.", e);
+			} finally {
+				try {
+					loader.close();
+				} catch (IOException e) {
+				}
 			}
 		}
 		return result;

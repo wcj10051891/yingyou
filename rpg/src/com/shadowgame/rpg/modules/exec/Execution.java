@@ -1,6 +1,7 @@
 package com.shadowgame.rpg.modules.exec;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shadowgame.rpg.data.ExecData;
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.service.Services;
 
@@ -11,11 +12,11 @@ public class Execution {
 	public Execution(String execStr) {
 		JSONObject json = JSONObject.parseObject(execStr);
 		this.param = json.getJSONObject("param");
-		this.exec = Services.config.execConfig.key2exec.get(json.getString("key"));
+		this.exec = Services.data.get(ExecData.class).key2exec.get(json.getString("key"));
 	}
 	
 	public Execution(String key, JSONObject param) {
-		this.exec = Services.config.execConfig.key2exec.get(key);
+		this.exec = Services.data.get(ExecData.class).key2exec.get(key);
 		this.param = param;
 	}
 

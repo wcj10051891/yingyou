@@ -13,6 +13,7 @@ import xgame.core.util.StringUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.core.NoticeException;
+import com.shadowgame.rpg.data.MissionData;
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.persist.dao.TPlayerMissionDao;
 import com.shadowgame.rpg.persist.entity.TPlayerMission;
@@ -81,7 +82,7 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, TPlayerMissi
 	public void accept(Integer missionId) {
         if (this.acceptedMissions.containsKey(missionId))
             throw new NoticeException("已经接受该任务了");
-        Mission mission = Services.config.missionConfig.missions.get(missionId);
+        Mission mission = Services.data.get(MissionData.class).missions.get(missionId);
         if (mission == null)
             throw new NoticeException("任务不存在");
         //1、检测是否可以接受该任务

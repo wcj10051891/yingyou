@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shadowgame.rpg.core.AppException;
+import com.shadowgame.rpg.data.MapData;
 import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.PlayerContainer;
 import com.shadowgame.rpg.persist.entity.TGameMap;
@@ -31,7 +32,7 @@ public class World {
 	public ConcurrentHashMap<Integer, MapInstance> mapInstances = new ConcurrentHashMap<Integer, MapInstance>();
 	
 	public World() {
-		for (TGameMap entity : Services.config.mapConfig.maps.values())
+		for (TGameMap entity : Services.data.get(MapData.class).maps.values())
 			gameMaps.put(entity.id, Services.cacheService.get(entity.id, GameMap.class, true, this));
 	}
 	
@@ -39,7 +40,7 @@ public class World {
 		synchronized (mapInstances) {
 			int current = 0;
 			do {
-				current = Long.valueOf(System.currentTimeMillis() / 1000l).intValue();
+				current = (int)(System.currentTimeMillis() / 1000l);
 			} while(this.mapInstances.contains(current));
 			return current;
 		}

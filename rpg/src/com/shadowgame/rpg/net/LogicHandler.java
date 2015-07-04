@@ -56,6 +56,10 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 					throw new AppException("receive msg not instanceof ClientMsg:[" + msg + 
 							"], server can't process, player:" + player + ", channel:" + ctx.getChannel());
 				if(player == null) {
+					if(!(msg instanceof NoPlayerClientMsg))
+						throw new AppException("receive msg not instanceof NoPlayerClientMsg:[" + msg + 
+								"], please login first, player:" + player + ", channel:" + ctx.getChannel());
+					
 					processRequest(player, (ClientMsg)msg, ctx);
 				} else {  
 					//每个玩家一个队列执行当前玩家的请求

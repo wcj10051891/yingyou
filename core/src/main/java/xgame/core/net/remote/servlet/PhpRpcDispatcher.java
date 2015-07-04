@@ -6,7 +6,6 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.UnavailableException;
 import javax.servlet.http.HttpServlet;
@@ -17,7 +16,6 @@ import org.phprpc.PHPRPC_Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import xgame.core.util.ClassUtils;
 import xgame.core.util.LockFreeDeque;
 
 public class PhpRpcDispatcher extends HttpServlet
@@ -25,8 +23,6 @@ public class PhpRpcDispatcher extends HttpServlet
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(PhpRpcDispatcher.class);
 	private Map<String, RpcServerPool> beanPoolMap = new ConcurrentHashMap<String, RpcServerPool>();
-	private static final String PRIVATE_KEY = "test";
-	
 	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp)
@@ -62,30 +58,17 @@ public class PhpRpcDispatcher extends HttpServlet
         }
     }
 
-    public void init(ServletConfig servletConfig) throws ServletException
-    {
-    	String phprpcBeanPackage = (String)servletConfig.getServletContext().getAttribute("phprpcBeanPackage");
-    	if(phprpcBeanPackage != null) {
-        	for(Class<?> clazz : ClassUtils.scanPackage(phprpcBeanPackage)) {
-                try
-                {
-                	String beanName = clazz.getSimpleName().toLowerCase();
-                    if (clazz.isInterface()
-                        || Modifier.isAbstract(clazz.getModifiers())
-                        || !Modifier.isPublic(clazz.getModifiers()))
-                        continue;
+	public void registerBean(Class<?> beanClass) throws Exception {
+    	String beanName = beanClass.getSimpleName().toLowerCase();
+        if (beanClass.isInterface()
+            || Modifier.isAbstract(beanClass.getModifiers())
+            || !Modifier.isPublic(beanClass.getModifiers()))
+            throw new IllegalArgumentException("bean must public, not abstract, not insterface");
 
-                    RpcServerPool pool = new RpcServerPool(clazz);
-                    pool.putServer(pool.getServer());        //初始化一个实例
-                    beanPoolMap.put("/" + beanName, pool);
-                	log.debug("[phprpc bean:/" + beanName + "] " + clazz.getName());
-                }
-                catch (Exception e)
-                {
-                    throw new ServletException("Servlet init Exception: ", e);
-                }
-            }
-    	}
+        RpcServerPool pool = new RpcServerPool(beanClass);
+        pool.putServer(pool.getServer());        //初始化一个实例
+        beanPoolMap.put("/" + beanName, pool);
+    	log.debug("[phprpc bean:/" + beanName + "] " + beanClass.getName());
     }
 
     public void destroy()
@@ -112,8 +95,6 @@ public class PhpRpcDispatcher extends HttpServlet
                 server = new PHPRPC_Server();
                 server.add(clazz.newInstance());
                 server.setDebugMode(true);
-//                server.setPrivateKey(PRIVATE_KEY);
-                //server.setCharset("UTF-8");
             }
             return server;
         }

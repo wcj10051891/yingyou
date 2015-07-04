@@ -3,11 +3,13 @@ package com.shadowgame.rpg.remote.servlet;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class Online extends HttpServlet{
+@WebServlet
+public class Online extends HttpServlet {
 
 	/**
 	 * 
@@ -15,7 +17,44 @@ public class Online extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.getWriter().println("123dd");
-		resp.flushBuffer();
+		try {
+////			Field f = CacheService.class.getDeclaredField("softCache");
+////			f.setAccessible(true);
+////			ConcurrentHashMap<String, WeakReference<CacheObject>> c = (ConcurrentHashMap<String, WeakReference<CacheObject>>)f.get(Services.cacheService);
+////			for (Entry<String, WeakReference<CacheObject>> e : c.entrySet()) {
+////				System.out.println(e.getKey() + " -> " + e.getValue());
+////			}
+////
+//////			Field f2 = CacheService.class.getDeclaredField("refQueue");
+//////			f2.setAccessible(true);
+////			Method m = CacheService.class.getDeclaredMethod("removeStaleEntries");
+////			m.setAccessible(true);
+////			m.invoke(Services.cacheService);
+////			
+//////			Player player = Services.cacheService.get(4676265064748060672l, Player.class, true);
+//////			player.channel = null;
+//////			player.daily = null;
+//////			player.extAttribute = null;
+//////			player.knapsack = null;
+//////			player.processQueue = null;
+//////			player.eventManager = null;
+//////			player.missionManager = null;
+//////			player.skillList = null;
+//			
+////			Services.config.start();
+////			Player player = Services.app.world.allPlayers.getOnlinePlayer(4676265064748060672l);
+////			player.buffList.validate();
+////			System.out.println(player.buffList.haveBuff(1));
+			
+			System.out.println(new A());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	static class A {
+		public A() {
+			System.out.println("亚麻跌3");
+		}
 	}
 }

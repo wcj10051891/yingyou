@@ -31,6 +31,10 @@ public class TPlayer{
 	public Integer lastMapX;
 	/** 离线所在副本坐标y */
 	public Integer lastMapY;
+	/** 玩家skill */
+	public String skill;
+	/** 玩家buff */
+	public String buff;
 	public Long getId(){
 		return this.id;
 	}
@@ -120,6 +124,18 @@ public class TPlayer{
 	}
 	public void setLastMapY(Integer lastMapY){
 		this.lastMapY = lastMapY;
+	}
+	public String getSkill() {
+		return skill;
+	}
+	public void setSkill(String skill) {
+		this.skill = skill;
+	}
+	public String getBuff() {
+		return buff;
+	}
+	public void setBuff(String buff) {
+		this.buff = buff;
 	}
 }
 

@@ -54,7 +54,7 @@ public abstract class AppConfig {
 	public static final String SERVER_KEY;
 	/**
 	 * 服务器序号
-	 * 0-2047
+	 * 0-32767
 	 */
 	public static final short SERVER_SEQ;
 	/**
@@ -66,6 +66,14 @@ public abstract class AppConfig {
 	 */
 	public static final String MSG_PACKAGE;
 	/**
+	 * data包名
+	 */
+	public static final String DATA_PACKAGE;
+	/**
+	 * servlet包名
+	 */
+	public static final String SERVLET_PACKAGE;
+	/**
 	 * 包长度的字节数
 	 */
 	public static final int packet_length_size = 4;
@@ -74,7 +82,7 @@ public abstract class AppConfig {
 	 */
 	public static final int msgId_size = 4;
 	
-	private static final Pattern serverIdPTN = Pattern.compile("([A-Z])([0-2047])");
+	private static final Pattern serverIdPTN = Pattern.compile("([A-Z])([0-32767])");
 	public static String configFileName = "config.properties";
 	public static Config config;
 	
@@ -88,8 +96,10 @@ public abstract class AppConfig {
 		HTTP_PORT = config.getInt("http.port");
 		HTTP_DEFAULT_CHARSET = config.getString("http.defaultCharset", "UTF-8");
 		HTTP_CONTEXT_ROOT = config.getString("http.context.root", "server");
-		PHPRPC_BEAN_PACKAGE = config.getString("phprpc.bean.package");
+		PHPRPC_BEAN_PACKAGE = config.getString("phprpc.package");
 		MSG_PACKAGE = config.getString("msg.package");
+		DATA_PACKAGE = config.getString("data.package");
+		SERVLET_PACKAGE = config.getString("servlet.package");
 		SERVER_ID = config.getString("serverId");
 		try {
 			Matcher matcher = serverIdPTN.matcher(SERVER_ID);
@@ -98,7 +108,7 @@ public abstract class AppConfig {
 			SERVER_KEY = matcher.group(1);
 			SERVER_SEQ = Short.parseShort(matcher.group(2));
 		} catch (Exception e) {
-			throw new AppException("'serverId' parameter config error. pattern:([A-Z])([0-2047]), eg:Q1, A1, B2, C3", e);
+			throw new AppException("'serverId' parameter config error. pattern:([A-Z])([0-32767]), eg:Q1, A1, B2, C3", e);
 		}
 		JMX_PACKAGE = config.getString("jmx.package");
 	}

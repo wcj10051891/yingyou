@@ -4,6 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.shadowgame.rpg.data.MapData;
 import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.Monster;
 import com.shadowgame.rpg.modules.core.Player;
@@ -118,7 +119,7 @@ public class MapInstance {
 			}
 		}
 		//初始化怪物
-		for (TMonster e : Services.config.mapConfig.monsters.get(this.gameMap.entity.id)) {
+		for (TMonster e : Services.data.get(MapData.class).monsters.get(this.gameMap.entity.id)) {
 			add(new Monster(new Position(e.x, e.y), e), e.x, e.y);
 		}
 		//设置定时销毁

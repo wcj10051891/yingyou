@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.shadowgame.rpg.data.MissionData;
+import com.shadowgame.rpg.data.MissionGoalData;
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.service.Services;
 
@@ -26,7 +28,7 @@ public class PlayerMission {
         } else {
             this.status = MissionStatus.ACCEPTED.getValue();
             for (JSONObject goal : mission.goals) {
-                goals.add(Services.config.missionGoalConfig.createMissionGoal(goal, goal.getJSONObject("param")));
+                goals.add(Services.data.get(MissionGoalData.class).createMissionGoal(goal, goal.getJSONObject("param")));
             }
         }
     }
@@ -94,12 +96,12 @@ public class PlayerMission {
         Long acceptTime = (Long) persistData.getLong("acceptTime");
         if (acceptTime != null)
             this.acceptTime = new Timestamp(acceptTime);
-        this.mission = Services.config.missionConfig.missions.get(persistData.getIntValue("missionId"));
+        this.mission = Services.data.get(MissionData.class).missions.get(persistData.getIntValue("missionId"));
         JSONArray array = persistData.getJSONArray("goals");
         for (int i = 0; i < array.size(); i++) {
         	JSONObject goalJson = (JSONObject)JSONObject.toJSON(array.get(i));
         	JSONObject param = this.mission.goals.get(i);
-        	this.goals.add(Services.config.missionGoalConfig.createMissionGoal(goalJson, param));
+        	this.goals.add(Services.data.get(MissionGoalData.class).createMissionGoal(goalJson, param));
 		}
 	}
 	

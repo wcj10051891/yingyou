@@ -18,11 +18,13 @@ import xgame.core.util.ProcessQueue;
 import xgame.core.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shadowgame.rpg.modules.buff.PlayerBuffList;
 import com.shadowgame.rpg.modules.common.DailyAttribute;
 import com.shadowgame.rpg.modules.item.Item;
 import com.shadowgame.rpg.modules.item.Knapsack;
 import com.shadowgame.rpg.modules.map.MapInstance;
 import com.shadowgame.rpg.modules.mission.PlayerMissionManager;
+import com.shadowgame.rpg.modules.skill.PlayerSkillList;
 import com.shadowgame.rpg.msg.map_12.Sc_12001;
 import com.shadowgame.rpg.msg.map_12.Sc_12002;
 import com.shadowgame.rpg.persist.dao.TPlayerDao;
@@ -58,9 +60,6 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		this.entity = entity;
 		this.daily = new DailyAttribute(!StringUtils.hasText(this.entity.daily) ? "{}" : this.entity.daily);
 		this.extAttribute = JsonUtils.parseObject(!StringUtils.hasText(this.entity.extAttribute) ? "{}" : this.entity.extAttribute);
-		this.knapsack = Services.cacheService.get(this.entity.id, Knapsack.class, true);
-		if(this.knapsack == null)
-			this.knapsack = Services.cacheService.create(Knapsack.class, this.entity.id);
 		return this;
 	}
 	
@@ -72,9 +71,16 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		Services.app.world.allPlayers.add(this);
 		Services.tcpService.joinGroup(Groups.World, channel);
 		
-		missionManager = Services.cacheService.get(this.entity.id, PlayerMissionManager.class, true, this);
+		this.knapsack = Services.cacheService.get(this.entity.id, Knapsack.class, true);
+		if(this.knapsack == null)
+			this.knapsack = Services.cacheService.create(Knapsack.class, this.entity.id);
+		
+		this.missionManager = Services.cacheService.get(this.entity.id, PlayerMissionManager.class, true, this);
 		if(missionManager == null)
 			missionManager = Services.cacheService.create(PlayerMissionManager.class, this);
+
+		this.skillList = new PlayerSkillList(this);
+		this.buffList = new PlayerBuffList(this);
 		
 		//返回上次场景
 		MapInstance lastMap = null;
@@ -110,10 +116,8 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 			log.error("player {} not in map", this.getKey());
 		}
 		
-		
 		Services.cacheService.saveAsync(this);
 		Services.cacheService.saveAsync(this.knapsack);
-		
 	}
 	
 	public void disconnect() {
@@ -177,6 +181,8 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		p.lv = 1;
 		p.exp = 0;
 		p.extAttribute = "{}";
+		p.skill = "[]";
+		p.buff = "[]";
 		p.username = (String)contextParam[0];
 		p.nickname = (String)contextParam[1];
 		dao.insert(p);
@@ -190,6 +196,8 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	public void update() {
 		this.entity.daily = this.daily.toString();
 		this.entity.extAttribute = this.extAttribute.toString();
+		this.entity.skill = this.skillList.toString();
+		this.entity.buff = this.buffList.toString();
 		dao.update(entity);
 	}
 	

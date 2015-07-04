@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.Servlet;
 
 import org.xnio.Options;
@@ -38,6 +39,7 @@ public class ServletServer {
 			deployment
 			.addServlet(Servlets.servlet(servletClass.getName(), servletClass).addMapping(entry.getKey()).setLoadOnStartup(1));
 		}
+		deployment.setDefaultMultipartConfig(new MultipartConfigElement(System.getProperty("java.io.tmpdir")));
 		DeploymentManager manager = Servlets.defaultContainer().addDeployment(deployment);
 		manager.deploy();
 		PathHandler httpHandler = null;
@@ -49,6 +51,7 @@ public class ServletServer {
 		InetSocketAddress address = new InetSocketAddress(this.port);
 		server = Undertow.builder()
 				.addHttpListener(address.getPort(), address.getHostName())
+				.setServerOption(Options.KEEP_ALIVE, true)
 				.setSocketOption(Options.TCP_NODELAY, true)
 				.setSocketOption(Options.REUSE_ADDRESSES, true)
 				.setSocketOption(Options.KEEP_ALIVE, true)

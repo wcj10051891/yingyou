@@ -30,6 +30,7 @@ import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.msg.login_11.Cs_11000;
 import com.shadowgame.rpg.msg.login_11.Cs_11001;
 import com.shadowgame.rpg.msg.login_11.Cs_11002;
+import com.shadowgame.rpg.msg.skill_13.Cs_13001;
 import com.shadowgame.rpg.net.msg.Message;
 
 public class BinaryGameClient {
@@ -185,6 +186,14 @@ public class BinaryGameClient {
 						Cs_11002 create = new Cs_11002();
 						create.playerId = 4676265064748060672l;
 						c.write(create);
+					} else if(cmd.equalsIgnoreCase("learnSkill")) {
+						Cs_13001 learn = new Cs_13001();
+						learn.skillId = 1;
+						c.write(learn);
+					} else if(cmd.equalsIgnoreCase("useSkill")) {
+						Cs_13001 learn = new Cs_13001();
+						learn.skillId = 1;
+						c.write(learn);
 					}
 				}
 			}

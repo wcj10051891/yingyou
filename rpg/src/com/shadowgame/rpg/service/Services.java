@@ -1,10 +1,5 @@
 package com.shadowgame.rpg.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.Servlet;
-
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +7,6 @@ import org.slf4j.LoggerFactory;
 import xgame.core.cache.CacheService;
 import xgame.core.db.DaoContext;
 import xgame.core.db.DaoFactory;
-import xgame.core.net.remote.servlet.PhpRpcDispatcher;
-import xgame.core.net.server.servlet.ServletServer;
 import xgame.core.net.server.tcp.TcpService;
 
 import com.shadowgame.rpg.core.AppConfig;
@@ -21,21 +14,20 @@ import com.shadowgame.rpg.net.LogicHandler;
 import com.shadowgame.rpg.net.codec.BinaryDecoder;
 import com.shadowgame.rpg.net.codec.BinaryEncoder;
 import com.shadowgame.rpg.net.msg.BinaryMsgService;
-import com.shadowgame.rpg.remote.servlet.Online;
 
 public class Services {
 	private static final Logger log = LoggerFactory.getLogger(Services.class);
 	public static ThreadService threadService;
 	public static TcpService tcpService;
-	public static ServletServer servletServer;
 	public static TimerService timerService;
 	public static JMXService jmxService;
 	public static CacheService cacheService;
 	public static BinaryMsgService msgService;
 	public static DaoFactory daoFactory;
 	public static QueryRunner jdbc;
-	public static ConfigService config;
+	public static DataService data;
 	public static AppService app;
+	public static ServletService servletService;
 	
 	public static void start() throws Exception {
 		timerService = new TimerService();
@@ -69,21 +61,13 @@ public class Services {
 		tcpService.start();
 		log.info("[tcpService] start ok.");
 		
-		Map<String, Class<? extends Servlet>> servlets = new HashMap<String, Class<? extends Servlet>>(2);
-		//registry servlets
-		servlets.put("/online", Online.class);
-		servlets.put("/rpc/*", PhpRpcDispatcher.class);
+		servletService = new ServletService();
+		servletService.start();
+		log.info("[servletService] start ok.");
 		
-		Map<String, String> servletContextAttribute = new HashMap<String, String>();
-		servletContextAttribute.put("phprpcBeanPackage", AppConfig.PHPRPC_BEAN_PACKAGE);
-		
-		servletServer = new ServletServer(AppConfig.HTTP_PORT, AppConfig.HTTP_DEFAULT_CHARSET, AppConfig.HTTP_CONTEXT_ROOT, servletContextAttribute, servlets);
-		servletServer.start();
-		log.info("[servletServer] start ok.");
-		
-		config = new ConfigService();
-		config.start();
-		log.info("[ConfigService] start ok.");
+		data = new DataService();
+		data.start();
+		log.info("[DataService] start ok.");
 		
 		app = new AppService();
 		app.start();
@@ -91,9 +75,9 @@ public class Services {
 	}
 	
 	public static void stop() throws Exception {
-		if(servletServer != null) {
-			servletServer.stop();
-			log.info("[servletServer] stop ok.");
+		if(servletService != null) {
+			servletService.stop();
+			log.info("[servletService] stop ok.");
 		}
 		
 		if(tcpService != null) {

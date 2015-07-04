@@ -6,7 +6,7 @@ public class TItem{
 	/** 道具名称 */
 	public String name="";
 	/** 道具描述 */
-	public String description="";
+	public String desc="";
 	/** 需求玩家等级 */
 	public Integer playerLv=0;
 	/** 父分类 */
@@ -29,8 +29,8 @@ public class TItem{
 	public String getName(){
 		return this.name;
 	}
-	public String getDescription(){
-		return this.description;
+	public String getDesc(){
+		return this.desc;
 	}
 	public Integer getPlayerLv(){
 		return this.playerLv;
@@ -62,8 +62,8 @@ public class TItem{
 	public void setName(String name){
 		this.name = name;
 	}
-	public void setDescription(String description){
-		this.description = description;
+	public void setDesc(String desc){
+		this.desc = desc;
 	}
 	public void setPlayerLv(Integer playerLv){
 		this.playerLv = playerLv;

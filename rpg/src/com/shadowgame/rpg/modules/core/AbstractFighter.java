@@ -1,11 +1,24 @@
 package com.shadowgame.rpg.modules.core;
 
+import com.shadowgame.rpg.modules.buff.BuffList;
+import com.shadowgame.rpg.modules.skill.SkillList;
+
 
 /**
  * 可参战单位
  * @author wcj10051891@gmail.com
  */
 public abstract class AbstractFighter extends AbstractSpirit {
+	
+	/**
+	 * 技能列表
+	 */
+	public SkillList skillList;
+	/**
+	 * buff列表
+	 */
+	public BuffList buffList;
+	
 	/**
 	 * 当前生命
 	 */
@@ -24,11 +37,11 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	public int def;
 	
 	/**
-	 * 命中
+	 * 命中率
 	 */
 	public int hit;
 	/**
-	 * 闪避
+	 * 闪避率
 	 */
 	public int dodge;
 	/**
@@ -97,27 +110,27 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	 */
 	public int shadowDamage;
 	/**
-	 * 火焰伤害
+	 * 火焰抗性
 	 */
 	public int fireDef;
 	/**
-	 * 寒冰伤害
+	 * 寒冰抗性
 	 */
 	public int iceDef;
 	/**
-	 * 雷电伤害
+	 * 雷电抗性
 	 */
 	public int thunderDef;
 	/**
-	 * 毒素伤害
+	 * 毒素抗性
 	 */
 	public int poisonDef;
 	/**
-	 * 神圣伤害
+	 * 神圣抗性
 	 */
 	public int holyDef;
 	/**
-	 * 暗影伤害
+	 * 暗影抗性
 	 */
 	public int shadowDef;
 	
@@ -129,4 +142,62 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	 * 伤害减免
 	 */
 	public int damageDecrease;
+
+
+	/**
+	 * 眩晕值
+	 */
+	public int dizziness;
+	/**
+	 * 减速值
+	 */
+	public int slow;
+	/**
+	 * 冻结值
+	 */
+	public int freeze;
+	/**
+	 * 沉默值
+	 */
+	public int silence;
+	/**
+	 * 恐惧值
+	 */
+	public int fear;
+	/**
+	 * 中毒值
+	 */
+	public int poisoning;
+	/**
+	 * 抗眩晕
+	 */
+	public int dizzinessDef;
+	/**
+	 * 抗减速
+	 */
+	public int slowDef;
+	/**
+	 * 抗冻结
+	 */
+	public int freezeDef;
+	/**
+	 * 抗沉默
+	 */
+	public int silenceDef;
+	/**
+	 * 抗恐惧
+	 */
+	public int fearDef;
+	/**
+	 * 抗中毒
+	 */
+	public int poisoningDef;
+	/**
+	 * 输出系数
+	 */
+	public int damageFactor1;
+	/**
+	 * 受伤系数
+	 */
+	public int damageFactor2;
 }
