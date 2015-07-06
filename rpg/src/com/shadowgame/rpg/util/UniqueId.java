@@ -86,7 +86,7 @@ public abstract class UniqueId {
 	 * 6位秒钟：最大值59<br/>
 	 * 10位毫秒：最大值999<br/>
 	 * 5位服务器单字母标记（26个字母）
-	 * 16位服务器序号：最大值65535
+	 * 16位服务器序号：最大值32767
 	 */
 	private static long encode(long original) {
 		long utc = encodeUTC(original);

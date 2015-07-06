@@ -2,9 +2,21 @@ package com.shadowgame.rpg.core;
 
 public interface Constants {
 	/**
-	 * 比率
+	 * 万
 	 */
-	int max = 10000;
+	int wanInt = 10000;
+	/**
+	 * 万
+	 */
+	float wanFloat = wanInt * 1f;
+	/**
+	 * 百
+	 */
+	int baiInt = 100;
+	/**
+	 * 百
+	 */
+	float baiFloat = 100 * 1f;
 	/**
 	 * 普通伤害百分比
 	 */

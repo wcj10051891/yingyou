@@ -143,6 +143,14 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	 */
 	public int damageDecrease;
 
+	/**
+	 * 输出系数
+	 */
+	public int damageFactor1;
+	/**
+	 * 受伤系数
+	 */
+	public int damageFactor2;
 
 	/**
 	 * 眩晕值
@@ -192,12 +200,4 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	 * 抗中毒
 	 */
 	public int poisoningDef;
-	/**
-	 * 输出系数
-	 */
-	public int damageFactor1;
-	/**
-	 * 受伤系数
-	 */
-	public int damageFactor2;
 }
