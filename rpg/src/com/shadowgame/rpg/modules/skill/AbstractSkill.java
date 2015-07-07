@@ -58,6 +58,7 @@ public abstract class AbstractSkill implements SkillLogic {
 		return false;
 	}
 	
+	@Override
 	public List<AbstractFighter> getTargetFighters(SkillTask task) {
 		List<AbstractFighter> result = new ArrayList<AbstractFighter>();
 		if(this.entity.rangeType == 3) {//扇形

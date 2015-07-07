@@ -1,5 +1,9 @@
 package com.shadowgame.rpg.modules.skill;
 
+import java.util.List;
+
+import com.shadowgame.rpg.modules.core.AbstractFighter;
+
 /**
  * 可调度执行的逻辑，执行一次，再每隔多久执行一次，每次执行完之后检测是否结束执行，若结束则终止执行
  * @author wcj10051891@gmail.com
@@ -33,4 +37,11 @@ public interface SkillLogic {
 	 * @return
 	 */
 	public abstract boolean isFinish(SkillTask task);
+	
+	/**
+	 * 筛选技能施放时中招的fighters
+	 * @param task
+	 * @return
+	 */
+	public abstract List<AbstractFighter> getTargetFighters(SkillTask task);
 }
