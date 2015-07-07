@@ -18,7 +18,7 @@ public class Cs_13001 extends ClientMsg {
 	@Override
 	public void handle(Player player) {
 		player.skillList.learnSkill(skillId);
-		player.skillList.useSkill(skillId);
+//		player.skillList.useSkill(skillId);
 	}
 
 }

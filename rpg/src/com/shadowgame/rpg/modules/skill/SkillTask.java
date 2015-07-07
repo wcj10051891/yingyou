@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import xgame.core.util.CommonUtils;
 
 import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.map.Point;
 import com.shadowgame.rpg.service.Services;
 
 
@@ -20,9 +21,17 @@ public class SkillTask {
 	 */
 	public AbstractFighter attacker;
 	/**
-	 * 攻击者朝向
+	 * 攻击者施放时的朝向
 	 */
 	public int direction;
+	/**
+	 * 施放目标
+	 */
+	public AbstractFighter target;
+	/**
+	 * 施放目标点
+	 */
+	public Point targetPoint;
 	/**
 	 * 调度执行目标，技能
 	 */
@@ -40,11 +49,13 @@ public class SkillTask {
 	 */
 	private ScheduledFuture<?> task;
 
-	public SkillTask(AbstractFighter attacker, int direction, SkillLogic skillLogic) {
+	public SkillTask(AbstractFighter attacker, AbstractFighter target, SkillLogic skillLogic) {
 		super();
-		this.skillLogic = skillLogic;
 		this.attacker = attacker;
-		this.direction = direction;
+		this.direction = attacker.getPosition().getDirection();
+		this.target = target;
+		this.targetPoint = target.getPosition().getPoint();
+		this.skillLogic = skillLogic;
 	}
 	
 	public void start() {

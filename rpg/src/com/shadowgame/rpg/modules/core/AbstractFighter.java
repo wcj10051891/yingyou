@@ -79,11 +79,11 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	/**
 	 * 反弹几率
 	 */
-	public int bounceRate;
+	public int reboundRate;
 	/**
 	 * 反弹比例
 	 */
-	public int bounceRatio;
+	public int reboundRatio;
 
 	/**
 	 * 火焰伤害

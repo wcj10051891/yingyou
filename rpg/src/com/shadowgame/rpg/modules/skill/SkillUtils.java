@@ -18,7 +18,7 @@ public abstract class SkillUtils {
 	 */
 	public static boolean isHit(AbstractFighter attacker, FighterSkill skill, AbstractFighter target) {
 		//计算命中率
-		int hitRate = (int)(1 + Math.max(Math.min((attacker.hit  - target.dodge) / Constants.wanFloat, 0), -0.6));
+		float hitRate = 1 + Math.max(Math.min((attacker.hit  - target.dodge) / Constants.wanFloat, 0), -0.6f);
 		hitRate *= Constants.wanInt;
 		return hitRate < RandomUtils.nextRandomInt(1, Constants.wanInt);
 	}
@@ -33,51 +33,82 @@ public abstract class SkillUtils {
 	public static Object[] attack(AbstractFighter attacker, FighterSkill skill, AbstractFighter target) {
 		if(isHit(attacker, skill, target)) {
 			//中转普通伤害
-			int damage = (int)(Math.max(attacker.atk - target.def, 0) * Constants.damagePercent / Constants.baiFloat);
+			float damage = Math.max(attacker.atk - target.def, 0) * Constants.damagePercent / Constants.baiFloat;
 			//中转火焰伤害
-			int fireDamage = (int)(Math.max(attacker.fireDamage - target.fireDef, 0) * Constants.fireDamagePercent / Constants.baiFloat);
+			float fireDamage = Math.max(attacker.fireDamage - target.fireDef, 0) * Constants.fireDamagePercent / Constants.baiFloat;
 			//中转寒冰伤害
-			int iceDamage = (int)(Math.max(attacker.iceDamage - target.iceDef, 0) * Constants.iceDamagePercent / Constants.baiFloat);
+			float iceDamage = Math.max(attacker.iceDamage - target.iceDef, 0) * Constants.iceDamagePercent / Constants.baiFloat;
 			//中转雷电伤害
-			int thunderDamage = (int)(Math.max(attacker.thunderDamage - target.thunderDef, 0) * Constants.thunderDamagePercent / Constants.baiFloat);
+			float thunderDamage = Math.max(attacker.thunderDamage - target.thunderDef, 0) * Constants.thunderDamagePercent / Constants.baiFloat;
 			//中转毒素伤害
-			int poisonDamage = (int)(Math.max(attacker.poisonDamage - target.poisonDef, 0) * Constants.poisonDamagePercent / Constants.baiFloat);
+			float poisonDamage = Math.max(attacker.poisonDamage - target.poisonDef, 0) * Constants.poisonDamagePercent / Constants.baiFloat;
 			//中转神圣伤害
-			int holyDamage = (int)(Math.max(attacker.holyDamage - target.holyDef, 0) * Constants.holyDamagePercent / Constants.baiFloat);
+			float holyDamage = Math.max(attacker.holyDamage - target.holyDef, 0) * Constants.holyDamagePercent / Constants.baiFloat;
 			//中转暗影伤害
-			int shadowDamage = (int)(Math.max(attacker.shadowDamage - target.shadowDef, 0) * Constants.shadowDamagePercent / Constants.baiFloat);
+			float shadowDamage = Math.max(attacker.shadowDamage - target.shadowDef, 0) * Constants.shadowDamagePercent / Constants.baiFloat;
 			//基础伤害
-			int total = damage + fireDamage + iceDamage + thunderDamage + poisonDamage + holyDamage + shadowDamage + Constants.damageAdd;
+			float total = damage + fireDamage + iceDamage + thunderDamage + poisonDamage + holyDamage + shadowDamage + Constants.damageAdd;
 			//暴击率
-			int critRate = (int)(Math.min(Math.max((attacker.critRate - target.critDefRate) / Constants.wanFloat, 0), 1));
+			int critRate = (int)(Math.min(Math.max((attacker.critRate - target.critDefRate) / Constants.wanFloat, 0), 1) * Constants.wanFloat);
 			boolean isCrit = false;
 			if(critRate < RandomUtils.nextRandomInt(1, Constants.wanInt)) {
 				isCrit = true;
 				//暴击
-				total = (int)(total * (2 + (Math.max(attacker.crit + target.critDef, -0.5))));
+				total = total * (2 + (Math.max((attacker.crit + target.critDef) / Constants.wanFloat, -0.5f)));
 			}
 			boolean isBlock = false;
 			//格挡率
-			int blockRate = (int)Math.min(Math.max((attacker.blockRate - target.breakBlockRate) / Constants.wanFloat, 0), 1);
+			int blockRate = (int)(Math.min(Math.max((attacker.blockRate - target.breakBlockRate) / Constants.wanFloat, 0), 1) * Constants.wanFloat);
 			if(blockRate < RandomUtils.nextRandomInt(1, Constants.baiInt)) {
 				isBlock = true;
 				//格挡
-				total = (int)(total * 0.4d);
+				total = total * 0.4f;
 			}
 			//属性加成伤害
-			int add = (int)Math.max(1 + (attacker.damageIncrease - target.damageDecrease) / Constants.wanFloat, 0);
+			float add = Math.max(1 + (attacker.damageIncrease - target.damageDecrease) / Constants.wanFloat, 0);
 			total = total * add;
 			//buff属性
-			//
+			total = total * buffRate(attacker, target);
 			//伤害修正
 			total = (int)(total * (attacker.damageFactor1 / Constants.wanFloat) * (target.damageFactor2 * Constants.wanFloat));
 			//是否吸血
 			int suckHp = 0;
+			if(attacker.suckHpRate > 0) {
+				if(attacker.suckHpRate < RandomUtils.nextRandomInt(1, Constants.wanInt)) {
+					suckHp = (int)(total * attacker.suckHpRatio / Constants.wanFloat);
+				}
+			}
 			//是否反弹
 			int rebound = 0;
+			if(attacker.reboundRate > 0) {
+				if(attacker.reboundRate < RandomUtils.nextRandomInt(1, Constants.wanInt)) {
+					rebound = (int)(total * attacker.reboundRatio / Constants.wanFloat);
+				}
+			}
 			return new Object[]{total, isCrit, isBlock, suckHp, rebound};
 		}
 		return null;
+	}
+	
+	private static float buffRate(AbstractFighter attacker, AbstractFighter target) {
+		int inc = 0;
+		int dec = 1;
+		for (BuffTask buff : attacker.buffList.getBuffs()) {
+			TBuff entity = buff.buffLogic.getBuff();
+			if(entity.damageIncrease > 0)
+				inc += entity.damageIncrease;
+			if(entity.damageDecrease > 0)
+				dec = (int)(dec * (1 - entity.damageDecrease / Constants.baiFloat));
+		}
+		for (BuffTask buff : target.buffList.getBuffs()) {
+			TBuff entity = buff.buffLogic.getBuff();
+			if(entity.hitDamageIncrease > 0)
+				inc += entity.hitDamageIncrease;
+			if(entity.hitDamageDecrease > 0)
+				dec = (int)(dec * (1 - entity.hitDamageDecrease/ Constants.baiFloat));
+		}
+		dec = 1 - dec;
+		return 1 + inc / Constants.baiFloat - dec;
 	}
 	
 	/**
@@ -90,16 +121,15 @@ public abstract class SkillUtils {
 	public static int contAttack(BuffTask buff) {
 		TBuff entity = buff.buffLogic.getBuff();
 		//基础伤害
-		int total = (int)(Math.max(buff.source.atk - buff.target.def, 0) * entity.normalDamage / Constants.baiFloat);
+		float total = Math.max(buff.source.atk - buff.target.def, 0) * entity.normalDamage / Constants.baiFloat;
 		//属性加成伤害
 		total = total * (int)Math.max(1 + (buff.source.damageIncrease - buff.target.damageDecrease) / Constants.wanFloat, 0);
 		//buff&debuff伤害
-
+		total = total * buffRate(buff.source, buff.target);
 		//伤害修正
-		total = (int)(total * (buff.source.damageFactor1 / Constants.wanFloat) * (buff.target.damageFactor2 * Constants.wanFloat));
-		
+		total = total * (buff.source.damageFactor1 / Constants.wanFloat) * (buff.target.damageFactor2 * Constants.wanFloat);
 		//基于攻防属性伤害+基于生命上限上限+固定伤害
-		total = total + (int)(buff.target.maxhp * entity.hpMaxDamage / Constants.baiFloat) + entity.fixDamage;
-		return total;
+		total = total + buff.target.maxhp * entity.hpMaxDamage / Constants.baiFloat + entity.fixDamage;
+		return (int)total;
 	}
 }

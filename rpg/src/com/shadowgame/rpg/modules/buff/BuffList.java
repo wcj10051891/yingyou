@@ -47,5 +47,9 @@ public class BuffList {
 				((BuffTask)buff).checkFinish();
 		}
 	}
+
+	public List<BuffTask> getBuffs() {
+		return buffs;
+	}
 	
 }

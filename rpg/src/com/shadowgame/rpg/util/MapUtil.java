@@ -11,45 +11,6 @@ import com.shadowgame.rpg.modules.map.Point;
 public abstract class MapUtil {
 	
 	/**
-	 * 获取周围格子,（不包含本格子）
-	 */
-	public static List<Grid> getAroundGrids(GameMap map, Grid current) {
-		List<Grid> result = new ArrayList<Grid>();
-		for(int i = current.x - 1; i <= current.x + 1; i++) {
-			if(i < 0)
-				continue;
-			for(int j = current.y - 1; j <= current.y + 1; j++) {
-				if(j < 0)
-					continue;
-				if(i == current.x && j == current.y)
-					continue;
-				result.add(map.getGridByGridXY(i, j));
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * 获得周围指定格子数目半径内的格子,（包含本格子）
-	 * @param grid 		格子
-	 * @param radius 	格子距离
-	 * @return
-	 */
-	public static List<Grid> getRoundGridByGridRadius(Grid grid, int radius, GameMap map) {
-		int round = 2 * radius + 1;
-		int num = round * round;
-		List<Grid> grids = new ArrayList<Grid>();
-		for (int i = 0; i < num; i++) {
-			int x = grid.x + i % round - radius;
-			int y = grid.y + i / round - radius;
-			Grid _grid = map.getGridByGridXY(x, y);
-			if(_grid != null)
-				grids.add(_grid);
-		}
-		return grids;
-	}
-	
-	/**
 	 * Returns distance between two 2D points
 	 * 
 	 * @param point1
@@ -58,15 +19,15 @@ public abstract class MapUtil {
 	 *            second point
 	 * @return distance between points
 	 */
-	public static double getDistance(Point point1, Point point2)
+	public static double calcDistance(Point point1, Point point2)
 	{
-		return getDistance(point1.x, point1.y, point2.x, point2.y);
+		return calcDistance(point1.x, point1.y, point2.x, point2.y);
 	}
 
 	/**
 	 * 计算2点间距离(返回像素)
 	 */
-	public static double getDistance(int x1, int y1, int x2, int y2)
+	public static double calcDistance(int x1, int y1, int x2, int y2)
 	{
 		// using long to avoid possible overflows when multiplying
 		long dx = x2 - x1;
@@ -96,7 +57,7 @@ public abstract class MapUtil {
 	 */
 	public static double getDistance(AbstractSpirit object , int x, int y)
 	{
-		return getDistance(object.getPosition().getX(), object.getPosition().getY(), x, y);
+		return calcDistance(object.getPosition().getX(), object.getPosition().getY(), x, y);
 	}
 	
 	/**
@@ -154,18 +115,18 @@ public abstract class MapUtil {
 	 */
 	public static int calcDirection(Point pos1, Point pos2) {
 		if (pos1.y == pos2.y && pos1.x == pos2.x) {
-			return 2;
+			return 4;
 		} else if (pos1.y == pos2.y) {
 			if (pos1.x < pos2.x) {
-				return 6;
+				return 2;
 			} else {
-				return 4;
+				return 6;
 			}
 		} else if (pos1.x == pos2.x) {
 			if (pos1.y < pos2.y) {
-				return 2;
+				return 4;
 			} else {
-				return 8;
+				return 0;
 			}
 		} else {
 			double angle = Math.atan(((double) (pos2.y - pos1.y)) / -(pos2.x - pos1.x));
@@ -173,15 +134,15 @@ public abstract class MapUtil {
 			double angle67d5 = Math.PI / 2 - angle22d5;
 			if (angle > -angle22d5 && angle <= angle22d5) {
 				if (pos1.x < pos2.x) {
-					return 6;
+					return 2;
 				} else {
-					return 4;
+					return 6;
 				}
 			} else if (angle > angle22d5 && angle <= angle67d5) {
 				if (pos1.x < pos2.x) {
-					return 9;
-				} else {
 					return 1;
+				} else {
+					return 5;
 				}
 			} else if (angle > -angle67d5 && angle <= -angle22d5) {
 				if (pos1.x < pos2.x) {
@@ -191,9 +152,9 @@ public abstract class MapUtil {
 				}
 			} else {
 				if (pos1.y < pos2.y) {
-					return 2;
+					return 4;
 				} else {
-					return 8;
+					return 0;
 				}
 			}
 		}
@@ -204,28 +165,28 @@ public abstract class MapUtil {
 	 */
 	public static int calcDirection(Grid grid1, Grid grid2) {
 		if (grid1.y == grid2.y && grid1.x == grid2.x) {
-			return 2;
+			return 4;
 		} else if (grid1.y == grid2.y) {
 			if (grid1.x < grid2.x) {
-				return 6;
+				return 2;
 			} else {
-				return 4;
+				return 6;
 			}
 		} else if (grid1.x == grid2.x) {
 			if (grid1.y < grid2.y) {
-				return 2;
+				return 4;
 			} else {
-				return 8;
+				return 0;
 			}
 		} else if (grid1.x < grid2.x) {
 			if (grid1.y < grid2.y) {
 				return 3;
 			} else {
-				return 9;
+				return 1;
 			}
 		} else {
 			if (grid1.y < grid2.y) {
-				return 1;
+				return 5;
 			} else {
 				return 7;
 			}
@@ -330,7 +291,7 @@ public abstract class MapUtil {
 	public static double getDistanceToSegment(int sx1, int sy1, int sx2, int sy2, int px, int py)
 	{
 		Point closestPoint = getClosestPointOnSegment(sx1, sy1, sx2, sy2, px, py);
-		return getDistance(closestPoint.x, closestPoint.y, px, py);
+		return calcDistance(closestPoint.x, closestPoint.y, px, py);
 	}
 
 	/**

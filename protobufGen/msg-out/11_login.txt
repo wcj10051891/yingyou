@@ -1,33 +1,33 @@
-// ======== 登录响应内的嵌套消息	
-message LoginResultAttachment{
-	string s; //字符串	
+// ======== 登录请求	
+message Cs_11000{
+	string username; //用户名	
+}
+// ======== 创建角色	
+message Cs_11001{
+	string username; //用户名	
+	string nickname; //昵称	
+	uint8 vocation; //职业，1战士2法师3弓箭手	
+}
+// ======== 选择角色	
+message Cs_11002{
+	uint64 playerId; //选择角色的playerId	
 }
 // ======== 登录协议响应	
 message Sc_11000{
-	uint8 byteValue; //字节	
-	uint16 shortValue; //短整型	
-	uint32 intValue; //整型	
-	uint64 longValue; //长整型	
-	float floatValue; //float浮点型	
-	double doubleValue; //double浮点型	
-	string stringValue; //字符串	
-	array string nestValue1; //数组[String]	
-	array LoginResultAttachment nestValue2; //数组[LoginResultAttachment]	
+	CharacterList characters; //角色列表	
 }
-// ======== 登录协议内的嵌套消息	
-message LoginAttachment{
-	string s; //字符串	
+// ======== 创建角色响应	
+message Sc_11001{
+	CharacterList characters; //角色列表	
 }
-// ======== 登录请求	
-message Cs_11000{
-	uint8 byteValue; //字节	
-	uint16 shortValue; //短整型	
-	uint32 intValue; //整型	
-	uint64 longValue; //长整型	
-	float floatValue; //float浮点型	
-	double doubleValue; //double浮点型	
-	string stringValue; //字符串	
-	array LoginAttachment nestValue1; //数组[LoginAttachment]	
-	array uint32 nestValue2; //数组[Integer]	
-	array string nestValue3; //数组[String]	
+// ======== 角色信息	
+message CharacterInfo{
+	uint64 playerId; //playerId	
+	uint32 lv; //等级	
+	string nickname; //昵称	
+	uint8 vocation; //职业	
+}
+// ======== 角色列表	
+message CharacterList{
+	array CharacterInfo characters; //角色列表	
 }

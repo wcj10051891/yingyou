@@ -2,7 +2,9 @@ package binarygen;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,10 +43,48 @@ public class BinaryGen {
 		typeRegister.put("Double", "double");
 	}
 	
+	private static class MessageEntry implements Comparable<MessageEntry>{
+		private String name;
+		private int type;
+		private String content;
+		public MessageEntry(String name, String content) {
+			this.name = name;
+			if(name.startsWith("Cs"))
+				type = 1;
+			else if(name.startsWith("Sc"))
+				type = 2;
+			else
+				type = 3;
+			this.content = content;
+		}
+
+		@Override
+		public int compareTo(MessageEntry o) {
+			if(type < o.type)
+				return -1;
+			if(type > o.type)
+				return 1;
+			
+			String[] s1 = name.split("_");
+			String[] s2 = o.name.split("_");
+			if(s1.length == 2 && s2.length == 2) {
+				Integer msgId1 = Integer.valueOf(s1[1]);
+				Integer msgId2 = Integer.valueOf(s2[1]);
+				return msgId1 - msgId2;
+			}
+			return 0;
+		}
+		
+		@Override
+		public String toString() {
+			return this.content;
+		}
+	}
+	
 	private static void gen() throws Exception {
 		JavaDocBuilder builder = new JavaDocBuilder();
 		builder.addSourceTree(new File(msg_src_package_path));
-		Map<String, List<String>> msgs = new HashMap<String, List<String>>();
+		Map<String, List<MessageEntry>> msgs = new LinkedHashMap<String, List<MessageEntry>>();
 		for (JavaClass cls : builder.getClasses()) {
 			if(cls.isA(messageType)) {
 				StringBuilder msg = new StringBuilder();
@@ -58,17 +98,21 @@ public class BinaryGen {
 							t = at;
 						msg.append("\t").append("array ").append(t).append(" ").append(f.getName()).append("; ").append(comment(f.getComment(), false));
 					} else {
-						msg.append("\t").append(typeRegister.get(f.getType().getJavaClass().getName())).append(" ").append(f.getName()).append("; ").append(comment(f.getComment(), false));
+						String t = f.getType().getJavaClass().getName();
+						String at = typeRegister.get(t);
+						if(at == null)
+							at = t;
+						msg.append("\t").append(at).append(" ").append(f.getName()).append("; ").append(comment(f.getComment(), false));
 					}
 					msg.append("\n");
 				}
 				msg.append("}");
-				List<String> list = msgs.get(cls.getPackageName());
+				List<MessageEntry> list= msgs.get(cls.getPackageName());
 				if(list == null) {
-					list = new ArrayList<String>();
+					list = new ArrayList<BinaryGen.MessageEntry>();
 					msgs.put(cls.getPackageName(), list);
 				}
-				list.add(msg.toString());
+				list.add(new MessageEntry(cls.getName(), msg.toString())); 
 			}
 		}
 
@@ -79,7 +123,8 @@ public class BinaryGen {
 			else
 				outDirectory.mkdirs();
 			
-			for (Entry<String, List<String>> e : msgs.entrySet()) {
+			for (Entry<String, List<MessageEntry>> e : msgs.entrySet()) {
+				Collections.sort(e.getValue());
 				String packageName = e.getKey();
 				String filename = packageName.substring(packageName.lastIndexOf(".") + 1);
 				String[] s = filename.split("_");

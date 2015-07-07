@@ -8,17 +8,17 @@ import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.net.msg.Message;
 
 /**
- * 看不见的地图上的对象
+ * 新看见的地图上的对象
  * @author wcj10051891@gmail.com
- * @date 2015年6月27日 下午5:22:56
+ * @date 2015年6月27日 下午4:59:11
  */
 public class Sc_12002 extends Message {
 	/**
-	 * 看不见的monster
+	 * 新看见的monster
 	 */
 	public List<MonsterInfo> monster;
 	/**
-	 * 看不见的player
+	 * 新看见的player
 	 */
 	public List<PlayerInfo> player;
 	

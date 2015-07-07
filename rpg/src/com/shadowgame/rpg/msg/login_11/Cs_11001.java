@@ -1,6 +1,5 @@
 package com.shadowgame.rpg.msg.login_11;
 
-import java.sql.Timestamp;
 import java.util.Arrays;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -9,11 +8,11 @@ import xgame.core.util.StringUtils;
 
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.core.NoticeException;
+import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.net.msg.NoPlayerClientMsg;
 import com.shadowgame.rpg.persist.dao.TPlayerDao;
 import com.shadowgame.rpg.persist.entity.TPlayer;
 import com.shadowgame.rpg.service.Services;
-import com.shadowgame.rpg.util.UniqueId;
 
 /**
  * 创建角色
@@ -46,16 +45,7 @@ public class Cs_11001 extends NoPlayerClientMsg {
 		TPlayer entity = playerDao.getByNickname(nickname);
 		if(entity != null)
 			throw new NoticeException("昵称已经存在");
-		entity = new TPlayer();
-		entity.createTime = new Timestamp(System.currentTimeMillis());
-		entity.daily = "{}";
-		entity.lv = 1;
-		entity.exp = 0;
-		entity.extAttribute = "{}";
-		entity.id = UniqueId.next();
-		entity.nickname = nickname;
-		entity.username = username;
-		entity.vocation = (int)vocation;
+		entity = Player.createEntity(username, nickname, vocation);
 		try {
 			playerDao.insert(entity);
 		} catch (Exception e) {

@@ -1,13 +1,21 @@
 package com.shadowgame.rpg.modules.map;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import com.shadowgame.rpg.data.MapData;
+import com.shadowgame.rpg.modules.core.AbstractFighter;
 import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.Monster;
 import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.msg.map_12.Sc_12001;
 import com.shadowgame.rpg.persist.entity.TMonster;
 import com.shadowgame.rpg.service.Services;
 
@@ -29,6 +37,10 @@ public class MapInstance {
 	 * 地图分块
 	 */
 	private ConcurrentHashMap<String, MapRegion> regions = new ConcurrentHashMap<String, MapRegion>();
+	/**
+	 * 地图内的对象
+	 */
+	private ConcurrentHashMap<Integer, MapObject> objects = new ConcurrentHashMap<Integer, MapObject>();
 	/**
 	 * 副本销毁任务
 	 */
@@ -125,6 +137,65 @@ public class MapInstance {
 		//设置定时销毁
 //		setDestroyTime(destroySecond);
 	}
+
+	
+	/**
+	 * 获取指定坐标点开始，格子数量gridRadius为半径内的所有格子所占的区块
+	 */
+	public Collection<MapRegion> getRegionsByGridRadius(int pointX, int pointY, int gridRadius) {
+		List<Grid> grids = this.gameMap.getGridsByGridRadius(pointX, pointY, gridRadius);
+		if(grids.isEmpty())
+			return Collections.emptyList();
+		Map<String, MapRegion> mapRegions = new LinkedHashMap<String, MapRegion>();
+		for (Grid grid : grids) {
+			MapRegion region = this.getRegion(grid.center.x, grid.center.y);
+			mapRegions.put(region.getRegionId(), region);
+		}
+		return mapRegions.values();
+	}
+
+	/**
+	 * 获得指定点周围多少格子半径内的Fighter
+	 */
+	public Collection<AbstractFighter> getFightersByGridRadius(int pointX, int pointY, int gridRadius) {
+		Collection<MapRegion> regions = getRegionsByGridRadius(pointX, pointY, gridRadius);
+		if(regions.isEmpty())
+			return Collections.emptyList();
+		List<AbstractFighter> fighters = new ArrayList<AbstractFighter>();
+		for (MapRegion mapRegion : regions) {
+			fighters.addAll(mapRegion.getFighters());
+		}
+		return fighters;
+	}
+
+	/**
+	 * 获取指定坐标点开始，radius像素为半径内的所有格子所占的区块
+	 */
+	public Collection<MapRegion> getRegionsByRadius(int pointX, int pointY, int radius) {
+		List<Grid> grids = this.gameMap.getGridsByRadius(pointX, pointY, radius);
+		if(grids.isEmpty())
+			return Collections.emptyList();
+		Map<String, MapRegion> mapRegions = new LinkedHashMap<String, MapRegion>();
+		for (Grid grid : grids) {
+			MapRegion region = this.getRegion(grid.center.x, grid.center.y);
+			mapRegions.put(region.getRegionId(), region);
+		}
+		return mapRegions.values();
+	}
+	
+	/**
+	 * 获得指定点周围多少像素半径内的Fighter
+	 */
+	public Collection<AbstractFighter> getFightersByRadius(int pointX, int pointY, int radius) {
+		Collection<MapRegion> regions = getRegionsByRadius(pointX, pointY, radius);
+		if(regions.isEmpty())
+			return Collections.emptyList();
+		List<AbstractFighter> fighters = new ArrayList<AbstractFighter>();
+		for (MapRegion mapRegion : regions) {
+			fighters.addAll(mapRegion.getFighters());
+		}
+		return fighters;
+	}
 	
 	public void destory() {
 		this.gameMap.removeInstance(this);
@@ -146,6 +217,12 @@ public class MapInstance {
 //		}
 	}
 	
+	/**
+	 * 往该地图上添加对象，会设置该对象最新位置，并同步给周围的其他对象
+	 * @param object
+	 * @param pointX
+	 * @param pointY
+	 */
 	public void add(MapObject object, int pointX, int pointY) {
 		Position pos = object.getPosition();
 		if(pos == null) {
@@ -155,15 +232,31 @@ public class MapInstance {
 		pos.update(object, this, pointX, pointY);
 	}
 	
+	void addObject(MapObject object) {
+		this.objects.put(object.getObjectId(), object);
+	}
+	
+	void removeObject(Integer objectId) {
+		this.objects.remove(objectId);
+	}
+	
+	public MapObject findObject(Integer objectId) {
+		return this.objects.get(objectId);
+	}
+	
+	/**
+	 * 将指定对象从该地图移除，即从该对象所属区块中移除，会同步给周围的其他对象
+	 * @param object
+	 */
 	public void remove(MapObject object) {
 		object.getPosition().getMapRegion().remove(object);
 	}
 
-	public void onEnter(Player player) {
-		
+	void onEnter(Player player) {
+		player.send(new Sc_12001().from(this));
 	}
 	
-	public void onLeave(Player player) {
+	void onLeave(Player player) {
 		
 	}
 

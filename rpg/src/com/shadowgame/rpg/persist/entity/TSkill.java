@@ -9,17 +9,19 @@ public class TSkill{
 	public String desc="";
 	/** 职业id */
 	public Integer vocation=0;
-	/** 攻击距离 */
-	public Integer distance=0;
-	/** 作用范围类型，1线性2圆周3扇形 */
+	/** 作用范围类型，1矩形2圆形3扇形 */
 	public Integer rangeType=0;
 	/** 作用范围位置，1施法者2目标 */
 	public Integer rangePosition=0;
 	/** 作用范围距离 */
 	public Integer rangeDistance=0;
+	/** 角度 */
+	public Integer rangeAngle=0;
+	/** 宽度 */
+	public Integer rangeWidth=0;
 	/** 延迟时间，毫秒 */
 	public Integer delay=0;
-	/** 作用间隔 ，毫秒*/
+	/** 作用间隔，毫秒 */
 	public Integer period=0;
 	/** 作用次数 */
 	public Integer count=0;
@@ -37,9 +39,6 @@ public class TSkill{
 	public Integer getVocation(){
 		return this.vocation;
 	}
-	public Integer getDistance(){
-		return this.distance;
-	}
 	public Integer getRangeType(){
 		return this.rangeType;
 	}
@@ -48,6 +47,12 @@ public class TSkill{
 	}
 	public Integer getRangeDistance(){
 		return this.rangeDistance;
+	}
+	public Integer getRangeAngle(){
+		return this.rangeAngle;
+	}
+	public Integer getRangeWidth(){
+		return this.rangeWidth;
 	}
 	public Integer getDelay(){
 		return this.delay;
@@ -73,9 +78,6 @@ public class TSkill{
 	public void setVocation(Integer vocation){
 		this.vocation = vocation;
 	}
-	public void setDistance(Integer distance){
-		this.distance = distance;
-	}
 	public void setRangeType(Integer rangeType){
 		this.rangeType = rangeType;
 	}
@@ -84,6 +86,12 @@ public class TSkill{
 	}
 	public void setRangeDistance(Integer rangeDistance){
 		this.rangeDistance = rangeDistance;
+	}
+	public void setRangeAngle(Integer rangeAngle){
+		this.rangeAngle = rangeAngle;
+	}
+	public void setRangeWidth(Integer rangeWidth){
+		this.rangeWidth = rangeWidth;
 	}
 	public void setDelay(Integer delay){
 		this.delay = delay;

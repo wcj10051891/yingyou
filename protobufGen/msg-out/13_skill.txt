@@ -1,0 +1,4 @@
+// ======== 学习技能	
+message Cs_13001{
+	uint32 skillId; //技能id	
+}

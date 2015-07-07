@@ -25,8 +25,8 @@ import com.shadowgame.rpg.modules.item.Knapsack;
 import com.shadowgame.rpg.modules.map.MapInstance;
 import com.shadowgame.rpg.modules.mission.PlayerMissionManager;
 import com.shadowgame.rpg.modules.skill.PlayerSkillList;
-import com.shadowgame.rpg.msg.map_12.Sc_12001;
 import com.shadowgame.rpg.msg.map_12.Sc_12002;
+import com.shadowgame.rpg.msg.map_12.Sc_12003;
 import com.shadowgame.rpg.persist.dao.TPlayerDao;
 import com.shadowgame.rpg.persist.entity.TPlayer;
 import com.shadowgame.rpg.service.Services;
@@ -168,12 +168,18 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	}
 
 	/**
-	 * 玩家创建，需要参数contextParam[username, nickname]
+	 * 玩家创建，需要参数contextParam[username, nickname,vocation]
 	 * @param contextParam
 	 * @return
 	 */
 	@Override
 	public TPlayer create(Object... contextParam) {
+		TPlayer p = createEntity((String)contextParam[0], (String)contextParam[1], (Integer)contextParam[2]);
+		dao.insert(p);
+		return p;
+	}
+	
+	public static TPlayer createEntity(String username, String nickname, int vocation) {
 		TPlayer p = new TPlayer();
 		p.id = UniqueId.next();
 		p.createTime = new Timestamp(System.currentTimeMillis());
@@ -183,9 +189,9 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		p.extAttribute = "{}";
 		p.skill = "[]";
 		p.buff = "[]";
-		p.username = (String)contextParam[0];
-		p.nickname = (String)contextParam[1];
-		dao.insert(p);
+		p.username = username;
+		p.nickname = nickname;
+		p.vocation = vocation;
 		return p;
 	}
 
@@ -204,18 +210,15 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	@Override
 	public void see(MapObject object) {
 		if(object instanceof Player)
-			send(new Sc_12001().from((Player)object));
+			send(new Sc_12002().from((Player)object));
 		else if(object instanceof Monster)
-			send(new Sc_12001().from((Monster)object));
+			send(new Sc_12002().from((Monster)object));
 		log.debug("player {} see object {}", this, object);
 	}
 	
 	@Override
 	public void notSee(MapObject object) {
-		if(object instanceof Player)
-			send(new Sc_12002().from((Player)object));
-		else if(object instanceof Monster)
-			send(new Sc_12002().from((Monster)object));
+		send(new Sc_12003().from(object));
 		log.debug("player {} not see object {}", this, object);
 	}
 	

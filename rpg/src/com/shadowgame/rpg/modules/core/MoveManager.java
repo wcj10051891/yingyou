@@ -26,7 +26,7 @@ public class MoveManager {
 			return;
 		}
 		final Point next = movePath.poll();
-		double distance = MapUtil.getDistance(this.spirit.getPosition().getPoint(), next);
+		double distance = MapUtil.calcDistance(this.spirit.getPosition().getPoint(), next);
 		long costMills = Double.valueOf(distance / this.spirit.getSpeed() * 1000l).longValue();
 		moveTask = Services.timerService.jdkScheduler.schedule(new Runnable() {
 			@Override

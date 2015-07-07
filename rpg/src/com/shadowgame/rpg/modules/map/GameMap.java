@@ -122,4 +122,50 @@ public class GameMap extends AbstractCacheObject<Integer, TGameMap> {
 		}
 		return result;
 	}
+	
+	/**
+	 * 获取指定坐标点开始，格子数量gridRadius为半径内的所有格子，即指定坐标点周围多少格半径内
+	 */
+	public List<Grid> getGridsByGridRadius(int pointX, int pointY, int gridRadius) {
+		List<Grid> result = new ArrayList<Grid>();
+		int round = 2 * gridRadius + 1;
+		int num = round * round;
+		Grid current = getGridByMapPoint(pointX, pointY);
+		for (int i = 0; i < num; i++) {
+			int gridX = current.x + i % round - gridRadius;
+			int gridY = current.y + i / round - gridRadius;
+			Grid grid = getGridByGridXY(gridX, gridY);
+			if(grid != null)
+				result.add(grid);
+		}
+		return result;
+	}
+
+	/**
+	 * 获取指定坐标点开始，radius像素为半径内的所有格子，即指定坐标点周围多少像素半径内
+	 */
+	public List<Grid> getGridsByRadius(int pointX, int pointY, int radius) {
+		List<Grid> grids = new ArrayList<Grid>();
+		int x = pointX - radius;
+		if (x < 0)
+			x = 0;
+		int left = x / Grid.SIZE;
+		x = pointX + radius;
+		int right = x / Grid.SIZE;
+		int y = pointY - radius;
+		if (y < 0)
+			y = 0;
+		int top = y / Grid.SIZE;
+		y = pointY + radius;
+		int buttom = y / Grid.SIZE;
+
+		for (int i = top; i <= buttom; i++) {
+			for (int j = left; j <= right; j++) {
+				Grid grid = getGridByGridXY(i, j);
+				if(grid != null)
+					grids.add(grid);
+			}
+		}
+		return grids;
+	}
 }

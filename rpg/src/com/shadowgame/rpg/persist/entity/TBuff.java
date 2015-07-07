@@ -21,6 +21,14 @@ public class TBuff{
 	public Integer hpMaxDamage=0;
 	/** 普通伤害百分比 */
 	public Integer normalDamage=0;
+	/** 伤害增加百分比 */
+	public Integer damageIncrease;
+	/** 伤害减少百分比 */
+	public Integer damageDecrease;
+	/** 受到伤害增加百分比 */
+	public Integer hitDamageIncrease;
+	/** 受到伤害减少百分比 */
+	public Integer hitDamageDecrease;
 	public Integer getId(){
 		return this.id;
 	}
@@ -51,6 +59,18 @@ public class TBuff{
 	public Integer getNormalDamage(){
 		return this.normalDamage;
 	}
+	public Integer getDamageIncrease(){
+		return this.damageIncrease;
+	}
+	public Integer getDamageDecrease(){
+		return this.damageDecrease;
+	}
+	public Integer getHitDamageIncrease(){
+		return this.hitDamageIncrease;
+	}
+	public Integer getHitDamageDecrease(){
+		return this.hitDamageDecrease;
+	}
 	public void setId(Integer id){
 		this.id = id;
 	}
@@ -80,6 +100,18 @@ public class TBuff{
 	}
 	public void setNormalDamage(Integer normalDamage){
 		this.normalDamage = normalDamage;
+	}
+	public void setDamageIncrease(Integer damageIncrease){
+		this.damageIncrease = damageIncrease;
+	}
+	public void setDamageDecrease(Integer damageDecrease){
+		this.damageDecrease = damageDecrease;
+	}
+	public void setHitDamageIncrease(Integer hitDamageIncrease){
+		this.hitDamageIncrease = hitDamageIncrease;
+	}
+	public void setHitDamageDecrease(Integer hitDamageDecrease){
+		this.hitDamageDecrease = hitDamageDecrease;
 	}
 }
 

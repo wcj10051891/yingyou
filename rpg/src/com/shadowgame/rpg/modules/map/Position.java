@@ -22,9 +22,9 @@ public class Position {
 	 */
 	private Point point;
 	/**
-	 * 朝向，小键盘数字 7：↖， 4：←， 1：↙， 2：↓， 3：↘， 6：→，9：↗，8：↑
+	 * 朝向，0 ↑，1 ↗，2 →，3 ↘，4 ↓， 5 ↙， 6 ←，7 ↖
 	 */
-	private int direction = 2;
+	private int direction;
 	
 	public Position(int x, int y) {
 		this.point = new Point(x, y);

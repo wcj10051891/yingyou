@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.netty.channel.Channel;
 
+import com.shadowgame.rpg.modules.core.AbstractFighter;
 import com.shadowgame.rpg.modules.core.AbstractSpirit;
 import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.Player;
@@ -43,14 +44,12 @@ public class MapRegion {
 	private MapRegionCollections<MapObject> objects = new MapRegionCollections<>();
 
 	@SuppressWarnings("unchecked")
-	private static final class MapRegionCollections<V extends MapObject> extends ConcurrentHashMap<Integer, V> {
+	private class MapRegionCollections<V extends MapObject> extends ConcurrentHashMap<Integer, V> {
 		private static final long serialVersionUID = 1L;
 		private Map<Class<V>, Collection<V>> type2Objects = new ConcurrentHashMap<Class<V>, Collection<V>>();
 		@Override
 		public V put(Integer key, V value) {
-			V result = super.put(key, value);
-			getObjectsByType((Class<V>) value.getClass()).add(value);
-			return result;
+			return putIfAbsent(key, value);
 		}
 		
 		private Collection<V> getObjectsByType(Class<V> type) {
@@ -66,6 +65,7 @@ public class MapRegion {
 		public V putIfAbsent(Integer key, V value) {
 			V result = super.putIfAbsent(key, value);
 			getObjectsByType((Class<V>) value.getClass()).add(value);
+			MapRegion.this.mapInstance.addObject(value);
 			return result;
 		}
 		
@@ -74,11 +74,14 @@ public class MapRegion {
 			V result = super.remove(key);
 			if(result != null)
 				getObjectsByType((Class<V>) result.getClass()).remove(result);
+			MapRegion.this.mapInstance.removeObject((Integer)key);
 			return result;
 		}
 		
 		@Override
 		public void clear() {
+			for (MapObject o : this.values())
+				MapRegion.this.mapInstance.removeObject(o.getObjectId());
 			super.clear();
 			type2Objects.clear();
 		}
@@ -148,6 +151,15 @@ public class MapRegion {
 					}
 				}
 			}
+			
+			if(newObject instanceof Player) {
+				if(oldRegion == null || oldRegion.mapInstance.getId() != this.mapInstance.getId()) {
+					//新加入地图
+					if(oldRegion != null)
+						oldRegion.mapInstance.onLeave((Player)newObject);
+					this.mapInstance.onEnter((Player)newObject);
+				}
+			}
 		}
 	}
 	
@@ -161,6 +173,8 @@ public class MapRegion {
 						((AbstractSpirit)object).notSee(o);
 				}
 			}
+			if(object instanceof Player)
+				this.mapInstance.onLeave((Player)object);
 		}
 	}
 	
@@ -189,6 +203,15 @@ public class MapRegion {
 	@SuppressWarnings("unchecked")
 	public <T extends MapObject> Collection<T> getMapObjectByType(Class<T> type) {
 		return (Set<T>) this.objects.getObjectsByType((Class<MapObject>) type);
+	}
+	
+	public Collection<AbstractFighter> getFighters() {
+		List<AbstractFighter> result = new ArrayList<AbstractFighter>();
+		for (MapObject o : this.objects.values()) {
+			if(o instanceof AbstractFighter)
+				result.add((AbstractFighter)o);
+		}
+		return result;
 	}
 	
 	/**
