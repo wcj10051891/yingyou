@@ -1,6 +1,7 @@
 package com.shadowgame.rpg.modules.buff;
 
 import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.skill.FighterSkill;
 import com.shadowgame.rpg.persist.entity.TBuff;
 import com.shadowgame.rpg.persist.entity.TSkill;
 
@@ -45,7 +46,7 @@ public class AbstractBuff implements BuffLogic {
 		return entity;
 	}
 	
-	public void effect(AbstractFighter source, TSkill skill, AbstractFighter target) {
+	public void effect(AbstractFighter source, FighterSkill skill, AbstractFighter target) {
 		new BuffTask(source, skill, target, this).start();
 	}
 }

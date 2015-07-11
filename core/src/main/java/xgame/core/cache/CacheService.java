@@ -25,7 +25,7 @@ import xgame.core.util.Service;
 public class CacheService implements Service {
 	private static final Logger log = LoggerFactory.getLogger(CacheService.class);
     private ReferenceQueue<CacheObject> refQueue = new ReferenceQueue<CacheObject>();
-	private ConcurrentHashMap<String, WeakReference<CacheObject>> softCache = new ConcurrentHashMap<String, WeakReference<CacheObject>>();
+	private ConcurrentHashMap<String, WeakReference<CacheObject>> weakCache = new ConcurrentHashMap<String, WeakReference<CacheObject>>();
 	private AtomicInteger putCount = new AtomicInteger();
 	private static int removeQueuedSize = 1000;
 	private Lock cacheLock = new ReentrantLock();
@@ -55,7 +55,7 @@ public class CacheService implements Service {
 	 * @return
 	 */
 	public <T extends CacheObject, K> T get(K key, Class<T> objectClass, boolean loadFromDB, Object... contextParam) {
-		if(key == null || key.toString().equals("0")) {
+		if(!isValidKey(key)) {
 			log.info("get object invalid key:{}, class:{}, loadFromDB:{}", 
 				key, objectClass, loadFromDB);
 			return null;
@@ -63,7 +63,7 @@ public class CacheService implements Service {
 		String k = k(key, objectClass);
 		try {
 			cacheLock.lock();
-			WeakReference<CacheObject> ref = softCache.get(k);
+			WeakReference<CacheObject> ref = weakCache.get(k);
 			if(ref != null && ref.get() != null) {
 				T result = (T) ref.get();
 				log.info("get object from cache, key:{}, class:{}, instance:{}, fromDB:{}", 
@@ -100,13 +100,13 @@ public class CacheService implements Service {
 	private WeakReference<CacheObject> putIfAbsent(String key, WeakReference<CacheObject> value) {
 		if(putCount.incrementAndGet() % removeQueuedSize == 0)
 			removeStaleEntries();
-		return this.softCache.putIfAbsent(key, value);
+		return this.weakCache.putIfAbsent(key, value);
 	}
 	
 	private WeakReference<CacheObject> put(String key, WeakReference<CacheObject> value) {
 		if(putCount.incrementAndGet() % removeQueuedSize == 0)
 			removeStaleEntries();
-		return this.softCache.put(key, value);
+		return this.weakCache.put(key, value);
 	}
 	
 	private static class CacheObjectReference<T extends CacheObject> extends WeakReference<T> {
@@ -122,9 +122,9 @@ public class CacheService implements Service {
 			cacheLock.lock();
 	        for (Reference<? extends CacheObject> x; (x = refQueue.poll()) != null; ) {
 	        	String key = ((CacheObjectReference<? extends CacheObject>)x).key;
-	        	WeakReference<CacheObject> ref = softCache.get(key);
+	        	WeakReference<CacheObject> ref = weakCache.get(key);
 	        	if(ref != null && ref.get() == null)
-	        		softCache.remove(key);
+	        		weakCache.remove(key);
 	        }
     	}finally{
     		cacheLock.unlock();
@@ -149,7 +149,7 @@ public class CacheService implements Service {
 		Map<Object, CacheObject> inCacheObjects = new HashMap<Object, CacheObject>(size);
 		List<K> notInCache = new ArrayList<K>(size);
 		for(K key : keys) {
-			if(key == null || key.toString().equals("0"))
+			if(!isValidKey(key))
 				continue;
 			T target = get(key, objectClass, false, contextParam);
 			if(target == null)
@@ -213,7 +213,7 @@ public class CacheService implements Service {
 			Object key = newObject.getKey();
 			String k = k(key, objectClass);
 
-			WeakReference<CacheObject> ref = softCache.get(k);
+			WeakReference<CacheObject> ref = weakCache.get(k);
 			if(ref != null && ref.get() != null) {
 				T result = (T) ref.get();
 				log.info("create object already in cache, key:{}, class:{}, instance:{}", 
@@ -241,14 +241,14 @@ public class CacheService implements Service {
 	 * @return
 	 */
 	public <T extends CacheObject, E> T init(Class<T> objectClass, Object key, E entity, Object... contextParam) {
-		if(key == null || key.equals("0")) {
+		if(!isValidKey(key)) {
 			log.info("put object invalid key:{}, class:{}", key, objectClass);
 			return null;
 		}
 		String k = k(key, objectClass);
 		try {
 			cacheLock.lock();
-			WeakReference<CacheObject> ref = softCache.get(k);
+			WeakReference<CacheObject> ref = weakCache.get(k);
 			if(ref != null && ref.get() != null)
 				return (T) ref.get();
 			
@@ -273,15 +273,16 @@ public class CacheService implements Service {
 	 * @return
 	 */
 	public <T extends CacheObject> T put(T newObject) {
-		if(newObject.getKey() == null || newObject.getKey().equals("0")) {
+		Object key = newObject.getKey();
+		if(!isValidKey(key)) {
 			log.info("put object invalid key:{}, class:{}, instance:{}", 
 				newObject.getKey(), newObject.getClass(), newObject);
 			return null;
 		}
-		String k = k(newObject.getKey(), newObject.getClass());
+		String k = k(key, newObject.getClass());
 		try {
 			cacheLock.lock();
-			WeakReference<CacheObject> ref = softCache.get(k);
+			WeakReference<CacheObject> ref = weakCache.get(k);
 			if(ref != null && ref.get() != null)
 				return (T) ref.get();
 			
@@ -309,7 +310,7 @@ public class CacheService implements Service {
 	 * @param deleteEntity		是否调用缓存对象的delete方法删除数据库记录
 	 */
 	public <T extends CacheObject> void remove(Object key, Class<T> objectClass, boolean deleteEntity) {
-		if(key == null || key.toString().equals("0")) {
+		if(!isValidKey(key)) {
 			log.info("remove object invalid key:{}, class:{}, deleteEntity:{}", 
 				key, objectClass, deleteEntity);			
 			return;
@@ -317,7 +318,7 @@ public class CacheService implements Service {
 		String k = k(key, objectClass);
 		try {
 			cacheLock.lock();
-			WeakReference<CacheObject> ref = this.softCache.remove(k);
+			WeakReference<CacheObject> ref = this.weakCache.remove(k);
 			if(deleteEntity && ref != null && ref.get() != null) {
 				try {
 					ref.get().delete();
@@ -357,5 +358,9 @@ public class CacheService implements Service {
 	
 	private String k(Object key, Class<?> objectClass) {
 		return objectClass.getSimpleName() + "_" + key.toString();
+	}
+	
+	private boolean isValidKey(Object key) {
+		return key != null && !key.toString().equals("0");
 	}
 }

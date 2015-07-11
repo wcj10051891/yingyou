@@ -13,6 +13,10 @@ public class TPlayer{
 	public Integer lv=0;
 	/** 当前经验 */
 	public Integer exp=0;
+	/** 当前血量 */
+	public Integer hp=0;
+	/** 当前魔法 */
+	public Integer mp=0;
 	/** 创建时间 */
 	public java.sql.Timestamp createTime;
 	/** 上次登录时间 */
@@ -31,7 +35,7 @@ public class TPlayer{
 	public Integer lastMapX;
 	/** 离线所在副本坐标y */
 	public Integer lastMapY;
-	/** 玩家skill */
+	/** 玩家技能 */
 	public String skill;
 	/** 玩家buff */
 	public String buff;
@@ -52,6 +56,12 @@ public class TPlayer{
 	}
 	public Integer getExp(){
 		return this.exp;
+	}
+	public Integer getHp(){
+		return this.hp;
+	}
+	public Integer getMp(){
+		return this.mp;
 	}
 	public java.sql.Timestamp getCreateTime(){
 		return this.createTime;
@@ -80,6 +90,12 @@ public class TPlayer{
 	public Integer getLastMapY(){
 		return this.lastMapY;
 	}
+	public String getSkill(){
+		return this.skill;
+	}
+	public String getBuff(){
+		return this.buff;
+	}
 	public void setId(Long id){
 		this.id = id;
 	}
@@ -97,6 +113,12 @@ public class TPlayer{
 	}
 	public void setExp(Integer exp){
 		this.exp = exp;
+	}
+	public void setHp(Integer hp){
+		this.hp = hp;
+	}
+	public void setMp(Integer mp){
+		this.mp = mp;
 	}
 	public void setCreateTime(java.sql.Timestamp createTime){
 		this.createTime = createTime;
@@ -125,16 +147,10 @@ public class TPlayer{
 	public void setLastMapY(Integer lastMapY){
 		this.lastMapY = lastMapY;
 	}
-	public String getSkill() {
-		return skill;
-	}
-	public void setSkill(String skill) {
+	public void setSkill(String skill){
 		this.skill = skill;
 	}
-	public String getBuff() {
-		return buff;
-	}
-	public void setBuff(String buff) {
+	public void setBuff(String buff){
 		this.buff = buff;
 	}
 }

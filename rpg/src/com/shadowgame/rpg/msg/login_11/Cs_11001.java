@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.msg.login_11;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
 
@@ -52,7 +52,8 @@ public class Cs_11001 extends NoPlayerClientMsg {
 			throw new AppException("create character error", e);
 		}
 		Sc_11001 result = new Sc_11001();
-		result.characters = new CharacterList().from(Arrays.asList(entity));
+		result.characters = new ArrayList<CharacterInfo>();
+		result.characters.add(new CharacterInfo().from(entity));
 		Services.tcpService.send(result, ctx.getChannel());
 	}
 }

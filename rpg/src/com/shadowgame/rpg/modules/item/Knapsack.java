@@ -9,7 +9,7 @@ import xgame.core.cache.CacheObject;
 import xgame.core.util.JsonUtils;
 
 import com.alibaba.fastjson.JSONArray;
-import com.shadowgame.rpg.core.AppException;
+import com.shadowgame.rpg.core.NoticeException;
 import com.shadowgame.rpg.persist.dao.TPlayerKnapsackDao;
 import com.shadowgame.rpg.persist.entity.TPlayerKnapsack;
 import com.shadowgame.rpg.service.Services;
@@ -19,10 +19,10 @@ import com.shadowgame.rpg.service.Services;
  */
 public class Knapsack extends AbstractCacheObject<Long, TPlayerKnapsack> {
 	
-	public static final int DEFAULT_CAPACITY = 100;
+	private static final int DEFAULT_CAPACITY = 100;
 	private static final TPlayerKnapsackDao dao = Services.daoFactory.get(TPlayerKnapsackDao.class);
-	public TPlayerKnapsack entity;
-	public Long[] items;
+	private TPlayerKnapsack entity;
+	private Long[] items;
 
 	/**
 	 * @param key
@@ -100,12 +100,11 @@ public class Knapsack extends AbstractCacheObject<Long, TPlayerKnapsack> {
 	
 	public void put(List<PlayerItem> playerItems) throws Exception {
 		if(!canPut(playerItems))
-			throw new AppException("包裹容量不足");
+			throw new NoticeException("包裹容量不足");
 		Iterator<PlayerItem> it = new HashSet<PlayerItem>(playerItems).iterator();
 		for(int i = 0; i < items.length && it.hasNext(); i++) {
 			if(items[i] == null) {
 				items[i] = it.next().getKey();
-				it.remove();
 			}
 		}
 	}

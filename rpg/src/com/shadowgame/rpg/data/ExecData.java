@@ -6,21 +6,20 @@ import java.util.Map;
 import xgame.core.util.ObjectUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shadowgame.rpg.core.Data;
+import com.shadowgame.rpg.core.AbstractData;
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.modules.exec.Exec;
 import com.shadowgame.rpg.persist.dao.TExecutionDao;
 import com.shadowgame.rpg.persist.entity.TExecution;
 import com.shadowgame.rpg.service.Services;
 
-@Data
-public class ExecData {
+public class ExecData extends AbstractData {
 	private TExecutionDao dao = Services.daoFactory.get(TExecutionDao.class);
 	
 	public Map<String, Exec> key2exec = new HashMap<>();
 	private Map<String, Object> execImplObject = new HashMap<>();
 	
-	public ExecData() {
+	public void load() {
 		for (TExecution entity : dao.getAll()) {
 			execImplObject.put(entity.clazz, ObjectUtils.create(entity.clazz));
 			this.key2exec.put(entity.key,

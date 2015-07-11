@@ -1,5 +1,7 @@
 package com.shadowgame.rpg.modules.core;
 
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -24,16 +26,16 @@ public abstract class AbstractSpirit extends MapObject {
 	
 	/**
 	 * 看见对象时候执行
-	 * @param object
+	 * @param objects
 	 */
-	public void see(MapObject object) {
+	public void see(List<MapObject> objects) {
 	}
 
 	/**
 	 * 看不见对象时候执行
 	 * @param object
 	 */
-	public void notSee(MapObject object) {
+	public void notSee(List<MapObject> objects) {
 //		System.out.println(this + " notSee " + object);
 	}
 	
@@ -58,5 +60,26 @@ public abstract class AbstractSpirit extends MapObject {
 
 	public MoveManager getMoveManager() {
 		return moveManager;
+	}
+	
+	/**
+	 * 获取当前以及周围8个区块中所有的指定类型type的mapObject
+	 * @param type
+	 * @return
+	 */
+	public <T extends MapObject> Collection<T> getVisibilityObjectsByType(Class<T> type) {
+		Collection<T> objects = this.position.getMapRegion().getVisibilityObjectsByType(type);
+		objects.remove(this);
+		return objects;
+	}
+	
+	/**
+	 * 获取当前以及周围8个区块中所有的mapObject
+	 * @return
+	 */
+	public <T extends MapObject> Collection<T> getVisibilityObjects() {
+		Collection<T> objects = this.position.getMapRegion().getVisibilityObjects();
+		objects.remove(this);
+		return objects;
 	}
 }

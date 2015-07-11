@@ -9,6 +9,10 @@ public class TSkill{
 	public String desc="";
 	/** 职业id */
 	public Integer vocation=0;
+	/** 冷却时间，秒 */
+	public Integer cooldown=0;
+	/** 耗蓝 */
+	public Integer mp=0;
 	/** 作用范围类型，1矩形2圆形3扇形 */
 	public Integer rangeType=0;
 	/** 作用范围位置，1施法者2目标 */
@@ -25,8 +29,8 @@ public class TSkill{
 	public Integer period=0;
 	/** 作用次数 */
 	public Integer count=0;
-	/** 技能参数 */
-	public String param;
+	/** 普通伤害百分比 */
+	public Integer damagePercent=0;
 	public Integer getId(){
 		return this.id;
 	}
@@ -38,6 +42,12 @@ public class TSkill{
 	}
 	public Integer getVocation(){
 		return this.vocation;
+	}
+	public Integer getCooldown(){
+		return this.cooldown;
+	}
+	public Integer getMp(){
+		return this.mp;
 	}
 	public Integer getRangeType(){
 		return this.rangeType;
@@ -63,8 +73,8 @@ public class TSkill{
 	public Integer getCount(){
 		return this.count;
 	}
-	public String getParam(){
-		return this.param;
+	public Integer getDamagePercent(){
+		return this.damagePercent;
 	}
 	public void setId(Integer id){
 		this.id = id;
@@ -77,6 +87,12 @@ public class TSkill{
 	}
 	public void setVocation(Integer vocation){
 		this.vocation = vocation;
+	}
+	public void setCooldown(Integer cooldown){
+		this.cooldown = cooldown;
+	}
+	public void setMp(Integer mp){
+		this.mp = mp;
 	}
 	public void setRangeType(Integer rangeType){
 		this.rangeType = rangeType;
@@ -102,8 +118,8 @@ public class TSkill{
 	public void setCount(Integer count){
 		this.count = count;
 	}
-	public void setParam(String param){
-		this.param = param;
+	public void setDamagePercent(Integer damagePercent){
+		this.damagePercent = damagePercent;
 	}
 }
 

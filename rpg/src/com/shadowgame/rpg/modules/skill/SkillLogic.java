@@ -1,5 +1,6 @@
 package com.shadowgame.rpg.modules.skill;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.shadowgame.rpg.modules.core.AbstractFighter;
@@ -43,5 +44,5 @@ public interface SkillLogic {
 	 * @param task
 	 * @return
 	 */
-	public abstract List<AbstractFighter> getTargetFighters(SkillTask task);
+	public abstract List<AbstractFighter> getTargetFighters(SkillTask task, Collection<AbstractFighter> excludes);
 }

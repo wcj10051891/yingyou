@@ -1,9 +1,10 @@
-<project name="protobufGen" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="proto_gen">
+<project name="protobufGen" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" default="gen">
 	<property name="jdk.version" value="1.6" />
 	<property name="source.encoding" value="UTF-8" />
 	<property name="src" value="src" />
 	<property name="target" value="target" />
 	<property name="classes" value="${target}/classes" />
+	<property name="depend-classes" value="../rpg/bin" />
 	<!--<property name="dependences-dir" value="lib" />-->
 	<artifact:pom id="pom.this" file="pom.xml" />
 	<artifact:dependencies filesetid="fileset.lib.runtime" pathid="path.lib.runtime" pomrefid="pom.this" usescope="runtime" />
@@ -11,11 +12,12 @@
 	<path id="classpath.project">
 		<!--	<fileset dir="${dependences-dir}" />	-->
 		<path refid="path.lib.runtime"/>
+		<pathelement location="${depend-classes}" />
 		<pathelement location="${classes}" />
 	</path>
 	
-	<target name="proto_gen">
-		<java classname="protobufgen.ProtobufGen">
+	<target name="gen">
+		<java classname="binarygen.BinaryGen">
 			<classpath>
 				<path refid="classpath.project" />
 			</classpath>
@@ -69,18 +71,18 @@
 			</fileset>
 		</jar>
 	</target>
-<!--
+
 	<target name="copy-maven-lib-jar">
 		<delete dir="lib">
 		</delete>
 		<mkdir dir="lib" />
 		<copy todir="lib" flatten="true">
 			<fileset refid="fileset.lib.runtime" />
-			This mapper strips off all leading directory information 
+			<!--This mapper strips off all leading directory information--> 
 			<mapper type="flatten" />
 		</copy>
 	</target>
-
+<!--
 	<target name="copyto">
 		<scp file="target/${ant.project.name}.jar" todir="root@192.168.14.90:/data/project/server" password="G38pTiJY%u41*8X" trust="true" />
 	</target>

@@ -1,12 +1,17 @@
 package com.shadowgame.rpg.remote.servlet;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.shadowgame.rpg.core.Constants;
+import com.shadowgame.rpg.modules.core.Monster;
+import com.shadowgame.rpg.service.Services;
 
 @WebServlet
 public class Online extends HttpServlet {
@@ -46,15 +51,15 @@ public class Online extends HttpServlet {
 ////			player.buffList.validate();
 ////			System.out.println(player.buffList.haveBuff(1));
 			
-			System.out.println(new A());
+//			Map<Integer, Monster> os = Services.app.world.getWorldMap(1).getDefaultInstance().getMapObjectByType(Monster.class);
+//			Monster monster = os.get(1);
+//			System.out.println(monster.buffList.getBuffs());
+			
+//			Services.data.start();
+			
+			System.out.println(Constants.damageAdd);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-	
-	static class A {
-		public A() {
-			System.out.println("亚麻跌3");
 		}
 	}
 }

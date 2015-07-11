@@ -1,0 +1,28 @@
+#是否是开发服务器
+debug=true
+#tcp监听端口
+#tcp.port=9998
+tcp.port=9999
+#http监听端口
+#http.port=8181
+http.port=8182
+#http servlet context root
+http.context.root=server
+#jmx管理监控对象包
+jmx.package=com.shadowgame.rpg.jmx
+#msg包名
+msg.package=com.shadowgame.rpg.msg
+#data config报名
+data.package=com.shadowgame.rpg.data
+#phprpc服务包名
+phprpc.package=com.shadowgame.rpg.remote.phprpc
+#servlet服务包名
+servlet.package=com.shadowgame.rpg.remote.servlet
+#业务线程数量
+thread.core.pool.size=10
+#jdk定时器线程数量
+jdk.schedule.core.pool.size=10
+#Quartz日历定时器线程数量
+quartz.schedule.core.pool.size=2
+#服务器标识，单个大写字母[A-Z]+顺序号[0-2047]
+serverId=S1

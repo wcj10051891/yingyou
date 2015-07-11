@@ -21,6 +21,8 @@ import com.shadowgame.rpg.service.Services;
 public class World {
 	private static final Logger log = LoggerFactory.getLogger(World.class);
 
+	public static final String GROUP_NAME = "World";
+	
 	public PlayerContainer allPlayers = new PlayerContainer();
 	/**
 	 * 地图集合，地图配置id->地图对象(包括多个该对象创建出的实际场景)

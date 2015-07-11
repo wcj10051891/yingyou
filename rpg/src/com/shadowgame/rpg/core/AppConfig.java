@@ -54,7 +54,7 @@ public abstract class AppConfig {
 	public static final String SERVER_KEY;
 	/**
 	 * 服务器序号
-	 * 0-32767
+	 * 0-4096
 	 */
 	public static final short SERVER_SEQ;
 	/**
@@ -82,7 +82,8 @@ public abstract class AppConfig {
 	 */
 	public static final int msgId_size = 4;
 	
-	private static final Pattern serverIdPTN = Pattern.compile("([A-Z])([0-32767])");
+	private static int serverSeqMax = 4095;
+	private static final Pattern serverIdPTN = Pattern.compile("([A-Z])(\\d+)");
 	public static String configFileName = "config.properties";
 	public static Config config;
 	
@@ -103,12 +104,16 @@ public abstract class AppConfig {
 		SERVER_ID = config.getString("serverId");
 		try {
 			Matcher matcher = serverIdPTN.matcher(SERVER_ID);
-			if(!matcher.matches())
-				throw new AppException("'serverId' parameter config error.");
-			SERVER_KEY = matcher.group(1);
-			SERVER_SEQ = Short.parseShort(matcher.group(2));
+			if(matcher.matches()) {
+				SERVER_KEY = matcher.group(1);
+				SERVER_SEQ = Short.parseShort(matcher.group(2));
+			} else {
+				throw new IllegalArgumentException("'serverId' error");
+			}
+			if(SERVER_SEQ > serverSeqMax)
+				throw new IllegalArgumentException("'serverId' error");
 		} catch (Exception e) {
-			throw new AppException("'serverId' parameter config error. pattern:([A-Z])([0-32767]), eg:Q1, A1, B2, C3", e);
+			throw new AppException("'serverId' parameter config error. pattern:([A-Z])([0-4095]), eg:Q1, A1, B2, C3", e);
 		}
 		JMX_PACKAGE = config.getString("jmx.package");
 	}

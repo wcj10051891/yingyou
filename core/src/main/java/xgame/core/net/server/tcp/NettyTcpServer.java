@@ -18,13 +18,16 @@ public class NettyTcpServer {
 	private ExecutorService bossPool;
 	private ExecutorService workersPool;
 	private ChannelUpstreamHandler logicHandler;
+	private StatHandler statHandler;
 	private int tcpPort;
 	private Class<? extends ChannelUpstreamHandler> decoderClass;
 	
-	public NettyTcpServer(int tcpPort, Class<? extends ChannelUpstreamHandler> decoderClass, ChannelUpstreamHandler logicHandler) {
+	public NettyTcpServer(int tcpPort, Class<? extends ChannelUpstreamHandler> decoderClass, ChannelUpstreamHandler logicHandler, boolean isStatistics) {
 		this.tcpPort = tcpPort;
 		this.decoderClass = decoderClass;
 		this.logicHandler = logicHandler;
+		if(isStatistics)
+			this.statHandler = new StatHandler();
 	}
 
 	public void start() {
@@ -45,12 +48,18 @@ public class NettyTcpServer {
 					} catch (Exception e) {
 						throw new NetException("create decoderClass instance failure.", e);
 					}
+					if(statHandler != null)
+						pipeline.addLast("stat", statHandler);
 					pipeline.addLast("logic", logicHandler);
 					return pipeline;
 				}
 			});
 			server.bind(new InetSocketAddress(tcpPort));
 		}
+	}
+	
+	public StatHandler getStatHandler() {
+		return this.statHandler;
 	}
 
 	public void stop() {

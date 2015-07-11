@@ -8,6 +8,7 @@ import xgame.core.util.CommonUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.data.BuffData;
 import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.skill.FighterSkill;
 import com.shadowgame.rpg.persist.entity.TSkill;
 import com.shadowgame.rpg.service.Services;
 
@@ -19,7 +20,7 @@ public class BuffTask {
 	/**
 	 * 触发buff的技能
 	 */
-	public TSkill sourceSkill;
+	public FighterSkill sourceSkill;
 	/**
 	 * buff目标
 	 */
@@ -41,7 +42,7 @@ public class BuffTask {
 	 */
 	private ScheduledFuture<?> task;
 
-	public BuffTask(AbstractFighter source, TSkill sourceSkill, AbstractFighter target, BuffLogic buffLogic) {
+	public BuffTask(AbstractFighter source, FighterSkill sourceSkill, AbstractFighter target, BuffLogic buffLogic) {
 		super();
 		this.source = source;
 		this.sourceSkill = sourceSkill;

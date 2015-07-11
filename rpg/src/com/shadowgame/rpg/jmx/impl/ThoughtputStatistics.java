@@ -6,15 +6,15 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import xgame.core.util.StringUtils;
 
-import com.shadowgame.rpg.jmx.IStatistics;
+import com.shadowgame.rpg.jmx.IThoughtputStatistics;
 
-public class Statistics implements IStatistics {
+public class ThoughtputStatistics implements IThoughtputStatistics {
 	public long startTime;
 	public AtomicInteger requestCount = new AtomicInteger();
 	public AtomicLong responseTimeSum = new AtomicLong();
 	public AtomicInteger users = new AtomicInteger();
 	
-	public Statistics() {
+	public ThoughtputStatistics() {
 		startTime = System.currentTimeMillis();
 	}
 	

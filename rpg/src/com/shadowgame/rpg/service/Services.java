@@ -57,7 +57,7 @@ public class Services {
 		jmxService.start();
 		log.info("[jmxService] start ok.");
 		
-		tcpService = new TcpService(AppConfig.TCP_PORT, BinaryDecoder.class, new LogicHandler(), new BinaryEncoder());
+		tcpService = new TcpService(AppConfig.TCP_PORT, BinaryDecoder.class, new BinaryEncoder(), new LogicHandler(), true);
 		tcpService.start();
 		log.info("[tcpService] start ok.");
 		

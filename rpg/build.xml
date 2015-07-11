@@ -22,7 +22,6 @@
 			</classpath>
 		</javac>
 		<copy file="${src}/log4j.xml" todir="${target}/classes"/>
-		<copy file="${src}/Messages.txt" todir="${target}/classes"/>
 		<copy file="${src}/quartz_jobs.xml" todir="${target}/classes"/>
 	</target>
 

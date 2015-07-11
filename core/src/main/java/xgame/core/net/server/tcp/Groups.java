@@ -1,6 +1,6 @@
 package xgame.core.net.server.tcp;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,9 +14,6 @@ import org.slf4j.LoggerFactory;
 
 public class Groups {
 	private static final Logger log = LoggerFactory.getLogger(Groups.class);
-	
-	public static final String World = "world";
-	
 	private ConcurrentHashMap<String, ChannelGroup> groups = new ConcurrentHashMap<String, ChannelGroup>();
 	
 	public ChannelGroup create(String groupName) {
@@ -43,7 +40,13 @@ public class Groups {
 	}
 
 	public void broadcast(ChannelBuffer message, String groupName, Channel... excludeChannels) {
-		this.broadcast(message, groupName, new HashSet<>(Arrays.asList(excludeChannels)));
+		Set<Channel> cs = Collections.emptySet();
+		if(excludeChannels.length > 0) {
+			cs = new HashSet<Channel>(excludeChannels.length);
+			for (Channel channel : excludeChannels)
+				cs.add(channel);
+		}
+		this.broadcast(message, groupName, cs);
 	}
 	
 	public void broadcast(ChannelBuffer message, String groupName, Set<Channel> excludeChannels) {

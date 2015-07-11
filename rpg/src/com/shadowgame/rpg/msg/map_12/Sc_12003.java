@@ -1,9 +1,11 @@
 package com.shadowgame.rpg.msg.map_12;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.shadowgame.rpg.modules.core.MapObject;
+import com.shadowgame.rpg.modules.core.Monster;
+import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.net.msg.Message;
 
 /**
@@ -13,12 +15,23 @@ import com.shadowgame.rpg.net.msg.Message;
  */
 public class Sc_12003 extends Message {
 	/**
-	 * 看不见的地图对象id，player，monster，npc等
+	 * 看不见的player
 	 */
-	public List<Integer> ids;
+	public List<Long> player;
+	/**
+	 * 看不见monster
+	 */
+	public List<Long> monster;
 	
-	public Sc_12003 from(MapObject object) {
-		this.ids = Arrays.asList(object.getObjectId());
+	public Sc_12003 from(List<MapObject> objects) {
+		this.player = new ArrayList<Long>();
+		this.monster = new ArrayList<Long>();
+		for (MapObject o : objects) {
+			if(o instanceof Monster)
+				this.monster.add(o.getObjectId());
+			else if(o instanceof Player)
+				this.player.add(o.getObjectId());
+		}
 		return this;
 	}
 }

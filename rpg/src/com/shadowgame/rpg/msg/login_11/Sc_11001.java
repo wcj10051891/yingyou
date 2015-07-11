@@ -1,5 +1,7 @@
 package com.shadowgame.rpg.msg.login_11;
 
+import java.util.List;
+
 import com.shadowgame.rpg.net.msg.Message;
 
 
@@ -12,5 +14,5 @@ public class Sc_11001 extends Message {
 	/**
 	 * 角色列表
 	 */
-	public CharacterList characters;
+	public List<CharacterInfo> characters;
 }

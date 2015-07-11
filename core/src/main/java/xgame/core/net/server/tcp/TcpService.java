@@ -1,7 +1,7 @@
 package xgame.core.net.server.tcp;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,18 +23,20 @@ public class TcpService implements Service {
 	private ChannelUpstreamHandler logicHandler;
 	private Encoder encoder;
 	private NettyTcpServer nettyTcpServer;
+	private boolean isStatistics;
 	
 	public TcpService(int tcpPort, Class<? extends ChannelUpstreamHandler> decoderClass, 
-			ChannelUpstreamHandler logicHandler, Encoder encoder) {
+			Encoder encoder, ChannelUpstreamHandler logicHandler, boolean isStatistics) {
 		this.tcpPort = tcpPort;
 		this.decoderClass = decoderClass;
-		this.logicHandler = logicHandler;
 		this.encoder = encoder;
+		this.logicHandler = logicHandler;
+		this.isStatistics = isStatistics;
 	}
 	
 	@Override
 	public void start() throws Exception {
-		this.nettyTcpServer = new NettyTcpServer(this.tcpPort, this.decoderClass, this.logicHandler);
+		this.nettyTcpServer = new NettyTcpServer(this.tcpPort, this.decoderClass, this.logicHandler, this.isStatistics);
 		this.nettyTcpServer.start();
 		this.groups = new Groups();
 	}
@@ -43,60 +45,57 @@ public class TcpService implements Service {
 	public void stop() throws Exception {
 		this.nettyTcpServer.stop();
 	}
+	
+	public StatHandler getStatHandler() {
+		return this.nettyTcpServer.getStatHandler();
+	}
 
 	public void send(Object message, Channel client) {
-		client.write(encoder.encode(message));
+		client.write(encodeMessage(message));
 		log.info("send to channel{}:{}", client, message);
 	}
 	
-	public void send(ChannelBuffer message, Channel client) {
-		client.write(message);
-		log.info("send to channel{}:{}", client, message);
+	private ChannelBuffer encodeMessage(Object message) {
+		if(message instanceof ChannelBuffer)
+			return (ChannelBuffer)message;
+		else
+			return encoder.encode(message);
 	}
 	
 	public void broadcast(Object message, String groupName, Channel... excludeChannels) {
-		this.broadcast(encoder.encode(message), groupName, excludeChannels);
-	}
-	
-	public void broadcast(Object message, String groupName, Set<Channel> excludeChannels) {
-		this.broadcast(encoder.encode(message), groupName, excludeChannels);
-	}
-
-	public void broadcast(ChannelBuffer message, String groupName, Channel... excludeChannels) {
-		groups.broadcast(message, groupName, excludeChannels);
+		groups.broadcast(encodeMessage(message), groupName, excludeChannels);
 		log.info("broadcast message:{} to group:{}, exclude:{}", message, groupName, excludeChannels);
 	}
 	
-	public void broadcast(ChannelBuffer message, String groupName, Set<Channel> excludeChannels) {
-		groups.broadcast(message, groupName, excludeChannels);
+	public void broadcast(Object message, String groupName, Set<Channel> excludeChannels) {
+		groups.broadcast(encodeMessage(message), groupName, excludeChannels);
 		log.info("broadcast message:{} to group:{}, exclude:{}", message, groupName, excludeChannels);
 	}
 	
 	public void broadcast(Object message, Collection<Channel> toChannels, Channel... excludeChannels) {
-		this.broadcast(encoder.encode(message), toChannels, excludeChannels);
+		Set<Channel> cs = Collections.emptySet();
+		if(excludeChannels.length > 0) {
+			cs = new HashSet<Channel>(excludeChannels.length);
+			for (Channel channel : excludeChannels)
+				cs.add(channel);
+		}
+		this.broadcast(message, toChannels, cs);
 	}
 	
 	public void broadcast(Object message, Collection<Channel> toChannels, Set<Channel> excludeChannels) {
-		this.broadcast(encoder.encode(message), toChannels, excludeChannels);
-	}
-
-	public void broadcast(ChannelBuffer message, Collection<Channel> toChannels, Channel... excludeChannels) {
-		this.broadcast(message, toChannels, new HashSet<>(Arrays.asList(excludeChannels)));
-	}
-	
-	public void broadcast(ChannelBuffer message, Collection<Channel> toChannels, Set<Channel> excludeChannels) {
+		Object msg = encodeMessage(message);
 		if(excludeChannels == null || excludeChannels.isEmpty()) {
 			for (Channel channel : toChannels)
-				channel.write(message);
+				channel.write(msg);
 		} else {
 			for (Channel channel : toChannels) {
 				if (!excludeChannels.contains(channel))
-					channel.write(message);
+					channel.write(msg);
 			}
 		}
 		log.info("broadcast message:{} to channels:{}, exclude:{}", message, toChannels, excludeChannels);
 	}
-	
+
 	public void joinGroup(String groupName, Channel channel) {
 		groups.join(groupName, channel);
 		log.info("channel {} join group {}.", channel, groupName);
@@ -105,10 +104,6 @@ public class TcpService implements Service {
 	public void leaveGroup(String groupName, Channel channel) {
 		groups.leave(groupName, channel);
 		log.info("channel {} leave group {}.", channel, groupName);
-	}
-	
-	public void world(Object message) {
-		broadcast(message, Groups.World);
 	}
 	
 	/**

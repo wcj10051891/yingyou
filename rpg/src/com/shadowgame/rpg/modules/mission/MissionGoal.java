@@ -4,7 +4,6 @@ import xgame.core.event.Event;
 import xgame.core.event.EventListener;
 
 import com.alibaba.fastjson.JSONObject;
-import com.shadowgame.rpg.modules.core.Player;
 
 /**
  * 任务目标，有物品收集，杀怪，做某些操作，
@@ -28,14 +27,10 @@ public abstract class MissionGoal<E extends Event> {
      * 任务监听器
      */
     private EventListener<E> monitor;
-	
-	public MissionGoal(String key, JSONObject param) {
+
+	public MissionGoal(String key, JSONObject param, int current) {
 		this.key = key;
 		this.param = param;
-	}
-	
-	public MissionGoal(String key, JSONObject param, int current) {
-		this(key, param);
 		this.current = current;
 	}
 	
@@ -45,13 +40,16 @@ public abstract class MissionGoal<E extends Event> {
 	
 	public void onActivated(PlayerMission pm) {
 		this.monitor = createEventListener(pm);
+		pm.getPlayer().eventDispatcher.addListener(this.monitor);
 	}
-	
+
 	protected abstract EventListener<E> createEventListener(PlayerMission pm);
 
 	public void onPassivated(PlayerMission pm) {
-		if(this.monitor != null)
-			pm.getPlayer().eventManager.removeListener(this.monitor);
+		if(this.monitor != null) {
+			pm.getPlayer().eventDispatcher.removeListener(this.monitor);
+			this.monitor = null;
+		}
 	}
 	
 	public boolean onUpdate(PlayerMission playerMission, int count) {
@@ -64,7 +62,6 @@ public abstract class MissionGoal<E extends Event> {
         boolean isFinish = isFinish();
         if (isFinish)
         	finish(playerMission);
-//        Context.getLogic(Logic.class).getMissionService().scheduleSave(playerMission.getPlayer());
         return isFinish;
 	}
 	

@@ -9,7 +9,7 @@ import com.shadowgame.rpg.modules.core.Player;
 public class NotSeePlayerEventHandler implements EventHandler {
 	@Override
 	public void handleEvent(AbstractAI ai) {
-		Collection<Player> ps = ai.getOwner().getSeeObjectsByType(Player.class);
+		Collection<Player> ps = ai.getOwner().getPosition().getMapRegion().getVisibilityObjectsByType(Player.class);
 		if(ps.isEmpty())
 			ai.setAiState(AIState.THINKING);
 	}

@@ -35,19 +35,38 @@ public class Grid {
 		this.center = center;
 		this.block = block;
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		Grid t = (Grid)obj;
-		return t.x == x && t.y == y;
-	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + (block ? 1231 : 1237);
+		result = prime * result + ((center == null) ? 0 : center.hashCode());
 		result = prime * result + x;
 		result = prime * result + y;
 		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Grid other = (Grid) obj;
+		if (block != other.block)
+			return false;
+		if (center == null) {
+			if (other.center != null)
+				return false;
+		} else if (!center.equals(other.center))
+			return false;
+		if (x != other.x)
+			return false;
+		if (y != other.y)
+			return false;
+		return true;
 	}
 }

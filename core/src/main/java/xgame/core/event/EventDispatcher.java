@@ -7,44 +7,25 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public abstract class BaseObservable {
+public class EventDispatcher {
 	public Map<Class<? extends Event>, Set<EventListener<? extends Event>>> eventListeners = new ConcurrentHashMap<Class<? extends Event>, Set<EventListener<? extends Event>>>(0);
 
-	public void addListener(Class<? extends Event> eventType, EventListener... listeners) {
-		if(listeners.length == 0)
-			return;
-		
+	public void addListener(EventListener listener) {
+		Class eventType = listener.getEventType();
 		Set<EventListener<? extends Event>> _listeners = eventListeners.get(eventType);
 		if (_listeners == null) {
 			_listeners = new LinkedHashSet<EventListener<? extends Event>>();
 			eventListeners.put(eventType, _listeners);
 		}
-		for (EventListener<? extends Event> eventListener : listeners)
-			_listeners.add(eventListener);
+		_listeners.add(listener);
 	}
 
-	public void removeListener(Class<? extends Event> eventType, EventListener... listeners) {
-		if(listeners.length == 0) {
-			eventListeners.remove(eventType);
-			return;
-		}
-
+	public void removeListener(EventListener listener) {
+		Class eventType = listener.getEventType();
 		Set<EventListener<? extends Event>> _listeners = eventListeners.get(eventType);
 		if (_listeners == null || _listeners.isEmpty())
 			return;
-		
-		for (EventListener<? extends Event> eventListener : listeners)
-			_listeners.remove(eventListener);
-	}
-	
-	public void removeListener(EventListener... listeners) {
-		if(listeners.length == 0)
-			return;
-
-		for (EventListener<? extends Event> eventListener : listeners) {
-			for (Set<EventListener<? extends Event>> es : this.eventListeners.values())
-				es.remove(eventListener);
-		}
+		_listeners.remove(listener);
 	}
 
 	public <E extends Event> void fireEvent(E event) {

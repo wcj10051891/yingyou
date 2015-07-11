@@ -1,5 +1,8 @@
 package com.shadowgame.rpg.msg.login_11;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.shadowgame.rpg.core.AlertException;
@@ -7,6 +10,7 @@ import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.msg.core_10.Sc_10000;
 import com.shadowgame.rpg.net.msg.NoPlayerClientMsg;
 import com.shadowgame.rpg.persist.dao.TPlayerDao;
+import com.shadowgame.rpg.persist.entity.TPlayer;
 import com.shadowgame.rpg.service.Services;
 
 /**
@@ -36,7 +40,10 @@ public class Cs_11000 extends NoPlayerClientMsg {
 		}
 		
 		Sc_11000 result = new Sc_11000();
-		result.characters = new CharacterList().from(Services.daoFactory.get(TPlayerDao.class).getByUsername(username));
+		result.characters = new ArrayList<CharacterInfo>();
+		List<TPlayer> entitys = Services.daoFactory.get(TPlayerDao.class).getByUsername(username);
+		for (TPlayer entity : entitys)
+			result.characters.add(new CharacterInfo().from(entity));
 		Services.tcpService.send(result, ctx.getChannel());
 	}
 }

@@ -14,8 +14,6 @@ import com.shadowgame.rpg.data.MapData;
 import com.shadowgame.rpg.modules.core.AbstractFighter;
 import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.Monster;
-import com.shadowgame.rpg.modules.core.Player;
-import com.shadowgame.rpg.msg.map_12.Sc_12001;
 import com.shadowgame.rpg.persist.entity.TMonster;
 import com.shadowgame.rpg.service.Services;
 
@@ -38,9 +36,9 @@ public class MapInstance {
 	 */
 	private ConcurrentHashMap<String, MapRegion> regions = new ConcurrentHashMap<String, MapRegion>();
 	/**
-	 * 地图内的对象
+	 * 地图内的对象，添加对象到地图上，是更新其位置，放进区块mapRegion，计算完同步后，再自动加进这里，不直接加
 	 */
-	private ConcurrentHashMap<Integer, MapObject> objects = new ConcurrentHashMap<Integer, MapObject>();
+	private MapObjectCollection<MapObject> objects = new MapObjectCollection<>();
 	/**
 	 * 副本销毁任务
 	 */
@@ -131,7 +129,7 @@ public class MapInstance {
 			}
 		}
 		//初始化怪物
-		for (TMonster e : Services.data.get(MapData.class).monsters.get(this.gameMap.entity.id)) {
+		for (TMonster e : Services.data.get(MapData.class).mapMonsters.get(this.gameMap.entity.id)) {
 			add(new Monster(new Position(e.x, e.y), e), e.x, e.y);
 		}
 		//设置定时销毁
@@ -232,18 +230,6 @@ public class MapInstance {
 		pos.update(object, this, pointX, pointY);
 	}
 	
-	void addObject(MapObject object) {
-		this.objects.put(object.getObjectId(), object);
-	}
-	
-	void removeObject(Integer objectId) {
-		this.objects.remove(objectId);
-	}
-	
-	public MapObject findObject(Integer objectId) {
-		return this.objects.get(objectId);
-	}
-	
 	/**
 	 * 将指定对象从该地图移除，即从该对象所属区块中移除，会同步给周围的其他对象
 	 * @param object
@@ -251,13 +237,34 @@ public class MapInstance {
 	public void remove(MapObject object) {
 		object.getPosition().getMapRegion().remove(object);
 	}
-
-	void onEnter(Player player) {
-		player.send(new Sc_12001().from(this));
+	
+	void putObject(MapObject object) {
+		if(this.objects.put(object.getObjectId(), object) == null) {
+			//新加入地图
+			object.onEnterMap(this);
+		}
 	}
 	
-	void onLeave(Player player) {
-		
+	void removeObject(Object objectId) {
+		MapObject target = this.objects.remove(objectId);
+		if(target != null) {
+			//从地图移除
+			target.onLeaveMap(this);
+		}
+	}
+	
+	public MapObject getObject(Integer objectId) {
+		return this.objects.get(objectId);
+	}
+	
+	/**
+	 * 按对象类型查找对象集合
+	 * @param type
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends MapObject> Map<Long, T> getMapObjectByType(Class<T> type) {
+		return (Map<Long, T>) this.objects.getObjectsByType((Class<MapObject>) type);
 	}
 
 	/**

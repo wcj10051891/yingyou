@@ -11,7 +11,7 @@ public class TeleporterInfo extends Message {
 	/**
 	 * 传送点id
 	 */
-	public int id;
+	public long id;
 	/**
 	 * 传送点名称
 	 */

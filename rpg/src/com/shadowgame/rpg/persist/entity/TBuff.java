@@ -22,13 +22,13 @@ public class TBuff{
 	/** 普通伤害百分比 */
 	public Integer normalDamage=0;
 	/** 伤害增加百分比 */
-	public Integer damageIncrease;
+	public Integer damageIncrease=0;
 	/** 伤害减少百分比 */
-	public Integer damageDecrease;
+	public Integer damageDecrease=0;
 	/** 受到伤害增加百分比 */
-	public Integer hitDamageIncrease;
+	public Integer hitDamageIncrease=0;
 	/** 受到伤害减少百分比 */
-	public Integer hitDamageDecrease;
+	public Integer hitDamageDecrease=0;
 	public Integer getId(){
 		return this.id;
 	}

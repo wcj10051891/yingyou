@@ -10,9 +10,12 @@ import com.shadowgame.rpg.ai.event.handler.SeePlayerEventHandler;
 import com.shadowgame.rpg.ai.state.AIState;
 import com.shadowgame.rpg.ai.state.impl.AttackingStateHandler;
 import com.shadowgame.rpg.ai.state.impl.NoneStateHandler;
+import com.shadowgame.rpg.modules.core.AbstractSpirit;
 
 public class NpcAI extends AbstractAI {
-	public NpcAI() {
+	
+	public NpcAI(AbstractSpirit spirit) {
+		super(spirit);
 		//event
 		this.addEventHandler(AIEvent.SEE_PLAYER, new SeePlayerEventHandler());
 		this.addEventHandler(AIEvent.NOT_SEE_PLAYER, new NotSeePlayerEventHandler());
@@ -22,10 +25,5 @@ public class NpcAI extends AbstractAI {
 		//state
 		this.addStateHandler(AIState.ATTACKING, new AttackingStateHandler());
 		this.addStateHandler(AIState.NONE, new NoneStateHandler());
-	}
-	
-	public static void main(String[] args) {
-		NpcAI ai = new NpcAI();
-		ai.handleEvent(AIEvent.SEE_PLAYER);
 	}
 }

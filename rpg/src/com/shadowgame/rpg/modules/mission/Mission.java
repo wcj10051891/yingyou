@@ -10,6 +10,9 @@ import com.shadowgame.rpg.modules.exec.Execution;
 import com.shadowgame.rpg.persist.entity.TMission;
 
 public class Mission {
+	/**
+	 * 任务配置
+	 */
 	public TMission entity;
 	/**
 	 * 接受条件

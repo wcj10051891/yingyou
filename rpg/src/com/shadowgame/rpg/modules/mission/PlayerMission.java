@@ -1,6 +1,7 @@
 package com.shadowgame.rpg.modules.mission;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONArray;
@@ -22,14 +23,14 @@ public class PlayerMission {
 		this.player = player;
         this.mission = mission;
         this.id = id;
+        this.goals = new ArrayList<MissionGoal<?>>();
         this.acceptTime = new Timestamp(System.currentTimeMillis());
         if (mission.goals == null || mission.goals.isEmpty()) {// 没有条件，立即完成
             this.status = MissionStatus.CAN_FINISH.getValue();
         } else {
             this.status = MissionStatus.ACCEPTED.getValue();
-            for (JSONObject goal : mission.goals) {
+            for (JSONObject goal : mission.goals)
                 goals.add(Services.data.get(MissionGoalData.class).createMissionGoal(goal, goal.getJSONObject("param")));
-            }
         }
     }
 	
@@ -84,6 +85,9 @@ public class PlayerMission {
             goal.onActivated(this);
     }
 
+    /**
+     * 清理
+     */
     public void passivate()
     {
         for (MissionGoal<?> goal : goals)

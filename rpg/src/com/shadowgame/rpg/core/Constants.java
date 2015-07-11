@@ -16,37 +16,33 @@ public interface Constants {
 	/**
 	 * 百
 	 */
-	float baiFloat = 100 * 1f;
-	/**
-	 * 普通伤害百分比
-	 */
-	int damagePercent = 10000;
+	float baiFloat = baiInt * 1f;
 	/**
 	 * 火焰伤害百分比
 	 */
-	int fireDamagePercent = 10000;
+	int fireDamagePercent = 0;
 	/**
 	 * 寒冰伤害百分比
 	 */
-	int iceDamagePercent = 10000;
+	int iceDamagePercent = 0;
 	/**
 	 * 雷电伤害百分比
 	 */
-	int thunderDamagePercent = 10000;
+	int thunderDamagePercent = 0;
 	/**
 	 * 毒素伤害百分比
 	 */
-	int poisonDamagePercent = 10000;
+	int poisonDamagePercent = 0;
 	/**
 	 * 神圣伤害百分比
 	 */
-	int holyDamagePercent = 10000;
+	int holyDamagePercent = 0;
 	/**
 	 * 暗影伤害百分比
 	 */
-	int shadowDamagePercent = 10000;
+	int shadowDamagePercent = 0;
 	/**
 	 * 附加伤害
 	 */
-	int damageAdd = 10000;
+	int damageAdd = 0;
 }

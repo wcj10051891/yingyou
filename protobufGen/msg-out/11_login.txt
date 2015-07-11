@@ -14,11 +14,15 @@ message Cs_11002{
 }
 // ======== 登录协议响应	
 message Sc_11000{
-	CharacterList characters; //角色列表	
+	array CharacterInfo characters; //角色列表	
 }
 // ======== 创建角色响应	
 message Sc_11001{
-	CharacterList characters; //角色列表	
+	array CharacterInfo characters; //角色列表	
+}
+// ======== 选择角色成功进入游戏	
+message Sc_11002{
+	uint32 mapId; //登录后进入的场景	
 }
 // ======== 角色信息	
 message CharacterInfo{
@@ -26,8 +30,4 @@ message CharacterInfo{
 	uint32 lv; //等级	
 	string nickname; //昵称	
 	uint8 vocation; //职业	
-}
-// ======== 角色列表	
-message CharacterList{
-	array CharacterInfo characters; //角色列表	
 }

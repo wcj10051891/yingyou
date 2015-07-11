@@ -20,10 +20,10 @@ import com.shadowgame.rpg.persist.entity.TPlayerMission;
 import com.shadowgame.rpg.service.Services;
 
 public class PlayerMissionManager extends AbstractCacheObject<Long, TPlayerMission>  {
-	private TPlayerMissionDao dao = Services.daoFactory.get(TPlayerMissionDao.class);
+	private static final TPlayerMissionDao dao = Services.daoFactory.get(TPlayerMissionDao.class);
 	private TPlayerMission entity;
     private Set<Integer> finishedMissions = new HashSet<Integer>();
-    private Map<Integer, com.shadowgame.rpg.modules.mission.PlayerMission> acceptedMissions = new ConcurrentHashMap<Integer, com.shadowgame.rpg.modules.mission.PlayerMission>();
+    private Map<Integer, PlayerMission> acceptedMissions = new ConcurrentHashMap<Integer, PlayerMission>();
     private AtomicInteger serialId = new AtomicInteger(Long.valueOf(System.currentTimeMillis() / 1000l).intValue());
     private Player player;
 	
@@ -40,10 +40,10 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, TPlayerMissi
 		if(StringUtils.hasText(entity.finishMission))
 			this.finishedMissions.addAll(JSONArray.parseArray(entity.finishMission, Integer.class));
 		if(StringUtils.hasText(entity.acceptMission))
-			for(JSONObject json : JSONArray.parseArray(entity.finishMission, JSONObject.class)) {
-				com.shadowgame.rpg.modules.mission.PlayerMission pm = new com.shadowgame.rpg.modules.mission.PlayerMission(player, json);
+			for(JSONObject json : JSONArray.parseArray(entity.acceptMission, JSONObject.class)) {
+				PlayerMission pm = new PlayerMission(player, json);
 				pm.active();
-				this.acceptedMissions.put(pm.mission.entity.id, pm);
+				acceptedMissions.put(pm.mission.entity.id, pm);
 			}
 		return this;
 	}
@@ -87,14 +87,13 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, TPlayerMissi
             throw new NoticeException("任务不存在");
         //1、检测是否可以接受该任务
         //2、处理接受任务时候执行的一些逻辑
-        com.shadowgame.rpg.modules.mission.PlayerMission pm = 
-    		new com.shadowgame.rpg.modules.mission.PlayerMission(player, this.serialId.addAndGet(1), mission);
+        PlayerMission pm = new PlayerMission(player, this.serialId.addAndGet(1), mission);
         pm.active();
         acceptedMissions.put(missionId, pm);
     }
 	
 	public void giveUp(Integer missionId) {
-		com.shadowgame.rpg.modules.mission.PlayerMission pm = this.acceptedMissions.get(missionId);
+		PlayerMission pm = this.acceptedMissions.get(missionId);
         if (pm == null)
             throw new NoticeException("要放弃的任务不存在");
         pm.passivate();
@@ -105,7 +104,7 @@ public class PlayerMissionManager extends AbstractCacheObject<Long, TPlayerMissi
 	}
 	
 	public void finish(Integer missionId) {
-		com.shadowgame.rpg.modules.mission.PlayerMission pm = this.acceptedMissions.get(missionId);
+		PlayerMission pm = this.acceptedMissions.get(missionId);
         if (pm != null) {
 	        if (!pm.checkFinish(false))
 	            throw new NoticeException("任务未完成");

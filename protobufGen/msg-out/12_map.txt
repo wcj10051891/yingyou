@@ -1,33 +1,33 @@
-// ======== 地图	
-message Sc_12000{
-	uint32 modelId; //地图配置id	
-	uint32 id; //地图唯一id	
-	uint32 width; //宽	
-	uint32 height; //高	
-	string name; //地图名称	
-	array TeleporterInfo teleporters; //传送点列表	
-	array NpcInfo npcs; //npc列表	
+// ======== 移动消息	
+message Cs_12000{
+	uint16 x; //坐标x	
+	uint16 y; //坐标y	
+}
+// ======== 请求进入地图，返回Sc_12004	
+message Cs_12001{
+	uint32 mapId; //地图id	
+}
+// ======== 请求获取附近的信息	
+message Cs_12002{
 }
 // ======== 新看见的地图上的对象	
-message Sc_12001{
+message Sc_12002{
 	array MonsterInfo monster; //新看见的monster	
 	array PlayerInfo player; //新看见的player	
 }
 // ======== 看不见的地图上的对象	
-message Sc_12002{
-	array MonsterInfo monster; //看不见的monster	
-	array PlayerInfo player; //看不见的player	
+message Sc_12003{
+	array uint64 player; //看不见的player	
+	array uint64 monster; //看不见monster	
 }
-// ======== npc信息	
-message NpcInfo{
-	uint32 modelId; //npc配置id	
-	uint32 id; //唯一id	
-	string name; //名称	
+// ======== 地图进入请求的返回	
+message Sc_12004{
+	uint32 mapId; //地图id	
 }
-// ======== 传送点	
-message TeleporterInfo{
-	uint32 id; //传送点id	
-	string name; //传送点名称	
+// ======== 移动消息广播	
+message Sc_12005{
+	uint16 x; //坐标x	
+	uint16 y; //坐标y	
 }
 // ======== 玩家信息	
 message PlayerInfo{
@@ -35,9 +35,25 @@ message PlayerInfo{
 	string name; //玩家昵称	
 	uint32 lv; //等级	
 	uint8 vocation; //职业	
+	uint16 x; //坐标x	
+	uint16 y; //坐标y	
 }
 // ======== 怪物信息	
 message MonsterInfo{
-	uint32 id; //怪物id	
+	uint32 modelId; //怪物模型id	
+	uint64 id; //怪物唯一id	
 	string name; //怪物名称	
+	uint16 x; //坐标x	
+	uint16 y; //坐标y	
+}
+// ======== 传送点	
+message TeleporterInfo{
+	uint64 id; //传送点id	
+	string name; //传送点名称	
+}
+// ======== npc信息	
+message NpcInfo{
+	uint32 modelId; //npc配置id	
+	uint64 id; //唯一id	
+	string name; //名称	
 }

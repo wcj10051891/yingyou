@@ -1,8 +1,10 @@
 package com.shadowgame.rpg.modules.skill;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shadowgame.rpg.data.SkillData;
 import com.shadowgame.rpg.modules.core.AbstractFighter;
 import com.shadowgame.rpg.persist.entity.TSkill;
+import com.shadowgame.rpg.service.Services;
 
 
 /**
@@ -27,5 +29,14 @@ public class FighterSkill {
 		data.put("id", entity.id);
 		data.put("lv", lv);
 		return data;
+	}
+	
+	public void fire(AbstractFighter target) {
+		new SkillTask(fighter, target, Services.data.get(SkillData.class).getSkillLogic(this.entity.id), this).start();
+	}
+	
+	@Override
+	public String toString() {
+		return entity.name + "-lv" + this.lv;
 	}
 }

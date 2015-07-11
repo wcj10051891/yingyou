@@ -15,7 +15,7 @@ public class NpcInfo extends Message {
 	/**
 	 * 唯一id
 	 */
-	public int id;
+	public long id;
 	/**
 	 * 名称
 	 */

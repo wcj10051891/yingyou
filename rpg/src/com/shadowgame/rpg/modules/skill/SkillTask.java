@@ -33,9 +33,13 @@ public class SkillTask {
 	 */
 	public Point targetPoint;
 	/**
-	 * 调度执行目标，技能
+	 * 技能实现逻辑
 	 */
-	public SkillLogic skillLogic;
+	private SkillLogic skillLogic;
+	/**
+	 * 技能数据
+	 */
+	public FighterSkill fighterSkill;
 	/**
 	 * 已作用次数
 	 */
@@ -49,13 +53,14 @@ public class SkillTask {
 	 */
 	private ScheduledFuture<?> task;
 
-	public SkillTask(AbstractFighter attacker, AbstractFighter target, SkillLogic skillLogic) {
+	public SkillTask(AbstractFighter attacker, AbstractFighter target, SkillLogic skillLogic, FighterSkill fighterSkill) {
 		super();
 		this.attacker = attacker;
 		this.direction = attacker.getPosition().getDirection();
 		this.target = target;
 		this.targetPoint = target.getPosition().getPoint();
 		this.skillLogic = skillLogic;
+		this.fighterSkill = fighterSkill;
 	}
 	
 	public void start() {

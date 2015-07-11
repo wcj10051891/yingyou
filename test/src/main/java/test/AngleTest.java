@@ -1,6 +1,7 @@
 package test;
 
-import java.awt.Point;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 
 public class AngleTest {
 
@@ -32,8 +33,18 @@ public class AngleTest {
 //			System.out.println("目标角度：" + Math.toDegrees(a2));			
 //			System.out.println("in range");
 //		}
-		double sin45 = Math.sin(Math.PI / 4);
-		System.out.println(2 / sin45);
+//		long a = System.currentTimeMillis() / 1000;
+//		double tan30 = Math.tan(Math.PI / 6);
+//		System.out.println(a);
+//		System.out.println(tan30);
+//		double b = tan30 * a;
+//		System.out.println(b);
+		
+		long start = System.currentTimeMillis();
+		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+		System.out.println(bean.getName());
+		long during = System.currentTimeMillis() - start;
+		System.out.println(during);
 	}
 
 }

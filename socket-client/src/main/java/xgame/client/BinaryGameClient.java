@@ -1,11 +1,12 @@
 package xgame.client;
 
 import java.net.InetSocketAddress;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jboss.netty.bootstrap.ClientBootstrap;
@@ -30,7 +31,8 @@ import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.msg.login_11.Cs_11000;
 import com.shadowgame.rpg.msg.login_11.Cs_11001;
 import com.shadowgame.rpg.msg.login_11.Cs_11002;
-import com.shadowgame.rpg.msg.skill_13.Cs_13001;
+import com.shadowgame.rpg.msg.map_12.Cs_12002;
+import com.shadowgame.rpg.msg.skill_13.Cs_13000;
 import com.shadowgame.rpg.net.msg.Message;
 
 public class BinaryGameClient {
@@ -126,30 +128,9 @@ public class BinaryGameClient {
 	
 	public static Channel connect(Callback callback) throws Exception {
 		ChannelFuture f = bootstarp.connect(new InetSocketAddress(9998));
-//		ChannelFuture f = bootstarp.connect(new InetSocketAddress("211.147.4.187", 9998));
 		Channel channel = f.awaitUninterruptibly().getChannel();
 		channel.setAttachment(callback);
 		return channel;
-		
-//		new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				Scanner sc = new Scanner(System.in);
-//				while(sc.hasNextLine()) {
-//					String cmd = sc.next();
-//					if(cmd.equalsIgnoreCase("exit")) {
-//						sc.close();
-//						System.exit(0);
-//					} else if(cmd.equals("send")) {
-//						LoginMsg login = new LoginMsg();
-//						login.setUsername("12345");
-//						login.setPassword("45678");
-////						AlertMsg s = new AlertMsg("尼玛");
-//						f.getChannel().write(login);
-//					}
-//				}
-//			}
-//		}, "debug exit listener").start();
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -160,9 +141,15 @@ public class BinaryGameClient {
 //		login.msgs2 = (Arrays.asList(new AlertMsg("消息4"), new AlertMsg("消息5"), new AlertMsg("消息6")));
 //		
 //		final LogoutMsg logout = new LogoutMsg();
-
+		
+		final List<ClientCommand> commands = new ArrayList<ClientCommand>();
+		commands.add(new ClientCommand(new Cs_12002(), 1000));
+		
 		BinaryGameClient.init();
-		final Channel c = connect();
+		final Map<Integer, Channel> channels = new HashMap<Integer, Channel>();
+		for (int i = 0; i < 1; i++) {
+			channels.put(i, connect());
+		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -172,37 +159,43 @@ public class BinaryGameClient {
 					if(cmd.equalsIgnoreCase("exit")) {
 						sc.close();
 						System.exit(0);
-					} else if(cmd.equalsIgnoreCase("login")) {
-						Cs_11000 login = new Cs_11000();
-						login.username = "123";
-						c.write(login);
-					} else if(cmd.equalsIgnoreCase("create")) {
-						Cs_11001 create = new Cs_11001();
-						create.nickname = "玩家3";
-						create.username = "123";
-						create.vocation = 3;
-						c.write(create);
-					} else if(cmd.equalsIgnoreCase("select")) {
-						Cs_11002 create = new Cs_11002();
-						create.playerId = 4676265064748060672l;
-						c.write(create);
-					} else if(cmd.equalsIgnoreCase("learnSkill")) {
-						Cs_13001 learn = new Cs_13001();
-						learn.skillId = 1;
-						c.write(learn);
-					} else if(cmd.equalsIgnoreCase("useSkill")) {
-						Cs_13001 learn = new Cs_13001();
-						learn.skillId = 1;
-						c.write(learn);
+					} else if(cmd.equalsIgnoreCase("start")) {
+						for (final Channel ctx : channels.values()) {
+							runCommands(ctx, commands);
+						}
+					} else {
+						if(cmd.equalsIgnoreCase("login")) {
+							Cs_11000 login = new Cs_11000();
+							login.username = "123";
+							channels.get(0).write(login);
+						} else if(cmd.equalsIgnoreCase("create")) {
+							Cs_11001 create = new Cs_11001();
+							create.nickname = "玩家3";
+							create.username = "123";
+							create.vocation = 3;
+							channels.get(0).write(create);
+						} else if(cmd.equalsIgnoreCase("select")) {
+							Cs_11002 create = new Cs_11002();
+							create.playerId = 4676265064748060672l;
+							channels.get(0).write(create);
+						} else if(cmd.equalsIgnoreCase("learnSkill")) {
+							Cs_13000 learn = new Cs_13000();
+							learn.skillId = 1;
+							channels.get(0).write(learn);
+						} else if(cmd.equalsIgnoreCase("useSkill")) {
+							Cs_13000 learn = new Cs_13000();
+							learn.skillId = 1;
+							learn.targetId = 1;
+							channels.get(0).write(learn);
+						}
 					}
+					
 				}
 			}
 		}, "debug exit listener").start();
 		
 	}
 	
-	private static Random r = new Random();
-	private static ScheduledExecutorService pool = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 	private static Channel connect() throws Exception {
 		return BinaryGameClient.connect(new Callback() {
 			@Override
@@ -212,17 +205,29 @@ public class BinaryGameClient {
 		});
 	}
 	
-	private static void sendTest(final Channel client, final Object msg, boolean schedule) {
-		if(schedule) {
-			pool.scheduleAtFixedRate(new Runnable() {
-				@Override
-				public void run() {
-					client.write(msg);
-				}
-			}, 0, r.nextInt(1000) + 500, TimeUnit.MILLISECONDS);
-		} else {
-			client.write(msg);
+	private static void runCommands(final Channel channel, final List<ClientCommand> commands) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				boolean loop = false;
+				do {
+					for (ClientCommand cmd : commands)
+						loop = runCommand(channel, cmd);
+				} while(loop);
+			}
+		}, channel.toString() + " thread").start();
+	}
+	
+	private static boolean runCommand(Channel channel, ClientCommand cmd) {
+		channel.write(cmd.msg);
+		if(cmd.waitMills <= -1)
+			return false;
+		try {
+			Thread.sleep(cmd.waitMills);
+		} catch (InterruptedException e) {
+			return false;
 		}
+		return true;
 	}
 	
 	

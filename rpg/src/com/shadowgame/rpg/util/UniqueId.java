@@ -9,6 +9,8 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import xgame.core.util.RandomUtils;
+
 import com.shadowgame.rpg.core.AppConfig;
 
 /**
@@ -29,7 +31,6 @@ public abstract class UniqueId {
 	}
 	/**
 	 * 产生一个64位的唯一id，不同服务器间不会重复。
-	 * 64位唯一id=43位utc时间戳 +5位服务器单字母标记+16位服务器唯一序号
 	 * @return
 	 */
 	public static Long next() {
@@ -54,10 +55,10 @@ public abstract class UniqueId {
 		long minute = dateTime.getMinuteOfHour();
 		long second = dateTime.getSecondOfMinute();
 		long mills = dateTime.getMillisOfSecond();
-		long n = days << 27;//(43 - 16);
-		n |= (hour << 22);//(43 - 5 - 16));
-		n |= (minute << 16);//(43 - 6 - 16 - 5));
-		n |= (second << 10);//(43 - 6 - 16 - 5 - 6));
+		long n = days << 27;
+		n |= (hour << 22);
+		n |= (minute << 16);
+		n |= (second << 10);
 		n |= mills;
 		return n;
 	}
@@ -78,15 +79,16 @@ public abstract class UniqueId {
 		DateTime dateTime = formatter.parseDateTime(datestr);
 		return dateTime.getMillis();
 	}
-	/**
-	 * 64位唯一id=43位utc时间戳+5位服务器单字母标记+16位服务器唯一序号
-	 * 16位天数：20991231-19700101日期相隔天数 最大值47481<br/>
+	/**7,4,5
+	 * 64位唯一id=43位utc时间戳+5位服务器单字母标记+12位服务器唯一序号+4位随机数
+	 * 16位天数：20991231-19700101日期相隔天数<br/>
 	 * 5位小时：最大值23<br/>
 	 * 6位分钟：最大值59<br/>
 	 * 6位秒钟：最大值59<br/>
 	 * 10位毫秒：最大值999<br/>
 	 * 5位服务器单字母标记（26个字母）
-	 * 16位服务器序号：最大值32767
+	 * 12位服务器序号：最大值4095
+	 * 4位位随机数：最大值9
 	 */
 	private static long encode(long original) {
 		long utc = encodeUTC(original);
@@ -94,20 +96,24 @@ public abstract class UniqueId {
 		long serverSeq = AppConfig.SERVER_SEQ;
 		long n = utc << 21;
 		n |= (serverKey << 16);
-		n |= serverSeq;
+		n |= (serverSeq << 4);
+		int r = RandomUtils.nextRandomInt(0, 9);
+		n |= r;
 		return n;
 	}
-	
+
 	/**
 	 * @see UniqueId#encode(long)
 	 * @param encoded
-	 * @return [utc时间, server标识, server编号]
+	 * @return [utc时间, server标识, server编号, 随机数]
 	 */
 	private static Object[] decode(long encoded) {
 		return new Object[]{
 			decodeUTC(encoded >> 21), 
 			index2letter.get((int)(encoded >> 16 & 0x1f)), 
-			encoded & 0xffff};
+			encoded >> 4 & 0xfff,
+			encoded & 0xf,
+		};
 	}
 	
 	public static void main(String[] args) {

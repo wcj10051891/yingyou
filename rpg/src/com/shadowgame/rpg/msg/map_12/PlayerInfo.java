@@ -25,12 +25,22 @@ public class PlayerInfo extends Message {
 	 * 职业
 	 */
 	public byte vocation;
+	/**
+	 * 坐标x
+	 */
+	public short x;
+	/**
+	 * 坐标y
+	 */
+	public short y;
 	
 	public PlayerInfo from(Player player) {
 		this.id = player.getKey();
 		this.name = player.entity.nickname;
 		this.lv = player.entity.lv;
 		this.vocation = player.entity.vocation.byteValue();
+		this.x = (short)player.getPosition().getX();
+		this.y = (short)player.getPosition().getY();
 		return this;
 	}
 }

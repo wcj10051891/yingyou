@@ -24,6 +24,10 @@ public abstract class AbstractAI implements Runnable {
 	protected AIState aiState = AIState.NONE;
 	protected boolean isStateChanged;
 	private Future<?> aiTask;
+	
+	public AbstractAI(AbstractSpirit spirit) {
+		this.spirit = spirit;
+	}
 
 	public void handleEvent(AIEvent event) {
 		EventHandler handler = this.eventHandlers.get(event);
@@ -65,12 +69,11 @@ public abstract class AbstractAI implements Runnable {
 			stateHandler.handleState(this);
 	}
 
-	/*
-	 * 定时执行
-	 * 遍历intent指令序列(每个intent表示一段逻辑，可以是任何意图，想做的事情，表示智能体的思考后的行为，可以将要执行的逻辑封装为intent
-	 * ，想执行的时候加进intent列表)，
-	 * 执行intent逻辑，执行的结果来决定这个intent是否执行完了可以移除，如果没执行完则不移除，下次调度再次执行
-	 * 当intent序列空了，或者任何时候AI当前状态改变了，会重新切换到当前最新状态来思考
+	/**
+	 * 定时执行<br/>
+	 * 遍历intent指令序列(每个intent表示一段逻辑，可以是任何意图，想做的事情，表示智能体的思考后的行为，可以将要执行的逻辑封装为intent，想执行的时候加进intent列表)，<br/>
+	 * 执行intent逻辑，执行的结果来决定这个intent是否执行完了可以移除，如果没执行完则不移除，下次调度再次执行<br/>
+	 * 当intent序列空了，或者任何时候AI当前状态改变了，会重新切换到当前最新状态来思考<br/>
 	 */
 	@Override
 	public void run() {

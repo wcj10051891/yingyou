@@ -15,8 +15,12 @@ public abstract class RuntimeUniqueId {
 	public static Integer next(Class<?> subject) {
 		AtomicInteger id = ids.get(subject);
 		if(id == null) {
-			id = new AtomicInteger(1);
-			ids.put(subject, id);
+			synchronized (subject) {
+				if(id == null) {
+					id = new AtomicInteger(1);
+					ids.put(subject, id);
+				}
+			}
 		}
 		return id.getAndIncrement();
 	}

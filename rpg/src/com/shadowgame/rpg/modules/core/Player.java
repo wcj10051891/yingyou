@@ -10,8 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xgame.core.cache.CacheObject;
-import xgame.core.event.BaseObservable;
-import xgame.core.net.server.tcp.Groups;
+import xgame.core.event.EventDispatcher;
 import xgame.core.util.CountMap;
 import xgame.core.util.JsonUtils;
 import xgame.core.util.ProcessQueue;
@@ -20,11 +19,14 @@ import xgame.core.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.modules.buff.PlayerBuffList;
 import com.shadowgame.rpg.modules.common.DailyAttribute;
+import com.shadowgame.rpg.modules.cooldown.Cooldown;
 import com.shadowgame.rpg.modules.item.Item;
 import com.shadowgame.rpg.modules.item.Knapsack;
 import com.shadowgame.rpg.modules.map.MapInstance;
+import com.shadowgame.rpg.modules.map.World;
 import com.shadowgame.rpg.modules.mission.PlayerMissionManager;
 import com.shadowgame.rpg.modules.skill.PlayerSkillList;
+import com.shadowgame.rpg.msg.login_11.Sc_11002;
 import com.shadowgame.rpg.msg.map_12.Sc_12002;
 import com.shadowgame.rpg.msg.map_12.Sc_12003;
 import com.shadowgame.rpg.persist.dao.TPlayerDao;
@@ -41,9 +43,10 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	public DailyAttribute daily;
 	public JSONObject extAttribute;
 	public Knapsack knapsack;
-	public ProcessQueue processQueue = new ProcessQueue(Services.threadService.threadPool);
-	public BaseObservable eventManager;
+	public ProcessQueue processQueue;
+	public EventDispatcher eventDispatcher;
 	public PlayerMissionManager missionManager;
+	public Cooldown cooldown;
 	private boolean isOnline;
 
 	/**
@@ -57,6 +60,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 
 	@Override
 	public Player init(TPlayer entity, Object... contextParam) {
+		this.objectId = entity.id;
 		this.entity = entity;
 		this.daily = new DailyAttribute(!StringUtils.hasText(this.entity.daily) ? "{}" : this.entity.daily);
 		this.extAttribute = JsonUtils.parseObject(!StringUtils.hasText(this.entity.extAttribute) ? "{}" : this.entity.extAttribute);
@@ -67,9 +71,12 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		this.isOnline = true;
 		this.channel = channel;
 		this.channel.setAttachment(this);
-		
+
 		Services.app.world.allPlayers.add(this);
-		Services.tcpService.joinGroup(Groups.World, channel);
+		Services.tcpService.joinGroup(World.GROUP_NAME, channel);
+		
+		this.processQueue = new ProcessQueue(Services.threadService.threadPool);
+		this.eventDispatcher = new EventDispatcher();
 		
 		this.knapsack = Services.cacheService.get(this.entity.id, Knapsack.class, true);
 		if(this.knapsack == null)
@@ -81,12 +88,22 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 
 		this.skillList = new PlayerSkillList(this);
 		this.buffList = new PlayerBuffList(this);
+		this.cooldown = new Cooldown();
+		//init attrs
+		this.attrs = new FighterAttrs(this);
+		this.attrs.initAttr(AttrType.hp, entity.hp);
+		this.attrs.initAttr(AttrType.maxHp, 100);
+		this.attrs.initAttr(AttrType.mp, entity.mp);
+		this.attrs.initAttr(AttrType.maxMp, 100);
+		this.attrs.initAttr(AttrType.atk, 10);
+		this.attrs.initAttr(AttrType.def, 5);
+		this.attrs.initAttr(AttrType.damageFactor1, 1);
+		this.attrs.initAttr(AttrType.damageFactor2, 1);
 		
 		//返回上次场景
 		MapInstance lastMap = null;
-		if(entity.lastInstanceId != null && entity.lastInstanceId > 0) {
+		if(entity.lastInstanceId != null && entity.lastInstanceId > 0)
 			lastMap = Services.app.world.mapInstances.get(entity.lastInstanceId);
-		}
 		if(lastMap == null && entity.lastMapId != null && entity.lastMapId > 0)
 			lastMap = Services.app.world.getWorldMap(entity.lastMapId).getDefaultInstance();
 		if(lastMap == null)
@@ -98,12 +115,14 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		if(entity.lastMapY != null && entity.lastMapY > 0)
 			lastMapY = entity.lastMapY;
 		Services.app.world.updatePosition(this, lastMap, lastMapX, lastMapY);
+		
+		send(new Sc_11002().from(lastMap.getId()));
 	}
 	
 	public void onLogout() {
 		this.isOnline = false;
 		Services.app.world.allPlayers.remove(this);
-		Services.tcpService.leaveGroup(Groups.World, channel);
+		Services.tcpService.leaveGroup(World.GROUP_NAME, channel);
 		try {
 			//保存离线场景
 			MapInstance instance = this.position.getMapInstance();
@@ -112,12 +131,14 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 			entity.lastMapId = instance.getGameMap().getKey();
 			entity.lastMapX = this.position.getX();
 			entity.lastMapY = this.position.getY();
+			this.position = null;
 		} catch (Exception e) {
 			log.error("player {} not in map", this.getKey());
 		}
 		
 		Services.cacheService.saveAsync(this);
 		Services.cacheService.saveAsync(this.knapsack);
+		Services.cacheService.saveAsync(this.missionManager);
 	}
 	
 	public void disconnect() {
@@ -208,21 +229,27 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	}
 	
 	@Override
-	public void see(MapObject object) {
-		if(object instanceof Player)
-			send(new Sc_12002().from((Player)object));
-		else if(object instanceof Monster)
-			send(new Sc_12002().from((Monster)object));
-		log.debug("player {} see object {}", this, object);
+	public void see(List<MapObject> objects) {
+		if(isOnline) {
+			send(new Sc_12002().from(objects));
+			log.debug("player {} see object {}", this, objects);
+		}
 	}
 	
 	@Override
-	public void notSee(MapObject object) {
-		send(new Sc_12003().from(object));
-		log.debug("player {} not see object {}", this, object);
+	public void notSee(List<MapObject> objects) {
+		if(isOnline) {
+			send(new Sc_12003().from(objects));
+			log.debug("player {} not see object {}", this, objects);
+		}
 	}
 	
 	public boolean isOnline() {
 		return this.isOnline;
+	}
+	
+	@Override
+	public void onEnterMap(MapInstance map) {
+//		send(new Sc_12001().from(map));
 	}
 }

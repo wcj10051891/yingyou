@@ -1,8 +1,10 @@
 package com.shadowgame.rpg.msg.map_12;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.modules.core.Monster;
 import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.net.msg.Message;
@@ -22,13 +24,15 @@ public class Sc_12002 extends Message {
 	 */
 	public List<PlayerInfo> player;
 	
-	public Sc_12002 from(Player player) {
-		this.player = Arrays.asList(new PlayerInfo().from(player));
-		return this;
-	}
-	
-	public Sc_12002 from(Monster monster) {
-		this.monster = Arrays.asList(new MonsterInfo().from(monster));
+	public Sc_12002 from(Collection<MapObject> objects) {
+		this.player = new ArrayList<PlayerInfo>();
+		this.monster = new ArrayList<MonsterInfo>();
+		for (MapObject o : objects) {
+			if(o instanceof Monster)
+				this.monster.add(new MonsterInfo().from((Monster)o));
+			else if(o instanceof Player)
+				this.player.add(new PlayerInfo().from((Player)o));
+		}
 		return this;
 	}
 }
