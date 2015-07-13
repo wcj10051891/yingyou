@@ -8,9 +8,8 @@ public enum AIState {
 	ACTIVE(3),
 	USESKILL(3),
 	ATTACKING(2),
-	RESTING(1),
 	MOVINGTOHOME(1),
-	NONE(0);
+	STOP(0);
 
 	private int priority;
 

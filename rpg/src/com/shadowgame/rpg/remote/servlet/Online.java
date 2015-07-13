@@ -9,8 +9,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.shadowgame.rpg.core.Constants;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.shadowgame.rpg.data.SkillData;
 import com.shadowgame.rpg.modules.monster.Monster;
+import com.shadowgame.rpg.modules.skill.AbstractSkill;
+import com.shadowgame.rpg.persist.entity.TSkill;
 import com.shadowgame.rpg.service.Services;
 
 @WebServlet
@@ -55,9 +59,9 @@ public class Online extends HttpServlet {
 //			Monster monster = os.get(1);
 //			System.out.println(monster.buffList.getBuffs());
 			
-//			Services.data.start();
-			
-			System.out.println(Constants.damageAdd);
+//			Map<Long, Monster> m = Services.app.world.getWorldMap(1).getDefaultInstance().getMapObjectByType(Monster.class);
+//			Monster monster = m.values().iterator().next();
+//			System.out.println(monster);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

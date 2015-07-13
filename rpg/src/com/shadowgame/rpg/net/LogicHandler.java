@@ -71,7 +71,7 @@ public class LogicHandler extends SimpleChannelUpstreamHandler {
 	private void processRequest(Player player, ClientMsg msg, ChannelHandlerContext ctx) {
 		long start = System.currentTimeMillis();
 		try {
-			log.info("process client msg:{}, player:{}, channel:{}", msg, player, ctx.getChannel());
+			log.info("C->S,process client msg:{}, player:{}, channel:{}", msg, player, ctx.getChannel());
 			if(msg instanceof NoPlayerClientMsg) {
 				msg.getClass().getMethod("handleNoPlayer", ChannelHandlerContext.class).invoke(msg, ctx);
 			} else {

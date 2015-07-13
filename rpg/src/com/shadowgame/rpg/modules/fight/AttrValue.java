@@ -44,4 +44,9 @@ public class AttrValue {
 	public int getValue() {
 		return value;
 	}
+	
+	@Override
+	public String toString() {
+		return type + ":" + value;
+	}
 }

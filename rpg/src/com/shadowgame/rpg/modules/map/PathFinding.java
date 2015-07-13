@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.shadowgame.rpg.util.MapUtil;
+
 public class PathFinding {
 	public static class PathNode {
 		public float f;
@@ -55,7 +57,7 @@ public class PathFinding {
 		
 	}
 	
-	public static LinkedList<Point> find(GameMap map, Point startPoint, Point endPoint) {
+	public static LinkedList<Point> findByAStar(GameMap map, Point startPoint, Point endPoint) {
 		PathNode start = new PathNode(map.getGridByMapPoint(startPoint.x, startPoint.y));
 		PathNode end = new PathNode(map.getGridByMapPoint(endPoint.x, endPoint.y));
 		TreeSet<PathNode> open = new TreeSet<PathNode>(PathNodeComparator.INSTANCE);
@@ -166,4 +168,9 @@ public class PathFinding {
 //			}
 //		}
 //	}
+	
+	public static int lineMovePx = 50;
+	public static LinkedList<Point> findByLine(GameMap map, Point start, Point end) {
+		return MapUtil.getLinePoints(start, end, map, lineMovePx);
+	}
 }

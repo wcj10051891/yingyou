@@ -8,9 +8,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.shadowgame.rpg.ai.action.AIAction;
 import com.shadowgame.rpg.ai.event.AIEvent;
 import com.shadowgame.rpg.ai.event.handler.EventHandler;
-import com.shadowgame.rpg.ai.intent.AIAction;
 import com.shadowgame.rpg.ai.state.AIState;
 import com.shadowgame.rpg.ai.state.impl.StateHandler;
 import com.shadowgame.rpg.modules.fight.AbstractFighter;
@@ -21,7 +21,7 @@ public abstract class AbstractAI implements Runnable {
 	protected Map<AIEvent, EventHandler> eventHandlers = new HashMap<>();
 	protected Map<AIState, StateHandler> stateHandlers = new HashMap<>();
 	protected PriorityQueue<AIAction> actions = new PriorityQueue<>();
-	protected AIState aiState = AIState.NONE;
+	protected AIState aiState = AIState.STOP;
 	protected boolean isStateChanged;
 	private Future<?> aiTask;
 	
@@ -51,14 +51,15 @@ public abstract class AbstractAI implements Runnable {
 		return this.aiState;
 	}
 
-	public void setAiState(AIState aiState) {
+	public synchronized void setAiState(AIState aiState) {
 		if (this.aiState != aiState) {
 			this.aiState = aiState;
 			isStateChanged = true;
 		}
+		start();
 	}
 
-	public void analyzeState() {
+	private void analyzeState() {
 		isStateChanged = false;
 		StateHandler stateHandler = stateHandlers.get(aiState);
 		if (stateHandler != null)
@@ -108,13 +109,13 @@ public abstract class AbstractAI implements Runnable {
 
 	public void clearActions() {
 		synchronized (actions) {
-			AIAction intent = null;
-			while ((intent = actions.poll()) != null)
-				intent.onRemove(this);
+			AIAction action = null;
+			while ((action = actions.poll()) != null)
+				action.onRemove(this);
 		}
 	}
 	
-	public void start() {
+	private void start() {
 		if (!isStart()) {
 //			aiTask = Services.timerService.jdkScheduler.scheduleAtFixedRate(
 //					this, 1, 1, TimeUnit.SECONDS);
@@ -122,12 +123,13 @@ public abstract class AbstractAI implements Runnable {
 		}
 	}
 
-	public boolean isStart() {
+	private boolean isStart() {
 		return aiTask != null && !aiTask.isCancelled();
 	}
 
 	public void stop() {
 		if (aiTask != null && !aiTask.isCancelled()) {
+			this.clearActions();
 			aiTask.cancel(true);
 			aiTask = null;
 		}

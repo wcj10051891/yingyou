@@ -25,6 +25,6 @@ public class Point {
 	
 	@Override
 	public String toString() {
-		return "map[" + x + "."+  y+"]";
+		return "map[" + x + ","+  y+"]";
 	}
 }

@@ -7,7 +7,5 @@ public class AttackedEventHandler implements EventHandler {
 	@Override
 	public void handleEvent(AbstractAI ai) {
 		ai.setAiState(AIState.ATTACKING);
-		if (!ai.isStart())
-			ai.analyzeState();
 	}
 }

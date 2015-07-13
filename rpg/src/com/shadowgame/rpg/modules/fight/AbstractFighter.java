@@ -25,16 +25,16 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	/**
 	 * 战斗属性
 	 */
-	protected FighterAttrs attrs;
+	protected FighterAttrs fightAttrs;
+	/**
+	 * 生命属性
+	 */
+	protected LifeAttrs lifeAttrs;
 	/**
 	 * 仇恨列表
 	 */
 	protected HateList hateList;
 	
-	
-	public boolean isDied() {
-		return this.attrs.get(AttrType.hp) == 0;
-	}
 	
 	public AbstractFighter getTarget() {
 		return target;
@@ -61,11 +61,11 @@ public abstract class AbstractFighter extends AbstractSpirit {
 	}
 
 	public FighterAttrs getAttrs() {
-		return attrs;
+		return fightAttrs;
 	}
 
 	public void setAttrs(FighterAttrs attrs) {
-		this.attrs = attrs;
+		this.fightAttrs = attrs;
 	}
 
 	public HateList getHateList() {
@@ -74,5 +74,13 @@ public abstract class AbstractFighter extends AbstractSpirit {
 
 	public void setHateList(HateList hateList) {
 		this.hateList = hateList;
+	}
+	
+	public boolean isDie() {
+		return this.lifeAttrs.isDie();
+	}
+	
+	public void onDie(AbstractFighter killer) {
+		
 	}
 }

@@ -185,7 +185,6 @@ public class BinaryGameClient {
 						} else if(cmd.equalsIgnoreCase("useSkill")) {
 							Cs_13000 learn = new Cs_13000();
 							learn.skillId = 1;
-							learn.targetId = 1;
 							channels.get(0).write(learn);
 						}
 					}

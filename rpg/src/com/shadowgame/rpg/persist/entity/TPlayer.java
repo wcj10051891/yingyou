@@ -31,9 +31,11 @@ public class TPlayer{
 	public Integer lastMapId;
 	/** 离线所在地图副本id */
 	public Integer lastInstanceId;
-	/** 离线所在副本坐标x */
+	/** 离线所在地图坐标x */
 	public Integer lastMapX;
-	/** 离线所在副本坐标y */
+	/** 离线所在地图坐标z */
+	public Integer lastMapZ;
+	/** 离线所在地图坐标y */
 	public Integer lastMapY;
 	/** 玩家技能 */
 	public String skill;
@@ -86,6 +88,9 @@ public class TPlayer{
 	}
 	public Integer getLastMapX(){
 		return this.lastMapX;
+	}
+	public Integer getLastMapZ(){
+		return this.lastMapZ;
 	}
 	public Integer getLastMapY(){
 		return this.lastMapY;
@@ -143,6 +148,9 @@ public class TPlayer{
 	}
 	public void setLastMapX(Integer lastMapX){
 		this.lastMapX = lastMapX;
+	}
+	public void setLastMapZ(Integer lastMapZ){
+		this.lastMapZ = lastMapZ;
 	}
 	public void setLastMapY(Integer lastMapY){
 		this.lastMapY = lastMapY;

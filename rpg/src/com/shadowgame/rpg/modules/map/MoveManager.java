@@ -11,12 +11,14 @@ public class MoveManager {
 	private AbstractSpirit spirit;
 	private Future<?> moveTask;
 	private LinkedList<Point> movePath;
+	private Point dest;
 	
 	public MoveManager(AbstractSpirit spirit) {
 		this.spirit = spirit;
 	}
 	
-	public void start(LinkedList<Point> newPath) {
+	public void start(Point newDest, LinkedList<Point> newPath) {
+		this.dest = newDest;
 		//检查是否可移动，不能移动则停止移动
 		this.movePath = newPath;
 		if(movePath == null || movePath.isEmpty()) {
@@ -31,13 +33,17 @@ public class MoveManager {
 			@Override
 			public void run() {
 				Services.app.world.updatePosition(spirit, next.x, next.y);
-				start(movePath);
+				start(dest, movePath);
 			}
 		}, costMills, TimeUnit.MILLISECONDS);
 	}
 	
 	public boolean isMoving() {
 		return this.moveTask != null && !this.moveTask.isCancelled();
+	}
+	
+	public boolean isMoveToDest(Point dest) {
+		return isMoving() && this.dest.equals(dest);
 	}
 
 	public LinkedList<Point> getMovePath() {

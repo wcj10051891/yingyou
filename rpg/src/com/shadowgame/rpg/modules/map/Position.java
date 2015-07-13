@@ -78,7 +78,7 @@ public class Position {
 		log.debug("{} update position {}", owner, this);
 		//是否切换区域
 		MapRegion newRegion = newInstance.getRegion(newPointX, newPointY);
-		if (newRegion != mapRegion) {
+		if (newRegion != null && newRegion != mapRegion) {
 			newRegion.add(owner);
 			log.debug("{} change mapRegion from {} to {}", owner, mapRegion, newRegion);
 			this.mapRegion = newRegion;

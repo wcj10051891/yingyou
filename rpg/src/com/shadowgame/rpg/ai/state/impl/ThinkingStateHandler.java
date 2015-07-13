@@ -1,6 +1,7 @@
 package com.shadowgame.rpg.ai.state.impl;
 
 import com.shadowgame.rpg.ai.AbstractAI;
+import com.shadowgame.rpg.ai.event.AIEvent;
 import com.shadowgame.rpg.ai.state.AIState;
 import com.shadowgame.rpg.modules.monster.Monster;
 
@@ -18,10 +19,11 @@ public class ThinkingStateHandler implements StateHandler {
 			ai.setAiState(AIState.ATTACKING);
 			return;
 		}
-//		if (!owner.isAtSpawnLocation()) {
-//			ai.setAiState(AIState.MOVINGTOHOME);
-//			return;
-//		}
-		ai.setAiState(AIState.ACTIVE);
+		
+		if (!owner.isAtBornPoint()) {
+			ai.setAiState(AIState.MOVINGTOHOME);
+			return;
+		}
+		ai.handleEvent(AIEvent.STOP_AI);
 	}
 }

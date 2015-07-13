@@ -28,17 +28,17 @@ public class BinaryGen {
 	private static final String messageType = Message.class.getName();
 	private static final Map<String, String> typeRegister = new HashMap<String, String>();
 	static {
-		typeRegister.put("byte", "uint8");
-		typeRegister.put("short", "uint16");
-		typeRegister.put("int", "uint32");
-		typeRegister.put("long", "uint64");
+		typeRegister.put("byte", "int8");
+		typeRegister.put("short", "int16");
+		typeRegister.put("int", "int32");
+		typeRegister.put("long", "int64");
 		typeRegister.put("float", "float");
 		typeRegister.put("double", "double");
 		typeRegister.put("String", "string");
-		typeRegister.put("Byte", "uint8");
-		typeRegister.put("Short", "uint16");
-		typeRegister.put("Integer", "uint32");
-		typeRegister.put("Long", "uint64");
+		typeRegister.put("Byte", "int8");
+		typeRegister.put("Short", "int16");
+		typeRegister.put("Integer", "int32");
+		typeRegister.put("Long", "int64");
 		typeRegister.put("Float", "float");
 		typeRegister.put("Double", "double");
 	}

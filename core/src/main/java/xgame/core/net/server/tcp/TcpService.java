@@ -52,7 +52,7 @@ public class TcpService implements Service {
 
 	public void send(Object message, Channel client) {
 		client.write(encodeMessage(message));
-		log.info("send to channel{}:{}", client, message);
+		log.info("S->C,send to client{}:{}", client, message);
 	}
 	
 	private ChannelBuffer encodeMessage(Object message) {
@@ -64,12 +64,12 @@ public class TcpService implements Service {
 	
 	public void broadcast(Object message, String groupName, Channel... excludeChannels) {
 		groups.broadcast(encodeMessage(message), groupName, excludeChannels);
-		log.info("broadcast message:{} to group:{}, exclude:{}", message, groupName, excludeChannels);
+		log.info("S->C,broadcast message:{} to group:{}, exclude:{}", message, groupName, excludeChannels);
 	}
 	
 	public void broadcast(Object message, String groupName, Set<Channel> excludeChannels) {
 		groups.broadcast(encodeMessage(message), groupName, excludeChannels);
-		log.info("broadcast message:{} to group:{}, exclude:{}", message, groupName, excludeChannels);
+		log.info("S->C,broadcast message:{} to group:{}, exclude:{}", message, groupName, excludeChannels);
 	}
 	
 	public void broadcast(Object message, Collection<Channel> toChannels, Channel... excludeChannels) {
@@ -93,7 +93,7 @@ public class TcpService implements Service {
 					channel.write(msg);
 			}
 		}
-		log.info("broadcast message:{} to channels:{}, exclude:{}", message, toChannels, excludeChannels);
+		log.info("S->C,broadcast message:{} to channels:{}, exclude:{}", message, toChannels, excludeChannels);
 	}
 
 	public void joinGroup(String groupName, Channel channel) {

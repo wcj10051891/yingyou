@@ -144,7 +144,7 @@ public class MapRegion {
 		Set<Channel> excludeChannels = Collections.emptySet();
 		Collection<Player> excludePs = Collections.emptySet();
 		if(excludePlayers.length > 0) {
-			excludeChannels = new HashSet<>();
+			excludeChannels = new HashSet<>(excludePlayers.length);
 			excludePs = new HashSet<>(Arrays.asList(excludePlayers));
 		}
 		for (Player player : getVisibilityObjectsByType(Player.class)) {

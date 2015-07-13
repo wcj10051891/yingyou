@@ -1,4 +1,4 @@
-package com.shadowgame.rpg.ai.intent;
+package com.shadowgame.rpg.ai.action;
 
 import com.shadowgame.rpg.ai.AbstractAI;
 
@@ -25,7 +25,7 @@ public abstract class AIAction implements Comparable<AIAction>{
 	 */
 	public abstract boolean execute(AbstractAI ai);
 	/**
-	 * 当从intent列表中移除，结束生命周期时候执行
+	 * 当从action列表中移除，结束生命周期时候执行
 	 */
 	public void onRemove(AbstractAI ai) {
 		

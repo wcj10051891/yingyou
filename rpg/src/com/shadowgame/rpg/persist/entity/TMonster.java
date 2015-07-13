@@ -10,9 +10,13 @@ public class TMonster{
 	/** 所属地图id */
 	public Integer mapId=0;
 	/** 坐标x */
-	public Integer x=0;
+	public Integer bornX=0;
 	/** 坐标y */
-	public Integer y=0;
+	public Integer bornY=0;
+	/** 追击距离 */
+	public Integer followDistance=0;
+	/** 离出生点距离 */
+	public Integer bornDistance=0;
 	public Integer getId(){
 		return this.id;
 	}
@@ -25,11 +29,17 @@ public class TMonster{
 	public Integer getMapId(){
 		return this.mapId;
 	}
-	public Integer getX(){
-		return this.x;
+	public Integer getBornX(){
+		return this.bornX;
 	}
-	public Integer getY(){
-		return this.y;
+	public Integer getBornY(){
+		return this.bornY;
+	}
+	public Integer getFollowDistance(){
+		return this.followDistance;
+	}
+	public Integer getBornDistance(){
+		return this.bornDistance;
 	}
 	public void setId(Integer id){
 		this.id = id;
@@ -43,11 +53,17 @@ public class TMonster{
 	public void setMapId(Integer mapId){
 		this.mapId = mapId;
 	}
-	public void setX(Integer x){
-		this.x = x;
+	public void setBornX(Integer bornX){
+		this.bornX = bornX;
 	}
-	public void setY(Integer y){
-		this.y = y;
+	public void setBornY(Integer bornY){
+		this.bornY = bornY;
+	}
+	public void setFollowDistance(Integer followDistance){
+		this.followDistance = followDistance;
+	}
+	public void setBornDistance(Integer bornDistance){
+		this.bornDistance = bornDistance;
 	}
 }
 

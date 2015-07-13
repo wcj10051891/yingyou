@@ -1,6 +1,7 @@
 package com.shadowgame.rpg.util;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.shadowgame.rpg.modules.fight.AbstractFighter;
@@ -8,6 +9,7 @@ import com.shadowgame.rpg.modules.map.AbstractSpirit;
 import com.shadowgame.rpg.modules.map.GameMap;
 import com.shadowgame.rpg.modules.map.Grid;
 import com.shadowgame.rpg.modules.map.Point;
+import com.shadowgame.rpg.modules.map.Position;
 
 public abstract class MapUtil {
 	
@@ -56,9 +58,63 @@ public abstract class MapUtil {
 	 * @param y
 	 * @return
 	 */
-	public static double getDistance(AbstractFighter object , int x, int y)
+	public static double calcDistance(AbstractFighter object, int x, int y)
 	{
-		return calcDistance(object.getPosition().getX(), object.getPosition().getY(), x, y);
+		Position pos = object.getPosition();
+		return calcDistance(pos.getX(), pos.getY(), x, y);
+	}
+	
+	public static double calcDistance(AbstractFighter f1, AbstractFighter f2)
+	{
+		Position pos1 = f1.getPosition();
+		Position pos2 = f2.getPosition();
+		
+		return calcDistance(pos1.getX(), pos1.getY(), pos2.getX(), pos2.getY());
+	}
+	
+	/**
+	 * 直线上的点
+	 * @return
+	 */
+	public static LinkedList<Point> getLinePoints(Point start, Point end, GameMap map, int px) {
+		LinkedList<Point> path = new LinkedList<Point>();
+		if (start == null || end == null) {
+			return path;
+		}
+		path.add(start);
+		if (!start.equals(end)) {
+			int _pointY = end.y - start.y;
+			int _pointX = end.x - start.x;
+			if (Math.abs(_pointY) >= Math.abs(_pointX)) {
+				if (_pointY < 0) {
+					px = -px;
+				}
+				double per = (double) _pointX / _pointY * px;
+				int y = start.y;
+				int n = Math.abs(_pointY / px);
+				for (int i = 0; i < n; i++) {
+					y = y + px;
+					int x = start.x + (int) Math.round(per * (i + 1));
+					path.add(new Point(x, y));
+				}
+			} else {
+				if (_pointX < 0) {
+					px = -px;
+				}
+				double per = (double) _pointY / _pointX * px;
+				int x = start.x;
+				int n = Math.abs(_pointX / px);
+				for (int i = 0; i < n; i++) {
+					x = x + px;
+					int y = start.y + (int) Math.round(per * (i + 1));
+					path.add(new Point(x, y));
+				}
+			}
+		}
+		Point last = path.getLast();
+		if(last.equals(end))
+			path.addLast(end);
+		return path;
 	}
 	
 	/**
@@ -74,34 +130,34 @@ public abstract class MapUtil {
 		}
 		grids.add(start);
 		if (!start.equals(end)) {
-			int y = end.y - start.y;
-			int x = end.x - start.x;
-			if (Math.abs(y) >= Math.abs(x)) {
+			int _gridY = end.y - start.y;
+			int _gridX = end.x - start.x;
+			if (Math.abs(_gridY) >= Math.abs(_gridX)) {
 				int step = 1;
-				if (y < 0) {
+				if (_gridY < 0) {
 					step = -1;
 				}
-				double per = (double) x / y;
-				int posY = start.x;
-				for (int i = 0; i < Math.abs(y); i++) {
-					posY = posY + step;
-					int posX = start.x + (int) Math.round(per * (i + 1));
-					Grid grid = map.getGridByMapPoint(posX, posY);
+				double per = (double) _gridX / _gridY;
+				int gridY = start.y;
+				for (int i = 0; i < Math.abs(_gridY); i++) {
+					gridY = gridY + step;
+					int gridX = start.x + (int) Math.round(per * (i + 1));
+					Grid grid = map.getGridByGridXY(gridX, gridY);
 					if (grid != null) {
 						grids.add(grid);
 					}
 				}
 			} else {
 				int step = 1;
-				if (x < 0) {
+				if (_gridX < 0) {
 					step = -1;
 				}
-				double per = (double) y / x;
-				int posX = start.x;
-				for (int i = 0; i < Math.abs(x); i++) {
-					posX = posX + step;
-					int posY = start.y + (int) Math.round(per * (i + 1));
-					Grid grid = map.getGridByMapPoint(posX, posY);
+				double per = (double) _gridY / _gridX;
+				int gridX = start.x;
+				for (int i = 0; i < Math.abs(_gridX); i++) {
+					gridX = gridX + step;
+					int gridY = start.y + (int) Math.round(per * (i + 1));
+					Grid grid = map.getGridByGridXY(gridX, gridY);
 					if (grid != null) {
 						grids.add(grid);
 					}

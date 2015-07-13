@@ -1,8 +1,9 @@
 package com.shadowgame.rpg.msg.skill_13;
 
-import com.shadowgame.rpg.modules.event.PlayerKillMonsterEvent;
+import com.shadowgame.rpg.modules.map.World;
 import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.net.msg.ClientMsg;
+import com.shadowgame.rpg.service.Services;
 
 /**
  * 使用技能
@@ -14,18 +15,11 @@ public class Cs_13000 extends ClientMsg {
 	 * 技能id
 	 */
 	public int skillId;
-	/**
-	 * 目标id
-	 */
-	public int targetId;
 	
 	@Override
 	public void handle(Player player) {
-//		player.skillList.useSkill(skillId, targetId);
-//		player.missionManager.accept(1);
-		player.eventDispatcher.fireEvent(new PlayerKillMonsterEvent(player, 1));
-//		player.missionManager.giveUp(1);
-		player.missionManager.finish(1);
+//		player.getPosition().getMapRegion().broadcast(new Sc_13000().from(player, skillId));
+		Services.tcpService.broadcast(new Sc_13000().from(player, skillId), World.GROUP_NAME);
 	}
 
 }

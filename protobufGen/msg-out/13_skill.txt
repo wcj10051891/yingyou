@@ -1,24 +1,25 @@
 // ======== 使用技能	
 message Cs_13000{
-	uint32 skillId; //技能id	
-	uint32 targetId; //目标id	
+	int32 skillId; //技能id	
 }
 // ======== 击中目标	
 message Cs_13001{
-	uint32 skillId; //技能id	
-	array uint64 targetId; //目标id	
+	int32 skillId; //技能id	
+	array int64 targetId; //目标id	
 }
 // ======== 技能施放确认	
 message Sc_13000{
+	int64 id; //施放者id	
+	int32 skillId; //技能id	
 }
 // ======== 伤害信息广播	
 message Sc_13001{
-	uint64 attackerId; //攻击者	
+	int64 attackerId; //攻击者	
 	array AttackInfo attackInfos; //被攻击者中招信息	
 }
 // ======== 被攻击者中招信息	
 message AttackInfo{
-	uint64 targetId; //被攻击者	
-	uint8 type; //类型	
-	uint32 damage; //伤害值	
+	int64 targetId; //被攻击者	
+	int8 type; //类型	
+	int32 damage; //伤害值	
 }

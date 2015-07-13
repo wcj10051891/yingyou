@@ -2,17 +2,9 @@ package com.shadowgame.rpg.modules.fight;
 
 public enum AttrType {
 	/**
-	 * 当前生命
-	 */
-	hp,
-	/**
 	 * 生命最大值
 	 */
 	maxHp,
-	/**
-	 * 当前魔法
-	 */
-	mp,
 	/**
 	 * 魔法最大值
 	 */

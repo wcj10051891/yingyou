@@ -129,7 +129,7 @@ public class MapInstance {
 		}
 		//初始化怪物
 		for (TMonster e : Services.data.get(MapData.class).mapMonsters.get(this.gameMap.entity.id)) {
-			add(new Monster(new Position(e.x, e.y), e), e.x, e.y);
+			add(new Monster(new Position(e.bornX, e.bornY), e), e.bornX, e.bornY);
 		}
 		//设置定时销毁
 //		setDestroyTime(destroySecond);

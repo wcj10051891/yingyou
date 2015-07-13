@@ -5,7 +5,7 @@ import com.shadowgame.rpg.net.msg.ClientMsg;
 import com.shadowgame.rpg.service.Services;
 
 /**
- * 移动消息
+ * player移动消息
  * @author wcj10051891@gmail.com
  * @date 2015年7月6日 下午4:39:23
  */
@@ -22,5 +22,6 @@ public class Cs_12000 extends ClientMsg {
 	@Override
 	public void handle(Player player) {
 		Services.app.world.updatePosition(player, x, y);
+		player.getPosition().getMapRegion().broadcast(new Sc_12005().from(player), player);
 	}
 }

@@ -6,11 +6,11 @@ message Cs_11000{
 message Cs_11001{
 	string username; //用户名	
 	string nickname; //昵称	
-	uint8 vocation; //职业，1战士2法师3弓箭手	
+	int8 vocation; //职业，1战士2法师3弓箭手	
 }
 // ======== 选择角色	
 message Cs_11002{
-	uint64 playerId; //选择角色的playerId	
+	int64 playerId; //选择角色的playerId	
 }
 // ======== 登录协议响应	
 message Sc_11000{
@@ -22,12 +22,16 @@ message Sc_11001{
 }
 // ======== 选择角色成功进入游戏	
 message Sc_11002{
-	uint32 mapId; //登录后进入的场景	
+	int64 playerId; //主角playerId	
+	int32 mapId; //登录后进入的场景	
+	int16 x; //上次的场景坐标x	
+	int16 z; //上次的场景坐标z	
+	int16 y; //上次的场景坐标y	
 }
 // ======== 角色信息	
 message CharacterInfo{
-	uint64 playerId; //playerId	
-	uint32 lv; //等级	
+	int64 playerId; //playerId	
+	int32 lv; //等级	
 	string nickname; //昵称	
-	uint8 vocation; //职业	
+	int8 vocation; //职业	
 }

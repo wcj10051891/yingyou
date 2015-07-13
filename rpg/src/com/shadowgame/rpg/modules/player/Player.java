@@ -14,6 +14,7 @@ import xgame.core.event.EventDispatcher;
 import xgame.core.util.CountMap;
 import xgame.core.util.JsonUtils;
 import xgame.core.util.ProcessQueue;
+import xgame.core.util.RandomUtils;
 import xgame.core.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
@@ -23,10 +24,12 @@ import com.shadowgame.rpg.modules.cooldown.Cooldown;
 import com.shadowgame.rpg.modules.fight.AbstractFighter;
 import com.shadowgame.rpg.modules.fight.AttrType;
 import com.shadowgame.rpg.modules.fight.FighterAttrs;
+import com.shadowgame.rpg.modules.fight.LifeAttrs;
 import com.shadowgame.rpg.modules.item.Item;
 import com.shadowgame.rpg.modules.item.Knapsack;
 import com.shadowgame.rpg.modules.map.MapInstance;
 import com.shadowgame.rpg.modules.map.MapObject;
+import com.shadowgame.rpg.modules.map.MapRegion;
 import com.shadowgame.rpg.modules.map.World;
 import com.shadowgame.rpg.modules.mission.PlayerMissionManager;
 import com.shadowgame.rpg.modules.skill.PlayerSkillList;
@@ -94,15 +97,15 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 		this.buffList = new PlayerBuffList(this);
 		this.cooldown = new Cooldown();
 		//init attrs
-		this.attrs = new FighterAttrs(this);
-		this.attrs.initAttr(AttrType.hp, entity.hp);
-		this.attrs.initAttr(AttrType.maxHp, 100);
-		this.attrs.initAttr(AttrType.mp, entity.mp);
-		this.attrs.initAttr(AttrType.maxMp, 100);
-		this.attrs.initAttr(AttrType.atk, 10);
-		this.attrs.initAttr(AttrType.def, 5);
-		this.attrs.initAttr(AttrType.damageFactor1, 1);
-		this.attrs.initAttr(AttrType.damageFactor2, 1);
+		this.fightAttrs = new FighterAttrs(this);
+		this.fightAttrs.initAttr(AttrType.maxHp, 100);
+		this.fightAttrs.initAttr(AttrType.maxMp, 100);
+		this.fightAttrs.initAttr(AttrType.atk, 10);
+		this.fightAttrs.initAttr(AttrType.def, 5);
+		this.fightAttrs.initAttr(AttrType.damageFactor1, 1);
+		this.fightAttrs.initAttr(AttrType.damageFactor2, 1);
+		
+		this.lifeAttrs = new LifeAttrs(this, entity.hp, entity.mp);
 		
 		//返回上次场景
 		MapInstance lastMap = null;
@@ -112,7 +115,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 			lastMap = Services.app.world.getWorldMap(entity.lastMapId).getDefaultInstance();
 		if(lastMap == null)
 			lastMap = Services.app.world.getWorldMap(1).getDefaultInstance();
-		int lastMapX = 0;
+		int lastMapX = 35;
 		if(entity.lastMapX != null && entity.lastMapX > 0)
 			lastMapX = entity.lastMapX;
 		int lastMapY = 0;
@@ -120,7 +123,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 			lastMapY = entity.lastMapY;
 		Services.app.world.updatePosition(this, lastMap, lastMapX, lastMapY);
 		
-		send(new Sc_11002().from(lastMap.getId()));
+		send(new Sc_11002().from(this));
 	}
 	
 	public void onLogout() {
@@ -169,6 +172,18 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 			Services.tcpService.send(message, this.channel);
 	}
 	
+	public void broadcast(Object message, boolean excludeMe) {
+		if(this.position != null) {
+			MapRegion mapRegion = this.position.getMapRegion();
+			if(mapRegion != null) {
+				if(excludeMe)
+					mapRegion.broadcast(message, this);
+				else
+					mapRegion.broadcast(message);
+			}
+		}
+	}
+	
 	public void disconnect(boolean synchronize) {
 		ChannelFuture future = Services.tcpService.disconnect(this.channel);
 		if(synchronize)
@@ -206,7 +221,7 @@ public class Player extends AbstractFighter implements CacheObject<Long, TPlayer
 	
 	public static TPlayer createEntity(String username, String nickname, int vocation) {
 		TPlayer p = new TPlayer();
-		p.id = UniqueId.next();
+		p.id = Long.valueOf(System.currentTimeMillis() / 1000);//UniqueId.next();
 		p.createTime = new Timestamp(System.currentTimeMillis());
 		p.daily = "{}";
 		p.lv = 1;

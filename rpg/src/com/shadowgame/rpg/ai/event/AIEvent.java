@@ -7,17 +7,9 @@ public enum AIEvent {
 	 */
 	ATTACKED,
 	/**
-	 * 切换到更大仇恨的玩家
-	 */
-	MOST_HATED_CHANGED,
-	/**
 	 * 停止AI计算
 	 */
-	STOP,
-	/**
-	 * 返回出生点
-	 */
-	BACK_HOME,
+	STOP_AI,
 	/**
 	 * 看见玩家
 	 */
@@ -26,10 +18,6 @@ public enum AIEvent {
 	 * 有玩家离开视野
 	 */
 	NOT_SEE_PLAYER,
-	/**
-	 * 死亡
-	 */
-	DIED,
 	/**
 	 * 思考
 	 */
