@@ -14,7 +14,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.core.NoticeException;
 import com.shadowgame.rpg.data.MissionData;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.persist.dao.TPlayerMissionDao;
 import com.shadowgame.rpg.persist.entity.TPlayerMission;
 import com.shadowgame.rpg.service.Services;

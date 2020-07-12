@@ -1,8 +1,5 @@
-package com.shadowgame.rpg.modules.core;
+package com.shadowgame.rpg.modules.map;
 
-import com.shadowgame.rpg.modules.map.MapInstance;
-import com.shadowgame.rpg.modules.map.Position;
-import com.shadowgame.rpg.modules.map.World;
 
 /**
  * 地图上的对象
@@ -33,7 +30,11 @@ public abstract class MapObject {
 	}
 	
 	public World getWorld() {
-		return this.position.getMapRegion().getMapInstance().getGameMap().getWorld();
+		return this.getGameMap().getWorld();
+	}
+	
+	public GameMap getGameMap() {
+		return this.position.getMapRegion().getMapInstance().getGameMap();
 	}
 	
 	/**

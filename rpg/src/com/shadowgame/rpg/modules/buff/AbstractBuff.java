@@ -1,9 +1,8 @@
 package com.shadowgame.rpg.modules.buff;
 
-import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 import com.shadowgame.rpg.modules.skill.FighterSkill;
 import com.shadowgame.rpg.persist.entity.TBuff;
-import com.shadowgame.rpg.persist.entity.TSkill;
 
 public class AbstractBuff implements BuffLogic {
 	protected TBuff entity;
@@ -20,7 +19,7 @@ public class AbstractBuff implements BuffLogic {
 	@Override
 	public void onStart(BuffTask task) {
 		System.out.println("buff " + entity.id + " start");
-		task.target.buffList.addBuff(task);
+		task.target.getBuffList().addBuff(task);
 	}
 
 	@Override
@@ -31,7 +30,7 @@ public class AbstractBuff implements BuffLogic {
 	@Override
 	public void onStop(BuffTask task) {
 		System.out.println("buff " + entity.id + " stop");
-		task.target.buffList.removeBuff(task);
+		task.target.getBuffList().removeBuff(task);
 	}
 
 	@Override

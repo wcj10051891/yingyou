@@ -1,10 +1,9 @@
-package com.shadowgame.rpg.modules.core;
+package com.shadowgame.rpg.modules.map;
 
 import java.util.LinkedList;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.shadowgame.rpg.modules.map.Point;
 import com.shadowgame.rpg.service.Services;
 import com.shadowgame.rpg.util.MapUtil;
 

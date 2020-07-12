@@ -3,7 +3,8 @@ package com.shadowgame.rpg.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.shadowgame.rpg.modules.core.AbstractSpirit;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
+import com.shadowgame.rpg.modules.map.AbstractSpirit;
 import com.shadowgame.rpg.modules.map.GameMap;
 import com.shadowgame.rpg.modules.map.Grid;
 import com.shadowgame.rpg.modules.map.Point;
@@ -55,7 +56,7 @@ public abstract class MapUtil {
 	 * @param y
 	 * @return
 	 */
-	public static double getDistance(AbstractSpirit object , int x, int y)
+	public static double getDistance(AbstractFighter object , int x, int y)
 	{
 		return calcDistance(object.getPosition().getX(), object.getPosition().getY(), x, y);
 	}

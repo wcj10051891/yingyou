@@ -1,4 +1,4 @@
-package com.shadowgame.rpg.modules.core;
+package com.shadowgame.rpg.modules.map;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,10 +11,6 @@ import java.util.List;
  */
 public abstract class AbstractSpirit extends MapObject {
 	
-	/**
-	 * 目标
-	 */
-	private AbstractSpirit target;
 	/**
 	 * 移动管理器
 	 */
@@ -44,14 +40,6 @@ public abstract class AbstractSpirit extends MapObject {
 //		Services.appService.world.updatePosition(this, this.position.getMapRegion().getMapInstance(), this.position.getX(), this.position.getY());
 		//广播移动结束
 		System.out.println("移动结束");
-	}
-
-	public AbstractSpirit getTarget() {
-		return target;
-	}
-	
-	public void setTarget(AbstractSpirit target) {
-		this.target = target;
 	}
 	
 	public int getSpeed() {

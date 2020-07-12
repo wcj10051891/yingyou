@@ -11,10 +11,8 @@ import java.util.Set;
 
 import org.jboss.netty.channel.Channel;
 
-import com.shadowgame.rpg.modules.core.AbstractFighter;
-import com.shadowgame.rpg.modules.core.AbstractSpirit;
-import com.shadowgame.rpg.modules.core.MapObject;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.service.Services;
 
 /**

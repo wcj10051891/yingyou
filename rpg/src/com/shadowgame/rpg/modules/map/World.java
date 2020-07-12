@@ -7,8 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.data.MapData;
-import com.shadowgame.rpg.modules.core.MapObject;
-import com.shadowgame.rpg.modules.core.PlayerContainer;
+import com.shadowgame.rpg.modules.player.PlayerContainer;
 import com.shadowgame.rpg.persist.entity.TGameMap;
 import com.shadowgame.rpg.service.Services;
 

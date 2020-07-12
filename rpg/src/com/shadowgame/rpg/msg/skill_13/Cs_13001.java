@@ -2,7 +2,7 @@ package com.shadowgame.rpg.msg.skill_13;
 
 import java.util.List;
 
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.net.msg.ClientMsg;
 
 /**

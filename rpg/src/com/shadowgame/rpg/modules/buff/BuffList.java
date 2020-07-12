@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 
 public class BuffList {
 	protected AbstractFighter fighter;

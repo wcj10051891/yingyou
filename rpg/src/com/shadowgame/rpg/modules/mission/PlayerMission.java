@@ -8,7 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.data.MissionData;
 import com.shadowgame.rpg.data.MissionGoalData;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.service.Services;
 
 public class PlayerMission {

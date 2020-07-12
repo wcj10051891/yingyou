@@ -3,7 +3,7 @@ package com.shadowgame.rpg.msg.login_11;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.shadowgame.rpg.core.NoticeException;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.net.msg.NoPlayerClientMsg;
 import com.shadowgame.rpg.service.Services;
 

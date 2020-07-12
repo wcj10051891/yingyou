@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.shadowgame.rpg.core.Constants;
-import com.shadowgame.rpg.modules.core.Monster;
+import com.shadowgame.rpg.modules.monster.Monster;
 import com.shadowgame.rpg.service.Services;
 
 @WebServlet

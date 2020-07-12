@@ -1,4 +1,4 @@
-package com.shadowgame.rpg.modules.core;
+package com.shadowgame.rpg.modules.player;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -20,9 +20,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.modules.buff.PlayerBuffList;
 import com.shadowgame.rpg.modules.common.DailyAttribute;
 import com.shadowgame.rpg.modules.cooldown.Cooldown;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AttrType;
+import com.shadowgame.rpg.modules.fight.FighterAttrs;
 import com.shadowgame.rpg.modules.item.Item;
 import com.shadowgame.rpg.modules.item.Knapsack;
 import com.shadowgame.rpg.modules.map.MapInstance;
+import com.shadowgame.rpg.modules.map.MapObject;
 import com.shadowgame.rpg.modules.map.World;
 import com.shadowgame.rpg.modules.mission.PlayerMissionManager;
 import com.shadowgame.rpg.modules.skill.PlayerSkillList;

@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import xgame.core.util.CommonUtils;
 
-import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 import com.shadowgame.rpg.modules.map.Point;
 import com.shadowgame.rpg.service.Services;
 

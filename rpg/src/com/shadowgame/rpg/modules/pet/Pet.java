@@ -1,5 +1,6 @@
-package com.shadowgame.rpg.modules.core;
+package com.shadowgame.rpg.modules.pet;
 
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 import com.shadowgame.rpg.util.UniqueId;
 
 

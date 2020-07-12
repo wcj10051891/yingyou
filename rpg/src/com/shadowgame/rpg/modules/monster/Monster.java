@@ -1,6 +1,10 @@
-package com.shadowgame.rpg.modules.core;
+package com.shadowgame.rpg.modules.monster;
 
 import com.shadowgame.rpg.modules.buff.BuffList;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AttrType;
+import com.shadowgame.rpg.modules.fight.FighterAttrs;
+import com.shadowgame.rpg.modules.fight.HateList;
 import com.shadowgame.rpg.modules.map.Position;
 import com.shadowgame.rpg.modules.skill.SkillList;
 import com.shadowgame.rpg.persist.entity.TMonster;
@@ -16,6 +20,7 @@ public class Monster extends AbstractFighter {
 		this.entity = entity;
 		this.skillList = new SkillList(this);
 		this.buffList = new BuffList(this);
+		this.hateList = new HateList(this);
 		this.attrs = new FighterAttrs(this);
 		//init attrs
 		this.attrs.initAttr(AttrType.hp, 40);

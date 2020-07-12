@@ -1,8 +1,7 @@
 package test;
 
+import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
 
 
 
@@ -38,13 +37,24 @@ public class Test {
 //		Thread.sleep(1);
 //		System.out.println((System.currentTimeMillis() - start));
 		
-		Set<Node> s = new TreeSet<Node>(new MyComparator());
-		s.add(new Node(1));
-		s.add(new Node(3));
-		s.add(new Node(2));
-		s.add(new Node(8));
-		s.add(new Node(0));
-		System.out.println(s);
+//		Set<Node> s = new TreeSet<Node>(new MyComparator());
+//		s.add(new Node(1));
+//		s.add(new Node(3));
+//		s.add(new Node(2));
+//		s.add(new Node(8));
+//		s.add(new Node(0));
+//		System.out.println(s);
+		
+		System.out.println(System.currentTimeMillis());
+		System.out.println(System.currentTimeMillis() / 1000);
+		System.out.println((short)0xFFFF);
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(Integer.MAX_VALUE * 1000l);
+		System.out.println(c.getTime());
+		c.set(2199, 11, 31, 23, 59, 59);
+		System.out.println(c.getTimeInMillis());
+		c.setTimeInMillis(4398046511103l);
+		System.out.println(c.getTime());
 	}
 	
 	static class MyComparator implements Comparator<Node> {

@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.msg.map_12;
 
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.net.msg.ClientMsg;
 import com.shadowgame.rpg.service.Services;
 

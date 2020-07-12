@@ -13,7 +13,7 @@ import com.shadowgame.rpg.core.AlertException;
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.core.NoticeException;
 import com.shadowgame.rpg.jmx.impl.ThoughtputStatistics;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.msg.core_10.Sc_10000;
 import com.shadowgame.rpg.net.msg.ClientMsg;
 import com.shadowgame.rpg.net.msg.Message;

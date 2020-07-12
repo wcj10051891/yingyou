@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import com.shadowgame.rpg.ai.AbstractAI;
 import com.shadowgame.rpg.ai.state.AIState;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 
 public class NotSeePlayerEventHandler implements EventHandler {
 	@Override

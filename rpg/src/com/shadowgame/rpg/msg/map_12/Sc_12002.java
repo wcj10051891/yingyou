@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.shadowgame.rpg.modules.core.MapObject;
-import com.shadowgame.rpg.modules.core.Monster;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.map.MapObject;
+import com.shadowgame.rpg.modules.monster.Monster;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.net.msg.Message;
 
 /**

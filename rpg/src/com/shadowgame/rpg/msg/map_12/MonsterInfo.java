@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.msg.map_12;
 
-import com.shadowgame.rpg.modules.core.Monster;
+import com.shadowgame.rpg.modules.monster.Monster;
 import com.shadowgame.rpg.net.msg.Message;
 
 /**

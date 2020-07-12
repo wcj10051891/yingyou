@@ -3,7 +3,6 @@ package com.shadowgame.rpg.modules.map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.shadowgame.rpg.modules.core.MapObject;
 import com.shadowgame.rpg.util.MapUtil;
 
 /**

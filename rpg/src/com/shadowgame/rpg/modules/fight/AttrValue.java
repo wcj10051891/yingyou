@@ -1,4 +1,5 @@
-package com.shadowgame.rpg.modules.core;
+package com.shadowgame.rpg.modules.fight;
+
 
 public class AttrValue {
 	/**

@@ -7,8 +7,8 @@ import xgame.core.util.ObjectUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.core.AbstractData;
-import com.shadowgame.rpg.modules.core.Player;
 import com.shadowgame.rpg.modules.exec.Exec;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.persist.dao.TExecutionDao;
 import com.shadowgame.rpg.persist.entity.TExecution;
 import com.shadowgame.rpg.service.Services;

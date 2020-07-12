@@ -6,7 +6,7 @@ import java.util.List;
 import org.jboss.netty.channel.ChannelHandlerContext;
 
 import com.shadowgame.rpg.core.AlertException;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.msg.core_10.Sc_10000;
 import com.shadowgame.rpg.net.msg.NoPlayerClientMsg;
 import com.shadowgame.rpg.persist.dao.TPlayerDao;

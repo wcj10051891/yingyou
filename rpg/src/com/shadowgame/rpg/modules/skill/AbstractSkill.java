@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shadowgame.rpg.core.NoticeException;
-import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 import com.shadowgame.rpg.modules.map.Point;
 import com.shadowgame.rpg.modules.map.Position;
 import com.shadowgame.rpg.msg.skill_13.AttackInfo;

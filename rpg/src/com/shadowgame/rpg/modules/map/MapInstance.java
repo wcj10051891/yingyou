@@ -11,9 +11,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import com.shadowgame.rpg.data.MapData;
-import com.shadowgame.rpg.modules.core.AbstractFighter;
-import com.shadowgame.rpg.modules.core.MapObject;
-import com.shadowgame.rpg.modules.core.Monster;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
+import com.shadowgame.rpg.modules.monster.Monster;
 import com.shadowgame.rpg.persist.entity.TMonster;
 import com.shadowgame.rpg.service.Services;
 

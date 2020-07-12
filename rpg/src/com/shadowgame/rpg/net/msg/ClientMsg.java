@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.net.msg;
 
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 
 /**
  * 客户端发上来的消息

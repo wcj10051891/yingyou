@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.shadowgame.rpg.modules.core.MapObject;
-
 public class MapObjectCollection<V extends MapObject> extends ConcurrentHashMap<Long, V> {
 	private static final long serialVersionUID = 1L;
 	private Map<Class<V>, Map<Long, V>> type2Objects = new ConcurrentHashMap<Class<V>, Map<Long, V>>();

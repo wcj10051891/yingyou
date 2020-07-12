@@ -2,7 +2,7 @@ package com.shadowgame.rpg.modules.skill;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.data.SkillData;
-import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 import com.shadowgame.rpg.persist.entity.TSkill;
 import com.shadowgame.rpg.service.Services;
 

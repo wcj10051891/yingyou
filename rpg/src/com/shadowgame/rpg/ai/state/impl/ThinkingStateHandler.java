@@ -1,6 +1,8 @@
 package com.shadowgame.rpg.ai.state.impl;
 
 import com.shadowgame.rpg.ai.AbstractAI;
+import com.shadowgame.rpg.ai.state.AIState;
+import com.shadowgame.rpg.modules.monster.Monster;
 
 public class ThinkingStateHandler implements StateHandler {
 
@@ -9,18 +11,17 @@ public class ThinkingStateHandler implements StateHandler {
 	 */
 	@Override
 	public void handleState(AbstractAI ai) {
-//		ai.clearDesires();
-//
-//		Npc owner = (Npc) ai.getOwner();
-//		if (owner.getAggroList().getMostHated() != null) {
-//			ai.setAiState(AIState.ATTACKING);
-//			return;
-//		}
+		ai.clearActions();
+
+		Monster owner = (Monster) ai.getOwner();
+		if (owner.getHateList().getMostHate() != null) {
+			ai.setAiState(AIState.ATTACKING);
+			return;
+		}
 //		if (!owner.isAtSpawnLocation()) {
 //			ai.setAiState(AIState.MOVINGTOHOME);
 //			return;
 //		}
-//
-//		ai.setAiState(AIState.ACTIVE);
+		ai.setAiState(AIState.ACTIVE);
 	}
 }

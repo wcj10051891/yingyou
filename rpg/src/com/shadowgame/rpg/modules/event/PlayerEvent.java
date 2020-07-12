@@ -2,7 +2,7 @@ package com.shadowgame.rpg.modules.event;
 
 import xgame.core.event.Event;
 
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 
 public class PlayerEvent extends Event {
 	public Player player;

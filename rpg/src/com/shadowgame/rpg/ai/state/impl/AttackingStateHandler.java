@@ -1,38 +1,31 @@
 package com.shadowgame.rpg.ai.state.impl;
 
 import com.shadowgame.rpg.ai.AbstractAI;
+import com.shadowgame.rpg.ai.intent.AttackAction;
+import com.shadowgame.rpg.ai.intent.MoveToTargetAction;
 import com.shadowgame.rpg.ai.state.AIState;
-import com.shadowgame.rpg.modules.core.Npc;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
+import com.shadowgame.rpg.modules.monster.Monster;
 
 public class AttackingStateHandler implements StateHandler {
 
 	/**
-	 * State ATTACKING AI MonsterAi AI AggressiveAi
+	 * 攻击状态逻辑
 	 */
 	@Override
 	public void handleState(AbstractAI ai) {
-//		 ai.clearIntents();
-//		
-//		 Creature target = ((Npc)ai.getOwner()).getAggroList().getMostHated();
-//		 if(target == null)
-//		 return;
-//		
-//		 Npc owner = (Npc) ai.getOwner();
-//		 owner.setTarget(target);
-//		
-//		 owner.getMoveController().setSpeed(owner.getGameStats().getCurrentStat(StatEnum.SPEED)
-//		 / 1000f);
-//		 owner.getMoveController().setDistance(owner.getGameStats().getCurrentStat(StatEnum.ATTACK_RANGE)
-//		 / 1000f);
-//		
-//		 if(owner.getNpcSkillList() != null)
-//		 ai.addDesire(new SkillUseDesire(owner,
-//		 AIState.USESKILL.getPriority()));
-//		 ai.addDesire(new AttackDesire(owner, target,
-//		 AIState.ATTACKING.getPriority()));
-//		 ai.addDesire(new MoveToTargetDesire(owner, target,
-//		 AIState.ATTACKING.getPriority()));
-//		
-//		 ai.start();
+		 ai.clearActions();
+		
+		 AbstractFighter target = ai.getOwner().getHateList().getMostHate();
+		 if(target == null)
+			 return;
+		
+		 Monster owner = (Monster) ai.getOwner();
+		 owner.setTarget(target);
+		
+		 ai.addAction(new AttackAction(owner, target, AIState.ATTACKING.getPriority()));
+		 ai.addAction(new MoveToTargetAction(owner, target, 1));
+		
+		 ai.start();
 	}
 }

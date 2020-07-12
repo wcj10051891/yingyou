@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.shadowgame.rpg.core.NoticeException;
-import com.shadowgame.rpg.modules.core.AbstractFighter;
-import com.shadowgame.rpg.modules.core.MapObject;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
+import com.shadowgame.rpg.modules.map.MapObject;
 
 public class SkillList {
 	protected AbstractFighter fighter;
@@ -23,6 +23,12 @@ public class SkillList {
 		return skills.get(skillId);
 	}
 	
+	public FighterSkill getDefaultSkill() {
+		if(this.skills.isEmpty())
+			return null;
+		return skills.values().iterator().next();
+	}
+	
 	public void useSkill(int skillId, int targetId) {
 		if(!this.skills.containsKey(skillId))
 			throw new NoticeException("未学习该技能");
@@ -38,5 +44,4 @@ public class SkillList {
 	public AbstractFighter getFighter() {
 		return fighter;
 	}
-
 }

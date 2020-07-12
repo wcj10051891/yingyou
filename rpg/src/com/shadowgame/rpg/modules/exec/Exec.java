@@ -10,7 +10,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.core.AlertException;
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.core.NoticeException;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 
 public class Exec {
 	private String key;

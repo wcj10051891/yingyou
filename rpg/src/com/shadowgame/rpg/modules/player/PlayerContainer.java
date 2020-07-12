@@ -1,4 +1,4 @@
-package com.shadowgame.rpg.modules.core;
+package com.shadowgame.rpg.modules.player;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;

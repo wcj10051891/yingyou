@@ -2,9 +2,9 @@ package com.shadowgame.rpg.ai.intent;
 
 import com.shadowgame.rpg.ai.AbstractAI;
 
-public class UseSkillIntent extends Intent {
+public class MoveToHomeAction extends AIAction {
 
-	public UseSkillIntent(int power) {
+	public MoveToHomeAction(int power) {
 		super(power);
 	}
 

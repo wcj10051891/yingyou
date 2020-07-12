@@ -1,7 +1,7 @@
 package com.shadowgame.rpg.ai.state.impl;
 
 import com.shadowgame.rpg.ai.AbstractAI;
-import com.shadowgame.rpg.ai.intent.MoveToHomeIntent;
+import com.shadowgame.rpg.ai.intent.MoveToHomeAction;
 import com.shadowgame.rpg.ai.state.AIState;
 
 public class MovingToHomeStateHandler implements StateHandler {
@@ -22,8 +22,8 @@ public class MovingToHomeStateHandler implements StateHandler {
 		//
 		// ai.schedule();
 		
-		ai.clearIntents();
-		ai.addIntent(new MoveToHomeIntent(AIState.MOVINGTOHOME.getPriority()));
+		ai.clearActions();
+		ai.addAction(new MoveToHomeAction(AIState.MOVINGTOHOME.getPriority()));
 		ai.start();
 	}
 }

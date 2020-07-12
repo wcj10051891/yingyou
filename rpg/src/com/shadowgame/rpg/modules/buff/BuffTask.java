@@ -7,7 +7,7 @@ import xgame.core.util.CommonUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.data.BuffData;
-import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 import com.shadowgame.rpg.modules.skill.FighterSkill;
 import com.shadowgame.rpg.persist.entity.TSkill;
 import com.shadowgame.rpg.service.Services;

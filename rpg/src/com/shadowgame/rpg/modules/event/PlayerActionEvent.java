@@ -1,6 +1,6 @@
 package com.shadowgame.rpg.modules.event;
 
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 
 public class PlayerActionEvent extends PlayerEvent {
 

@@ -6,24 +6,21 @@ import com.shadowgame.rpg.ai.event.handler.AttackedEventHandler;
 import com.shadowgame.rpg.ai.event.handler.BackHomeEventHandler;
 import com.shadowgame.rpg.ai.event.handler.NotSeePlayerEventHandler;
 import com.shadowgame.rpg.ai.event.handler.NothingTodoEventHandler;
-import com.shadowgame.rpg.ai.event.handler.SeePlayerEventHandler;
 import com.shadowgame.rpg.ai.state.AIState;
 import com.shadowgame.rpg.ai.state.impl.AttackingStateHandler;
-import com.shadowgame.rpg.ai.state.impl.NoneStateHandler;
-import com.shadowgame.rpg.modules.core.AbstractSpirit;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 
-public class NpcAI extends AbstractAI {
+public class NormalMonsterAI extends AbstractAI {
 	
-	public NpcAI(AbstractSpirit spirit) {
+	public NormalMonsterAI(AbstractFighter spirit) {
 		super(spirit);
 		//event
-		this.addEventHandler(AIEvent.SEE_PLAYER, new SeePlayerEventHandler());
-		this.addEventHandler(AIEvent.NOT_SEE_PLAYER, new NotSeePlayerEventHandler());
 		this.addEventHandler(AIEvent.ATTACKED, new AttackedEventHandler());
 		this.addEventHandler(AIEvent.BACK_HOME, new BackHomeEventHandler());
-		this.addEventHandler(AIEvent.NOTHING_TODO, new NothingTodoEventHandler());
+		this.addEventHandler(AIEvent.NOT_SEE_PLAYER, new NotSeePlayerEventHandler());
+		this.addEventHandler(AIEvent.STOP, new NothingTodoEventHandler());
 		//state
 		this.addStateHandler(AIState.ATTACKING, new AttackingStateHandler());
-		this.addStateHandler(AIState.NONE, new NoneStateHandler());
+//		this.addStateHandler(AIState.NONE, new NoneStateHandler());
 	}
 }

@@ -2,7 +2,7 @@ package com.shadowgame.rpg.modules.exec;
 
 import com.alibaba.fastjson.JSONObject;
 import com.shadowgame.rpg.data.ExecData;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.service.Services;
 
 public class Execution {

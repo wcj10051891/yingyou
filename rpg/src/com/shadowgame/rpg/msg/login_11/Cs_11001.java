@@ -8,7 +8,7 @@ import xgame.core.util.StringUtils;
 
 import com.shadowgame.rpg.core.AppException;
 import com.shadowgame.rpg.core.NoticeException;
-import com.shadowgame.rpg.modules.core.Player;
+import com.shadowgame.rpg.modules.player.Player;
 import com.shadowgame.rpg.net.msg.NoPlayerClientMsg;
 import com.shadowgame.rpg.persist.dao.TPlayerDao;
 import com.shadowgame.rpg.persist.entity.TPlayer;

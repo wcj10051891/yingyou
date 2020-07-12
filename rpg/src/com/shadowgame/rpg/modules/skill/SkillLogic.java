@@ -3,7 +3,7 @@ package com.shadowgame.rpg.modules.skill;
 import java.util.Collection;
 import java.util.List;
 
-import com.shadowgame.rpg.modules.core.AbstractFighter;
+import com.shadowgame.rpg.modules.fight.AbstractFighter;
 
 /**
  * 可调度执行的逻辑，执行一次，再每隔多久执行一次，每次执行完之后检测是否结束执行，若结束则终止执行
